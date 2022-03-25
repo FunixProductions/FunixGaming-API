@@ -8,14 +8,12 @@ import fr.funixgaming.api.core.repositories.ApiRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-@Service
 @Getter
 @RequiredArgsConstructor
 public abstract class ApiService<DTO extends ApiDTO,
@@ -37,23 +35,10 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
-    @Nullable
-    public DTO getById(String id) {
-        final Optional<ENTITY> search = repository.findByUuid(id);
-
-        if (search.isPresent()) {
-            final ENTITY entity = search.get();
-            return mapper.toDto(entity);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     @Transactional
     public DTO create(DTO request) {
-        final ENTITY entity = repository.save(mapper.toEntity(request));
-        return mapper.toDto(entity);
+        final ENTITY entity = mapper.toEntity(request);
+        return mapper.toDto(repository.save(entity));
     }
 
     @Override

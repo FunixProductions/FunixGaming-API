@@ -1,9 +1,10 @@
 package fr.funixgaming.api.core;
 
 import com.google.gson.Gson;
-import fr.funixgaming.api.core.dtos.TestDTO;
+import fr.funixgaming.api.core.doc.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -14,22 +15,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = CoreAppTest.class)
+@SpringBootTest(classes = {TestApp.class})
 @AutoConfigureMockMvc
 public class CoreAppTest {
     public static final String ROUTE = "/test";
 
     private final Gson gson;
     private final MockMvc mockMvc;
-    private final TestDTO testDTO = new TestDTO(
-            null,
-            "hey :"
-    );
+    private final TestDTO testDTO;
 
     @Autowired
     public CoreAppTest(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
         this.gson = new Gson();
+        this.testDTO = new TestDTO();
+        this.testDTO.setData("oui");
     }
 
     @Test
@@ -63,6 +63,13 @@ public class CoreAppTest {
         final TestDTO result = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
         assertEquals(created.getId(), result.getId());
         assertEquals(created.getData(), result.getData());
+    }
+
+    @Test
+    public void testGetAll() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(ROUTE))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
 }

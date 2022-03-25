@@ -1,6 +1,6 @@
-package fr.funixgaming.api.core.repositories;
+package fr.funixgaming.api.core.doc;
 
-import fr.funixgaming.api.core.entities.Test;
+import fr.funixgaming.api.core.repositories.ApiRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
