@@ -1,12 +1,12 @@
 package fr.funixgaming.api.core.entities;
 
-import lombok.Data;
 import org.hibernate.annotations.NaturalId;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.UUID;
 
-@Data
+@MappedSuperclass
 public abstract class ApiEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,13 +15,37 @@ public abstract class ApiEntity {
 
     @NaturalId
     @Column(name = "uuid", nullable = false, updatable = false, unique = true)
-    private UUID uuid;
+    private String uuid;
 
     @PrePersist
     @PreUpdate
     public void onCreateOrUpdate() {
         if (uuid == null) {
-            uuid = UUID.randomUUID();
+            uuid = UUID.randomUUID().toString();
         }
+    }
+
+    public UUID getUuid() {
+        if (uuid == null) {
+            return null;
+        } else {
+            return UUID.fromString(uuid);
+        }
+    }
+
+    public void setUuid(final @Nullable UUID uuid) {
+        if (uuid == null) {
+            this.uuid = null;
+        } else {
+            this.uuid = uuid.toString();
+        }
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

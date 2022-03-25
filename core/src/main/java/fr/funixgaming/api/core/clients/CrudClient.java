@@ -9,9 +9,6 @@ public interface CrudClient<DTO extends ApiDTO> {
     @GetMapping
     Set<DTO> getAll();
 
-    @GetMapping()
-    DTO getById(@RequestParam String id);
-
     @PostMapping
     DTO create(@RequestBody DTO request);
 

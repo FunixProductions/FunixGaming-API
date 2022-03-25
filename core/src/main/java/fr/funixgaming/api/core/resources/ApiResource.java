@@ -4,13 +4,11 @@ import fr.funixgaming.api.core.clients.CrudClient;
 import fr.funixgaming.api.core.dtos.ApiDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
-@RestController
 public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient<DTO>> implements CrudClient<DTO> {
 
     private final SERVICE service;
@@ -18,11 +16,6 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
     @Override
     public Set<DTO> getAll() {
         return service.getAll();
-    }
-
-    @Override
-    public DTO getById(String id) {
-        return service.getById(id);
     }
 
     @Override

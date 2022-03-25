@@ -20,6 +20,7 @@
             <groupId>fr.funixgaming.api.core</groupId>
             <artifactId>core</artifactId>
             <version>${funixgaming.core.version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

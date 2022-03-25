@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ApiRepository<ENTITY extends ApiEntity> extends CrudRepository<ENTITY, Long> {
     Optional<ENTITY> findByUuid(String uuid);
-    Iterable<ENTITY> findAllByUuid(Iterable<String> uuid);
+    Iterable<ENTITY> findAllByUuid(String uuid);
 }

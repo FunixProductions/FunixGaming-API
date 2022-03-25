@@ -5,18 +5,15 @@ import fr.funixgaming.api.core.mappers.ApiMapper;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotCommand;
 import org.mapstruct.*;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface FunixBotCommandMapper extends ApiMapper<FunixBotCommand, FunixBotCommandDTO> {
     @Mapping(target = "uuid", source = "id")
     @Mapping(target = "id", ignore = true)
-    @Override
     FunixBotCommand toEntity(FunixBotCommandDTO dto);
 
-    @InheritInverseConfiguration
-    @Override
+    @Mapping(target = "id", source = "uuid")
     FunixBotCommandDTO toDto(FunixBotCommand entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Override
     void patch(FunixBotCommand request, @MappingTarget FunixBotCommand toPatch);
 }
