@@ -2,8 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>FunixAPI</artifactId>
         <groupId>fr.funixgaming.api</groupId>
@@ -11,16 +9,23 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>fr.funixgaming.api.client</groupId>
-    <artifactId>FunixAPI-API</artifactId>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fr.funixgaming.api.core</groupId>
+    <artifactId>core</artifactId>
     <version>1.0.0</version>
 
     <dependencies>
         <dependency>
-            <groupId>fr.funixgaming.api.core</groupId>
-            <artifactId>core</artifactId>
-            <version>${funixgaming.core.version}</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
     </dependencies>
+
 
 </project>
