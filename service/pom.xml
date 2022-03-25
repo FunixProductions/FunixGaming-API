@@ -4,22 +4,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fr.funixgaming.api.service</groupId>
-    <artifactId>FunixAPI-Service</artifactId>
-    <version>0.0.1</version>
-
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.4</version>
+        <artifactId>FunixAPI</artifactId>
+        <groupId>fr.funixgaming.api</groupId>
+        <version>1.0.0</version>
     </parent>
 
-    <properties>
-        <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <maven.compiler.version>3.10.1</maven.compiler.version>
-        <mariadb.version>3.0.3</mariadb.version>
-        <flyway.version>8.5.2</flyway.version>
+    <groupId>fr.funixgaming.api.service</groupId>
+    <artifactId>FunixAPI-Service</artifactId>
+    <version>1.0.0</version>
 
+    <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
@@ -28,8 +23,8 @@
 
         <dependency>
             <groupId>fr.funixgaming.api.api</groupId>
-            <artifactId>FunixAPI</artifactId>
-            <version>0.0.1</version>
+            <artifactId>FunixAPI-API</artifactId>
+            <version>${funixgaming.api.version}</version>
             <scope>compile</scope>
         </dependency>
 
