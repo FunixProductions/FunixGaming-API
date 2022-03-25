@@ -9,6 +9,6 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @Entity
-public class Test extends ApiEntity {
+public class TestEntity extends ApiEntity {
     private String data;
 }
