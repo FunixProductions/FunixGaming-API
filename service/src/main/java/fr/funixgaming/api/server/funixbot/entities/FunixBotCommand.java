@@ -1,5 +1,7 @@
 package fr.funixgaming.api.server.funixbot.entities;
 
+import fr.funixgaming.api.core.entities.ApiEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 

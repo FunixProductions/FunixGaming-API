@@ -1,14 +1,16 @@
-package fr.funixgaming.api.core.resource;
+package fr.funixgaming.api.core.resources;
 
 import fr.funixgaming.api.core.clients.CrudClient;
 import fr.funixgaming.api.core.dtos.ApiDTO;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
 
 @Getter
 @RequiredArgsConstructor
+@RestController
 public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient<DTO>> implements CrudClient<DTO> {
 
     private final SERVICE service;
