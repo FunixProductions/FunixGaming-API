@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -49,19 +50,39 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    @Transactional
     public DTO create(DTO request) {
         final ENTITY entity = repository.save(mapper.toEntity(request));
         return mapper.toDto(entity);
     }
 
     @Override
+    @Transactional
+    @Nullable
     public DTO update(DTO request) {
-        final Optional<ENTITY> entity = repository.findByUuid(request.getId().toString());
-        return null;
+        final Optional<ENTITY> search = repository.findByUuid(request.getId().toString());
+
+        if (search.isPresent()) {
+            ENTITY entity = search.get();
+            final ENTITY entRequest = mapper.toEntity(request);
+
+            entRequest.setId(null);
+            mapper.patch(entRequest, entity);
+            entity = repository.save(entity);
+
+            return mapper.toDto(entity);
+        } else {
+            return null;
+        }
     }
 
     @Override
     public void delete(String id) {
+        final Optional<ENTITY> search = repository.findByUuid(id);
 
+        if (search.isPresent()) {
+            final ENTITY entity = search.get();
+            repository.delete(entity);
+        }
     }
 }
