@@ -1,5 +1,6 @@
 package fr.funixgaming.api.client.funixbot.dtos;
 
+import fr.funixgaming.api.core.dtos.ApiDTO;
 import lombok.Data;
 
 import java.util.UUID;
