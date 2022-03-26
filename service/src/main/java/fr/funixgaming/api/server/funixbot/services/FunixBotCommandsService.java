@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FunixBotCommandsService extends ApiService<FunixBotCommandDTO, FunixBotCommand, FunixBotCommandMapper, FunixBotCommandRepository> {
+
     public FunixBotCommandsService(FunixBotCommandRepository repository,
                                    FunixBotCommandMapper mapper) {
         super(repository, mapper);
     }
+
 }
