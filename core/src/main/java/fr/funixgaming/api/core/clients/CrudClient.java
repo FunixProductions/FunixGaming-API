@@ -16,5 +16,5 @@ public interface CrudClient<DTO extends ApiDTO> {
     DTO update(@RequestBody DTO request);
 
     @DeleteMapping
-    void delete(@PathVariable("id") String id);
+    void delete(@RequestParam String id);
 }
