@@ -29,7 +29,6 @@ public class CoreAppTest {
 
     private final Gson gson;
     private final MockMvc mockMvc;
-    private final TestDTO testDTO;
     private final TestRepository repository;
 
     @Autowired
@@ -37,16 +36,16 @@ public class CoreAppTest {
                        TestRepository repository) {
         this.mockMvc = mockMvc;
         this.repository = repository;
-
         this.gson = new Gson();
-        this.testDTO = new TestDTO();
-        this.testDTO.setData("oui");
 
         repository.deleteAll();
     }
 
     @Test
     public void testCreation() throws Exception {
+        final TestDTO testDTO = new TestDTO();
+        testDTO.setData("oui");
+
         MvcResult mvcResult = mockMvc.perform(post(ROUTE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gson.toJson(testDTO)))
@@ -55,11 +54,16 @@ public class CoreAppTest {
 
         final TestDTO result = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
         assertNotNull(result.getId());
+        assertNotNull(result.getCreatedAt());
+        assertNull(result.getUpdatedAt());
         assertEquals(testDTO.getData(), result.getData());
     }
 
     @Test
     public void testUpdate() throws Exception {
+        final TestDTO testDTO = new TestDTO();
+        testDTO.setData("oui");
+
         MvcResult mvcResult = mockMvc.perform(post(ROUTE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(testDTO)))
@@ -67,13 +71,17 @@ public class CoreAppTest {
 
         final TestDTO created = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
         created.setData("changed");
+        created.setCreatedAt(null);
 
         mvcResult = mockMvc.perform(patch(ROUTE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(created)))
                 .andExpect(status().isOk())
                 .andReturn();
+
         final TestDTO result = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
+        assertNotNull(result.getCreatedAt());
+        assertNotEquals(created.getUpdatedAt(), result.getUpdatedAt());
         assertEquals(created.getId(), result.getId());
         assertEquals(created.getData(), result.getData());
     }
