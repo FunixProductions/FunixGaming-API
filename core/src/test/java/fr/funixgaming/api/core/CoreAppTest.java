@@ -1,6 +1,7 @@
 package fr.funixgaming.api.core;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import fr.funixgaming.api.core.doc.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -23,13 +30,19 @@ public class CoreAppTest {
     private final Gson gson;
     private final MockMvc mockMvc;
     private final TestDTO testDTO;
+    private final TestRepository repository;
 
     @Autowired
-    public CoreAppTest(MockMvc mockMvc) {
+    public CoreAppTest(MockMvc mockMvc,
+                       TestRepository repository) {
         this.mockMvc = mockMvc;
+        this.repository = repository;
+
         this.gson = new Gson();
         this.testDTO = new TestDTO();
         this.testDTO.setData("oui");
+
+        repository.deleteAll();
     }
 
     @Test
@@ -67,9 +80,49 @@ public class CoreAppTest {
 
     @Test
     public void testGetAll() throws Exception {
+        int size = 3;
+
+        for (int i = 0; i < size; ++i) {
+            final TestEntity entity = new TestEntity();
+
+            entity.setData(Integer.toString(i));
+            this.repository.save(entity);
+        }
+
         MvcResult mvcResult = mockMvc.perform(get(ROUTE))
                 .andExpect(status().isOk())
                 .andReturn();
+
+        Type type = new TypeToken<Set<TestDTO>>() {}.getType();
+        final Set<TestDTO> entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+
+        assertEquals(size, entities.size());
+        for (final TestDTO entity : entities) {
+            assertNotNull(entity.getData());
+            assertNotNull(entity.getId());
+        }
+    }
+
+    @Test
+    public void testRemove() throws Exception {
+        Type type = new TypeToken<Set<TestDTO>>() {}.getType();
+
+        TestEntity entity = new TestEntity();
+
+        entity.setData("TEST");
+        entity = this.repository.save(entity);
+
+        MvcResult mvcResult = mockMvc.perform(get(ROUTE)).andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+        Set<TestDTO> entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        assertEquals(1, entities.size());
+
+        mockMvc.perform(delete(ROUTE + "?id=" + entity.getUuid()))
+                .andExpect(status().isOk());
+
+        mvcResult = mockMvc.perform(get(ROUTE)).andReturn();
+        entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        assertEquals(0, entities.size());
     }
 
 }
