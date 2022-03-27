@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.converters;
 
 import fr.funixgaming.api.server.configs.FunixApiConfig;
-import fr.funixgaming.api.server.exceptions.FunixApiException;
+import fr.funixgaming.api.core.exceptions.ApiException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -29,11 +29,11 @@ public abstract class Encryption<T> implements AttributeConverter<T, String> {
             this.base64Encoder = Base64.getEncoder();
             this.base64Decoder = Base64.getDecoder();
         } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
-            throw new FunixApiException("Une erreur est survenue lors du chargement de l'encryption de BDD.", e);
+            throw new ApiException("Une erreur est survenue lors du chargement de l'encryption de BDD.", e);
         }
     }
 
-    public String convertToDatabase(final String object) throws FunixApiException {
+    public String convertToDatabase(final String object) throws ApiException {
         try {
             if (object == null) {
                 return null;
@@ -42,11 +42,11 @@ public abstract class Encryption<T> implements AttributeConverter<T, String> {
             cipher.init(Cipher.ENCRYPT_MODE, key);
             return base64Encoder.encodeToString(cipher.doFinal(object.getBytes()));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new FunixApiException("Une erreur est survenue lors de l'encryption.", e);
+            throw new ApiException("Une erreur est survenue lors de l'encryption.", e);
         }
     }
 
-    public String convertToEntity(final String dbData) throws FunixApiException {
+    public String convertToEntity(final String dbData) throws ApiException {
         try {
             if (dbData == null) {
                 return null;
@@ -55,7 +55,7 @@ public abstract class Encryption<T> implements AttributeConverter<T, String> {
             cipher.init(Cipher.DECRYPT_MODE, key);
             return new String(cipher.doFinal(base64Decoder.decode(dbData)));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw new FunixApiException("Une erreur est survenue lors du décryptage.", e);
+            throw new ApiException("Une erreur est survenue lors du décryptage.", e);
         }
     }
 

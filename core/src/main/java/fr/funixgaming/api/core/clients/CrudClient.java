@@ -5,9 +5,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
+/**
+ * @FeignClient(name = "name", url = "${app.domain.url}/url")
+ * @param <DTO> dto
+ */
 public interface CrudClient<DTO extends ApiDTO> {
     @GetMapping
     Set<DTO> getAll();
+
+    @GetMapping("{id}")
+    DTO findById(@PathVariable("id") String id);
 
     @PostMapping
     DTO create(@RequestBody DTO request);
