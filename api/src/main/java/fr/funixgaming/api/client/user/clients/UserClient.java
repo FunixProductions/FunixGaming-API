@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 
-@FeignClient(name = "user", url = "${app.domain.url}/user")
+@FeignClient(name = "user", url = "${app.domain.url}/user/")
 public interface UserClient extends CrudClient<UserDTO> {
 
     @PostMapping("register")
