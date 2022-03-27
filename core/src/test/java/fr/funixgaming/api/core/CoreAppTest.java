@@ -13,10 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -87,6 +84,25 @@ public class CoreAppTest {
     }
 
     @Test
+    public void testUpdateNoId() throws Exception {
+        mockMvc.perform(patch(ROUTE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(new TestDTO())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateEntityNotCreated() throws Exception {
+        final TestDTO testDTO = new TestDTO();
+        testDTO.setId(UUID.randomUUID());
+
+        mockMvc.perform(patch(ROUTE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(testDTO)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testGetAll() throws Exception {
         int size = 3;
 
@@ -112,6 +128,28 @@ public class CoreAppTest {
     }
 
     @Test
+    public void testGetById() throws Exception {
+        final TestDTO testDTO = new TestDTO();
+        testDTO.setData("oui");
+
+        MvcResult mvcResult = mockMvc.perform(post(ROUTE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(testDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final TestDTO result = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
+        mockMvc.perform(get(ROUTE + "/" + result.getId()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetByIdNotCreated() throws Exception {
+        mockMvc.perform(get(ROUTE + "/" + UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void testRemove() throws Exception {
         Type type = new TypeToken<Set<TestDTO>>() {}.getType();
 
@@ -131,6 +169,12 @@ public class CoreAppTest {
         mvcResult = mockMvc.perform(get(ROUTE)).andReturn();
         entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
         assertEquals(0, entities.size());
+    }
+
+    @Test
+    public void testRemoveNoId() throws Exception {
+        mockMvc.perform(delete(ROUTE))
+                .andExpect(status().isBadRequest());
     }
 
 }

@@ -1,13 +1,13 @@
 package fr.funixgaming.api.server.converters;
 
 import fr.funixgaming.api.server.configs.FunixApiConfig;
-import fr.funixgaming.api.server.exceptions.FunixApiException;
+import fr.funixgaming.api.core.exceptions.ApiException;
 
 import javax.persistence.Converter;
 
 @Converter
 public class EncryptionString extends Encryption<String> {
-    public EncryptionString(FunixApiConfig funixApiConfig) throws FunixApiException {
+    public EncryptionString(FunixApiConfig funixApiConfig) throws ApiException {
         super(funixApiConfig);
     }
 

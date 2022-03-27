@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -34,9 +36,29 @@ public class User extends ApiEntity implements UserDetails {
     @Column(nullable = false)
     private Boolean banned;
 
+    @OneToMany(mappedBy = "user")
+    private Set<UserToken> tokens;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(role.getRole()));
+        switch (this.role) {
+            case MODERATOR -> {
+                return Set.of(
+                        new SimpleGrantedAuthority(UserRole.USER.getRole()),
+                        new SimpleGrantedAuthority(UserRole.MODERATOR.getRole())
+                );
+            }
+            case ADMIN -> {
+                final Set<SimpleGrantedAuthority> roles = new HashSet<>();
+
+                for (final UserRole role : UserRole.values()) {
+                    roles.add(new SimpleGrantedAuthority(role.getRole()));
+                }
+                return roles;
+            }
+        }
+
+        return Collections.singletonList(new SimpleGrantedAuthority(UserRole.USER.getRole()));
     }
 
     @Override

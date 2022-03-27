@@ -37,6 +37,18 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    @Nullable
+    public DTO findById(String id) {
+        final Optional<ENTITY> entity = repository.findByUuid(id);
+
+        if (entity.isPresent()) {
+            return mapper.toDto(entity.get());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     @Transactional
     public DTO create(DTO request) {
         final ENTITY entity = mapper.toEntity(request);
