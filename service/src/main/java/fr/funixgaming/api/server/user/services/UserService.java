@@ -2,6 +2,7 @@ package fr.funixgaming.api.server.user.services;
 
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
+import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.services.ApiService;
 import fr.funixgaming.api.server.configs.FunixApiConfig;
 import fr.funixgaming.api.server.user.entities.User;
@@ -84,16 +85,14 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     public boolean isTokenValid(final String token) {
         try {
             Jwts.parser().setSigningKey(funixApiConfig.getSecret()).parseClaimsJws(token);
-            return getToken(token) != null;
-        } catch (JwtException e) {
-            if (e instanceof ExpiredJwtException) {
-                log.error("Votre token de session a expiré. {}", e.getMessage());
+            final UserToken userToken = getToken(token);
+
+            if (userToken == null) {
+                throw new ApiBadRequestException("Votre token d'accès est invalide.");
             } else {
-                log.error("Votre token d'accès est invalide. {}", e.getMessage());
+                return true;
             }
-            return false;
-        } catch (IllegalArgumentException e) {
-            log.error("Votre token d'accès est invalide. {}", e.getMessage());
+        } catch (Exception e) {
             return false;
         }
     }
