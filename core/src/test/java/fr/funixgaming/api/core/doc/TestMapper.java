@@ -1,6 +1,6 @@
 package fr.funixgaming.api.core.doc;
 
-import fr.funixgaming.api.core.mappers.ApiMapper;
+import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")

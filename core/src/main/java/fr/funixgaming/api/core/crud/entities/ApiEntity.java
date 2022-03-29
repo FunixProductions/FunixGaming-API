@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.entities;
+package fr.funixgaming.api.core.crud.entities;
 
 import lombok.Getter;
 import lombok.Setter;

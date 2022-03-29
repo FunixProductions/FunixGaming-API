@@ -10,4 +10,9 @@ public class FunixApiConfig {
      * App secret key for encryption
      */
     private String secret;
+
+    /**
+     * Ip list who does not needs bearer token
+     */
+    private String[] whitelist;
 }

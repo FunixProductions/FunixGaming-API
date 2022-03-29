@@ -1,6 +1,6 @@
-package fr.funixgaming.api.core.repositories;
+package fr.funixgaming.api.core.crud.repositories;
 
-import fr.funixgaming.api.core.entities.ApiEntity;
+import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.user.mappers;
 
 import fr.funixgaming.api.client.user.dtos.UserDTO;
-import fr.funixgaming.api.core.mappers.ApiMapper;
+import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.server.user.entities.User;
 import org.mapstruct.*;
 
@@ -11,6 +11,8 @@ public interface UserMapper extends ApiMapper<User, UserDTO> {
     @Mapping(target = "uuid", source = "id")
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "tokens", ignore = true)
+    @Mapping(target = "banned", ignore = true)
     User toEntity(UserDTO dto);
 
     @Override

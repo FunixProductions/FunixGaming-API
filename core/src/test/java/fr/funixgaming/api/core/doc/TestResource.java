@@ -1,6 +1,6 @@
 package fr.funixgaming.api.core.doc;
 
-import fr.funixgaming.api.core.resources.ApiResource;
+import fr.funixgaming.api.core.crud.resources.ApiResource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

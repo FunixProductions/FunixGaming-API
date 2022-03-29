@@ -1,6 +1,6 @@
 package fr.funixgaming.api.server.user.repositories;
 
-import fr.funixgaming.api.core.repositories.ApiRepository;
+import fr.funixgaming.api.core.crud.repositories.ApiRepository;
 import fr.funixgaming.api.server.user.entities.User;
 
 import java.util.Optional;

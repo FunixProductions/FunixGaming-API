@@ -1,6 +1,6 @@
 package fr.funixgaming.api.core.doc;
 
-import fr.funixgaming.api.core.services.ApiService;
+import fr.funixgaming.api.core.crud.services.ApiService;
 import org.springframework.stereotype.Service;
 
 @Service

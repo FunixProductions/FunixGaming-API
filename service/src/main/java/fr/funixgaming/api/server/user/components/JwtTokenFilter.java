@@ -25,14 +25,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
-        checkIpWhitelist(request, response, chain);
         checkBearer(request, response, chain);
-    }
-
-    private void checkIpWhitelist(HttpServletRequest request,
-                                  HttpServletResponse response,
-                                  FilterChain chain) {
-        //TODO ip validation with no tokens
     }
 
     private void checkBearer(HttpServletRequest request,

@@ -1,7 +1,7 @@
-package fr.funixgaming.api.core.resources;
+package fr.funixgaming.api.core.crud.resources;
 
-import fr.funixgaming.api.core.clients.CrudClient;
-import fr.funixgaming.api.core.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.clients.CrudClient;
+import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
