@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.dtos;
+package fr.funixgaming.api.core.crud.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.user.entities;
 
 import fr.funixgaming.api.client.user.enums.UserRole;
-import fr.funixgaming.api.core.entities.ApiEntity;
+import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.server.converters.EncryptionString;
 import lombok.Getter;
 import lombok.Setter;

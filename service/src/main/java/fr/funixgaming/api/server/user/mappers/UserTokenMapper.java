@@ -2,7 +2,7 @@ package fr.funixgaming.api.server.user.mappers;
 
 
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
-import fr.funixgaming.api.core.mappers.ApiMapper;
+import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import org.mapstruct.*;
 

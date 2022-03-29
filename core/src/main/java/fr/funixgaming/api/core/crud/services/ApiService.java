@@ -1,10 +1,10 @@
-package fr.funixgaming.api.core.services;
+package fr.funixgaming.api.core.crud.services;
 
-import fr.funixgaming.api.core.clients.CrudClient;
-import fr.funixgaming.api.core.dtos.ApiDTO;
-import fr.funixgaming.api.core.entities.ApiEntity;
-import fr.funixgaming.api.core.mappers.ApiMapper;
-import fr.funixgaming.api.core.repositories.ApiRepository;
+import fr.funixgaming.api.core.crud.clients.CrudClient;
+import fr.funixgaming.api.core.crud.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.entities.ApiEntity;
+import fr.funixgaming.api.core.crud.mappers.ApiMapper;
+import fr.funixgaming.api.core.crud.repositories.ApiRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;

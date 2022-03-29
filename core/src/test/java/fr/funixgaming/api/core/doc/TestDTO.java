@@ -1,7 +1,6 @@
 package fr.funixgaming.api.core.doc;
 
-import fr.funixgaming.api.core.dtos.ApiDTO;
-import lombok.Data;
+import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;
 import lombok.Setter;
 

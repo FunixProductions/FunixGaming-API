@@ -8,7 +8,8 @@ import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
-import fr.funixgaming.api.core.resources.ApiResource;
+import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
+import fr.funixgaming.api.core.crud.resources.ApiResource;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
 import fr.funixgaming.api.server.user.services.UserService;
@@ -35,16 +36,19 @@ public class UserResource extends ApiResource<UserDTO, UserService> implements U
 
     @Override
     public UserDTO findById(String id) {
-        if (id.equals("self")) {
-            final UserDTO userDTO = super.getService().getCurrentUser();
+        final UserDTO userDTO = super.getService().getCurrentUser();
+        if (userDTO == null) {
+            throw new ApiException("Vous n'êtes pas connecté à l'application.");
+        }
 
-            if (userDTO == null) {
-                throw new ApiException("Vous n'êtes pas connecté à l'application.");
-            } else {
-                return userDTO;
-            }
+        if (id.equals("self")) {
+            return userDTO;
         } else {
-            return super.findById(id);
+            if (userDTO.getRole().equals(UserRole.ADMIN)) {
+                return super.findById(id);
+            } else {
+                throw new ApiForbiddenException("Vous n'êtes pas admin pour effectuer cette opération.");
+            }
         }
     }
 

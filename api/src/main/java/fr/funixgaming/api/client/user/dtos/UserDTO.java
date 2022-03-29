@@ -1,7 +1,7 @@
 package fr.funixgaming.api.client.user.dtos;
 
 import fr.funixgaming.api.client.user.enums.UserRole;
-import fr.funixgaming.api.core.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;
 import lombok.Setter;
 

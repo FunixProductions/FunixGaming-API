@@ -1,6 +1,6 @@
 package fr.funixgaming.api.server.funixbot.entities;
 
-import fr.funixgaming.api.core.entities.ApiEntity;
+import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import lombok.Getter;
 import lombok.Setter;
 

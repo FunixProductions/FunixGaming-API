@@ -1,7 +1,7 @@
-package fr.funixgaming.api.core.mappers;
+package fr.funixgaming.api.core.crud.mappers;
 
-import fr.funixgaming.api.core.dtos.ApiDTO;
-import fr.funixgaming.api.core.entities.ApiEntity;
+import fr.funixgaming.api.core.crud.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.entities.ApiEntity;
 
 /**
  * Example class impl

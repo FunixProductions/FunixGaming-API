@@ -1,6 +1,6 @@
-package fr.funixgaming.api.core.clients;
+package fr.funixgaming.api.core.crud.clients;
 
-import fr.funixgaming.api.core.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;

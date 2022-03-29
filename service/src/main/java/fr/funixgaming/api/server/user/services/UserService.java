@@ -3,7 +3,7 @@ package fr.funixgaming.api.server.user.services;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
-import fr.funixgaming.api.core.services.ApiService;
+import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.server.configs.FunixApiConfig;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;

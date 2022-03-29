@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.funixbot.services;
 
 import fr.funixgaming.api.client.funixbot.dtos.FunixBotCommandDTO;
-import fr.funixgaming.api.core.services.ApiService;
+import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotCommand;
 import fr.funixgaming.api.server.funixbot.mappers.FunixBotCommandMapper;
 import fr.funixgaming.api.server.funixbot.repositories.FunixBotCommandRepository;
