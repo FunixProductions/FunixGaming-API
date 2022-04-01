@@ -19,8 +19,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("user")
 public class UserResource extends ApiResource<UserDTO, UserService> implements UserClient {
@@ -62,15 +60,9 @@ public class UserResource extends ApiResource<UserDTO, UserService> implements U
     @Override
     public UserTokenDTO login(UserLoginDTO request) {
         try {
-            final Optional<User> search = super.getService().getRepository().findByUsername(request.getUsername());
-            Authentication authenticate = authenticationManager
-                    .authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    request.getUsername(), request.getPassword()
-                            )
-                    );
-
-            User user = (User) authenticate.getPrincipal();
+            final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+            final Authentication authenticate = authenticationManager.authenticate(auth);
+            final User user = (User) authenticate.getPrincipal();
 
             return super.getService().generateAccessToken(user);
         } catch (BadCredentialsException ex) {

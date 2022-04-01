@@ -155,8 +155,8 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return getRepository()
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        return super.getRepository()
                 .findByUsername(username)
                 .orElseThrow(
                         () -> new UsernameNotFoundException(String.format("Utilisateur %s non trouvé", username))

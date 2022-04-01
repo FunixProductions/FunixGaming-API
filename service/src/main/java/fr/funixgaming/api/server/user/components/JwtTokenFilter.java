@@ -25,12 +25,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain chain) throws ServletException, IOException {
-        checkBearer(request, response, chain);
-    }
-
-    private void checkBearer(HttpServletRequest request,
-                             HttpServletResponse response,
-                             FilterChain chain) throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (Strings.isEmpty(header) || !header.startsWith("Bearer ")) {
@@ -50,4 +44,5 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }
+
 }
