@@ -8,6 +8,7 @@ import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
+import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,11 +33,13 @@ public class TestUserResourceAuth {
     @Autowired
     public TestUserResourceAuth(MockMvc mockMvc,
                                 UserRepository userRepository,
+                                UserTokenRepository userTokenRepository,
                                 UserTestComponent userTestComponent) {
         this.mockMvc = mockMvc;
         this.gson = new Gson();
         this.userTestComponent = userTestComponent;
 
+        userTokenRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -99,7 +102,7 @@ public class TestUserResourceAuth {
 
         final UserLoginDTO loginDTO = new UserLoginDTO();
         loginDTO.setUsername(account.getUsername());
-        loginDTO.setPassword("oui");
+        loginDTO.setPassword("passwordoui");
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)

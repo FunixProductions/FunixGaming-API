@@ -88,12 +88,12 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     @Transactional
     public UserTokenDTO generateAccessToken(final User user) {
         final Instant now = Instant.now();
-        final Instant expiresAt = now.plus(1, ChronoUnit.WEEKS);
+        final Instant expiresAt = now.plusSeconds(604800); //one week
         final UserToken userToken = new UserToken();
 
         userToken.setUser(user);
         userToken.setUuid(UUID.randomUUID());
-        userToken.setExpirationDate(expiresAt);
+        userToken.setExpirationDate(Date.from(expiresAt));
         userToken.setToken(Jwts.builder()
                 .setSubject(userToken.getUuid().toString())
                 .setIssuer(ISSUER)

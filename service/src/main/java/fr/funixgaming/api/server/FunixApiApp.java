@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
-@ConfigurationPropertiesScan("fr.funixgaming.api")
 @SpringBootApplication(scanBasePackages = "fr.funixgaming.api")
 public class FunixApiApp {
 

@@ -29,8 +29,8 @@ public class UserTestComponent {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail("test@gmail.com");
         creationDTO.setUsername("test");
-        creationDTO.setPassword("oui");
-        creationDTO.setPasswordConfirmation("oui");
+        creationDTO.setPassword("passwordoui");
+        creationDTO.setPasswordConfirmation("passwordoui");
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
