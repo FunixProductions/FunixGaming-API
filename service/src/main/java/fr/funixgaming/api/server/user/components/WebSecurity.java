@@ -2,6 +2,7 @@ package fr.funixgaming.api.server.user.components;
 
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
+import fr.funixgaming.api.server.user.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,12 +31,12 @@ import javax.servlet.http.HttpServletResponse;
         prePostEnabled = true
 )
 public class WebSecurity extends WebSecurityConfigurerAdapter {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final JwtTokenFilter jwtTokenFilter;
 
-    public WebSecurity(UserRepository userRepository,
+    public WebSecurity(UserService userService,
                        JwtTokenFilter jwtTokenFilter) {
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.jwtTokenFilter = jwtTokenFilter;
 
         SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
@@ -64,10 +65,10 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/funixbot/**").hasRole(UserRole.MODERATOR.getRole())
 
-                .antMatchers("/user/**").hasRole(UserRole.ADMIN.getRole())
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/{id}").hasRole(UserRole.USER.getRole())
+                .antMatchers("/user/**").hasRole(UserRole.ADMIN.getRole())
 
                 .anyRequest().authenticated();
 
@@ -76,19 +77,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> userRepository
-                .findByUsername(username)
-                .orElseThrow(
-                        () -> new UsernameNotFoundException(
-                                String.format("L'utilisateur %s n'existe pas.", username)
-                        )
-                ));
+        auth.userDetailsService(userService);
     }
 
     @Bean
     public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+
         config.setAllowCredentials(true);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
@@ -108,7 +104,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    GrantedAuthorityDefaults grantedAuthorityDefaults() {
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults("");
     }
 }

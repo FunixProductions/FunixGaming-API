@@ -25,16 +25,16 @@ public class User extends ApiEntity implements UserDetails {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @Convert(converter = EncryptionString.class)
     private String password;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole role = UserRole.USER;
 
     @Column(nullable = false)
-    private Boolean banned;
+    private Boolean banned = false;
 
     @OneToMany(mappedBy = "user")
     private Set<UserToken> tokens;
@@ -73,11 +73,11 @@ public class User extends ApiEntity implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return !banned;
     }
 
     @Override
     public boolean isEnabled() {
-        return banned;
+        return !banned;
     }
 }

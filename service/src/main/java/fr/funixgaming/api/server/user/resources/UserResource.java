@@ -11,7 +11,6 @@ import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.crud.resources.ApiResource;
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
 import fr.funixgaming.api.server.user.services.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,17 +19,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("user")
 public class UserResource extends ApiResource<UserDTO, UserService> implements UserClient {
-    private final UserAuthMapper authMapper;
     private final AuthenticationManager authenticationManager;
 
     public UserResource(UserService userService,
-                        UserAuthMapper authMapper,
                         AuthenticationManager authenticationManager) {
         super(userService);
-        this.authMapper = authMapper;
         this.authenticationManager = authenticationManager;
     }
 
@@ -55,10 +53,7 @@ public class UserResource extends ApiResource<UserDTO, UserService> implements U
     @Override
     public UserDTO register(UserCreationDTO request) {
         if (request.getPassword().equals(request.getPasswordConfirmation())) {
-            final UserDTO userDTO = this.authMapper.toDto(request);
-
-            userDTO.setRole(UserRole.USER);
-            return super.create(userDTO);
+            return this.getService().create(request);
         } else {
             throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
         }
@@ -67,6 +62,7 @@ public class UserResource extends ApiResource<UserDTO, UserService> implements U
     @Override
     public UserTokenDTO login(UserLoginDTO request) {
         try {
+            final Optional<User> search = super.getService().getRepository().findByUsername(request.getUsername());
             Authentication authenticate = authenticationManager
                     .authenticate(
                             new UsernamePasswordAuthenticationToken(
