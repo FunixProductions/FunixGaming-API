@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,9 +16,9 @@ public class UserToken extends ApiEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, unique = true, updatable = false)
+    @Column(nullable = false, unique = true, updatable = false, length = 2000)
     private String token;
 
     @Column(name = "expiration_date", updatable = false)
-    private Instant expirationDate;
+    private Date expirationDate;
 }

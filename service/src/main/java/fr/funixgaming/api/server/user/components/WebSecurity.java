@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,11 +21,6 @@ import org.springframework.web.filter.CorsFilter;
 import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        securedEnabled = true,
-        jsr250Enabled = true,
-        prePostEnabled = true
-)
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final UserService userService;
     private final JwtTokenFilter jwtTokenFilter;
@@ -64,7 +58,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/user/{id}").hasRole(UserRole.USER.getRole())
+                .antMatchers(HttpMethod.GET, "/user/{id}").authenticated()
                 .antMatchers("/user/**").hasRole(UserRole.ADMIN.getRole())
 
                 .anyRequest().authenticated();
@@ -92,12 +86,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        return new FunixApiAuth(userService);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(31);
     }
 
 }

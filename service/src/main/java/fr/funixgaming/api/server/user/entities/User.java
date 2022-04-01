@@ -25,7 +25,7 @@ public class User extends ApiEntity implements UserDetails {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     @Convert(converter = EncryptionString.class)
     private String password;
 
