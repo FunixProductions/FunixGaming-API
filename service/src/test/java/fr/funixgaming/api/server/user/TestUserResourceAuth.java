@@ -6,6 +6,7 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
+import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +27,17 @@ public class TestUserResourceAuth {
 
     private final MockMvc mockMvc;
     private final Gson gson;
-    private final UserRepository userRepository;
+    private final UserTestComponent userTestComponent;
 
     @Autowired
     public TestUserResourceAuth(MockMvc mockMvc,
-                                UserRepository userRepository) {
+                                UserRepository userRepository,
+                                UserTestComponent userTestComponent) {
         this.mockMvc = mockMvc;
-        this.userRepository = userRepository;
         this.gson = new Gson();
+        this.userTestComponent = userTestComponent;
 
-        this.userRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -73,10 +75,29 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testLoginSuccess() throws Exception {
-        final UserDTO account = createAccount();
-        final UserLoginDTO loginDTO = new UserLoginDTO();
+    public void testRegisterUsernameTaken() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail("test@gmail.com");
+        creationDTO.setUsername("test");
+        creationDTO.setPassword("oui");
+        creationDTO.setPasswordConfirmation("oui");
 
+        this.mockMvc.perform(post("/user/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(creationDTO)))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/user/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testLoginSuccess() throws Exception {
+        final UserDTO account = userTestComponent.createAccount();
+
+        final UserLoginDTO loginDTO = new UserLoginDTO();
         loginDTO.setUsername(account.getUsername());
         loginDTO.setPassword("oui");
 
@@ -92,20 +113,19 @@ public class TestUserResourceAuth {
         assertNotNull(tokenDTO.getExpirationDate());
     }
 
-    private UserDTO createAccount() throws Exception {
-        final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail("test@gmail.com");
-        creationDTO.setUsername("test");
-        creationDTO.setPassword("oui");
-        creationDTO.setPasswordConfirmation("oui");
+    @Test
+    public void testLoginWrongPassword() throws Exception {
+        final UserLoginDTO loginDTO = new UserLoginDTO();
 
-        MvcResult mvcResult = this.mockMvc.perform(post("/user/register")
+        loginDTO.setUsername("JENEXISTEPAS");
+        loginDTO.setPassword("CEMOTDEPASSENONPLUS");
+
+        this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(creationDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        return gson.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
+                        .content(gson.toJson(loginDTO)))
+                .andExpect(status().isBadRequest());
     }
+
+
 
 }

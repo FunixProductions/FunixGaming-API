@@ -21,5 +21,6 @@ public interface UserMapper extends ApiMapper<User, UserDTO> {
 
     @Override
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "authorities", ignore = true)
     void patch(User request, @MappingTarget User toPatch);
 }

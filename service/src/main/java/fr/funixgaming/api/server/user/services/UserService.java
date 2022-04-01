@@ -2,11 +2,13 @@ package fr.funixgaming.api.server.user.services;
 
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.server.configs.FunixApiConfig;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
+import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.mappers.UserTokenMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
@@ -18,8 +20,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -29,22 +35,38 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepository> {
+public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
     private final static String ISSUER = "FunixApi - api.funixgaming.fr";
 
     private final FunixApiConfig funixApiConfig;
     private final UserTokenRepository tokenRepository;
     private final UserTokenMapper tokenMapper;
+    private final UserAuthMapper authMapper;
 
     public UserService(UserRepository repository,
                        UserMapper mapper,
                        FunixApiConfig funixApiConfig,
                        UserTokenRepository userTokenRepository,
-                       UserTokenMapper userTokenMapper) {
+                       UserTokenMapper userTokenMapper,
+                       UserAuthMapper userAuthMapper) {
         super(repository, mapper);
         this.funixApiConfig = funixApiConfig;
         this.tokenRepository = userTokenRepository;
         this.tokenMapper = userTokenMapper;
+        this.authMapper = userAuthMapper;
+    }
+
+    @Transactional
+    public UserDTO create(final UserCreationDTO userCreationDTO) {
+        final Optional<User> search = this.getRepository().findByUsername(userCreationDTO.getUsername());
+
+        if (search.isPresent()) {
+            throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", userCreationDTO.getUsername()));
+        } else {
+            final User request = this.authMapper.toEntity(userCreationDTO);
+            return this.getMapper().toDto(this.getRepository().save(request));
+        }
+
     }
 
     @Nullable
@@ -63,6 +85,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         return null;
     }
 
+    @Transactional
     public UserTokenDTO generateAccessToken(final User user) {
         final Instant now = Instant.now();
         final Instant expiresAt = now.plus(1, ChronoUnit.WEEKS);
@@ -129,5 +152,14 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         } else {
             return null;
         }
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return getRepository()
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException(String.format("Utilisateur %s non trouvé", username))
+                );
     }
 }
