@@ -3,10 +3,11 @@ package fr.funixgaming.api.core.crud.clients;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 /**
- * @FeignClient(name = "name", url = "${app.domain.url}/url")
+ * @FeignClient(name = "name", url = "${app.domain.url}", path = "/path")
  * @param <DTO> dto
  */
 public interface CrudClient<DTO extends ApiDTO> {
@@ -17,7 +18,7 @@ public interface CrudClient<DTO extends ApiDTO> {
     DTO findById(@PathVariable("id") String id);
 
     @PostMapping
-    DTO create(@RequestBody DTO request);
+    DTO create(@RequestBody @Valid DTO request);
 
     @PatchMapping
     DTO update(@RequestBody DTO request);
