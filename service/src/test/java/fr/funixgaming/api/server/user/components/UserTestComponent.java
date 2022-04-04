@@ -2,7 +2,9 @@ package fr.funixgaming.api.server.user.components;
 
 import com.google.gson.Gson;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
+import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
@@ -41,24 +43,38 @@ public class UserTestComponent {
         return gson.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
     }
 
-    public UserDTO createAdminAccount() {
+    public User createAdminAccount() {
         final User user = new User();
 
         user.setUsername("admin");
         user.setPassword("oui");
         user.setEmail("admin@gmail.com");
         user.setRole(UserRole.ADMIN);
-        return userMapper.toDto(userRepository.save(user));
+        return userRepository.save(user);
     }
 
-    public UserDTO createModoAccount() {
+    public User createModoAccount() {
         final User user = new User();
 
         user.setUsername("modo");
         user.setPassword("oui");
         user.setEmail("modo@gmail.com");
         user.setRole(UserRole.MODERATOR);
-        return userMapper.toDto(userRepository.save(user));
+        return userRepository.save(user);
+    }
+
+    public UserTokenDTO loginUser(final User user) throws Exception {
+        final UserLoginDTO userLoginDTO = new UserLoginDTO();
+        userLoginDTO.setUsername(user.getUsername());
+        userLoginDTO.setPassword(user.getPassword());
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(userLoginDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return gson.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
     }
 
 }
