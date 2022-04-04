@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import fr.funixgaming.api.core.doc.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -21,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(classes = {TestApp.class})
 @AutoConfigureMockMvc
-public class CoreAppTest {
+public class CoreAppTestCrud {
     public static final String ROUTE = "/test";
 
     private final Gson gson;
@@ -29,8 +28,8 @@ public class CoreAppTest {
     private final TestRepository repository;
 
     @Autowired
-    public CoreAppTest(MockMvc mockMvc,
-                       TestRepository repository) {
+    public CoreAppTestCrud(MockMvc mockMvc,
+                           TestRepository repository) {
         this.mockMvc = mockMvc;
         this.repository = repository;
         this.gson = new Gson();
