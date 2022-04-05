@@ -1,5 +1,6 @@
 package fr.funixgaming.api.server.user.components;
 
+import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -40,6 +41,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         final UsernamePasswordAuthenticationToken authentication = userService.authenticateToken(token);
+        final Object principal = authentication.getPrincipal();
+
+        if (principal instanceof final User user) {
+            userService.checkWhitelist(request.getRemoteAddr(), user.getUsername());
+        }
+
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);

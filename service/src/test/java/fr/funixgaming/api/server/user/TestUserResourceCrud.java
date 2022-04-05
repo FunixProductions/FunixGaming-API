@@ -1,6 +1,6 @@
 package fr.funixgaming.api.server.user;
 
-import fr.funixgaming.api.client.user.dtos.UserAdminDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;

@@ -1,7 +1,6 @@
 package fr.funixgaming.api.server.user.resources;
 
-import fr.funixgaming.api.client.user.clients.UserClient;
-import fr.funixgaming.api.client.user.dtos.UserAdminDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
@@ -10,7 +9,6 @@ import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
-import fr.funixgaming.api.core.crud.resources.ApiResource;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +16,47 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
-public class UserResource implements UserClient {
+public class UserResource {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
 
-    @Override
-    public UserDTO findById(String id) {
+    @PostMapping("register")
+    public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
+        userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+
+        if (request.getPassword().equals(request.getPasswordConfirmation())) {
+            return this.userService.create(request);
+        } else {
+            throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
+        }
+    }
+
+    @PostMapping("login")
+    public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
+        userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+
+        try {
+            final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
+            final Authentication authenticate = authenticationManager.authenticate(auth);
+            final User user = (User) authenticate.getPrincipal();
+
+            return userService.generateAccessToken(user);
+        } catch (BadCredentialsException ex) {
+            throw new ApiBadRequestException("Vos identifiants sont incorrects.", ex);
+        }
+    }
+
+    @GetMapping("{id}")
+    public UserDTO findById(@PathVariable("id") String id) {
         final UserDTO userDTO = userService.getCurrentUser();
         if (userDTO == null) {
             throw new ApiException("Vous n'êtes pas connecté à l'application.");
@@ -48,44 +73,22 @@ public class UserResource implements UserClient {
         }
     }
 
-    @Override
-    public UserDTO register(UserCreationDTO request) {
-        if (request.getPassword().equals(request.getPasswordConfirmation())) {
-            return this.userService.create(request);
-        } else {
-            throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
-        }
-    }
-
-    @Override
-    public UserTokenDTO login(UserLoginDTO request) {
-        try {
-            final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
-            final Authentication authenticate = authenticationManager.authenticate(auth);
-            final User user = (User) authenticate.getPrincipal();
-
-            return userService.generateAccessToken(user);
-        } catch (BadCredentialsException ex) {
-            throw new ApiBadRequestException("Vos identifiants sont incorrects.", ex);
-        }
-    }
-
-    @Override
+    @GetMapping
     public Set<UserDTO> getAll() {
         return userService.getAll();
     }
 
-    @Override
-    public UserDTO create(UserAdminDTO request) {
+    @PostMapping
+    public UserDTO create(@RequestBody @Valid UserAdminDTO request) {
         return userService.create(request);
     }
 
-    @Override
-    public UserDTO update(UserAdminDTO request) {
+    @PatchMapping
+    public UserDTO update(@RequestBody UserAdminDTO request) {
         return userService.update(request);
     }
 
-    @Override
+    @DeleteMapping
     public void delete(String id) {
         userService.delete(id);
     }
