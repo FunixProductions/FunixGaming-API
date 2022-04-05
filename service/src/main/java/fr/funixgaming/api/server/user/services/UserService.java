@@ -1,13 +1,15 @@
 package fr.funixgaming.api.server.user.services;
 
-import fr.funixgaming.api.client.user.dtos.UserAdminDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiException;
+import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.utils.encryption.Encryption;
+import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import fr.funixgaming.api.server.user.mappers.UserAdminMapper;
@@ -44,6 +46,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     private final UserAuthMapper authMapper;
     private final UserAdminMapper adminMapper;
     private final Encryption encryption;
+    private final IPUtils ipUtils;
 
     public UserService(UserRepository repository,
                        UserMapper mapper,
@@ -51,13 +54,15 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                        UserTokenRepository userTokenRepository,
                        UserTokenMapper userTokenMapper,
                        UserAdminMapper adminMapper,
-                       UserAuthMapper userAuthMapper) {
+                       UserAuthMapper userAuthMapper,
+                       IPUtils ipUtils) {
         super(repository, mapper);
         this.encryption = encryption;
         this.tokenRepository = userTokenRepository;
         this.tokenMapper = userTokenMapper;
         this.authMapper = userAuthMapper;
         this.adminMapper = adminMapper;
+        this.ipUtils = ipUtils;
     }
 
     @Transactional
@@ -198,5 +203,11 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     @Override
     public void delete(String id) {
         super.delete(id);
+    }
+
+    public void checkWhitelist(final String ip, final String username) {
+        if (username.equalsIgnoreCase("api") && !ipUtils.canAccess(ip)) {
+            throw new ApiForbiddenException("Vous n'êtes pas whitelisté.");
+        }
     }
 }

@@ -1,5 +1,6 @@
-package fr.funixgaming.api.client.user.dtos;
+package fr.funixgaming.api.client.user.dtos.requests;
 
+import fr.funixgaming.api.client.user.dtos.UserDTO;
 import lombok.Getter;
 import lombok.Setter;
 
