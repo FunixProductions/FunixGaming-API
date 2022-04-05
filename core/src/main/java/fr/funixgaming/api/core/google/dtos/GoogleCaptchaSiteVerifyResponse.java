@@ -13,4 +13,8 @@ public class GoogleCaptchaSiteVerifyResponse {
     private String executedAt;
 
     private String hostname;
+
+    private float score;
+
+    private String action;
 }

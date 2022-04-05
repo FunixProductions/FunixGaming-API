@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 public class GoogleCaptchaConfig {
     private String site;
     private String secret;
+    private float thresold;
 }
