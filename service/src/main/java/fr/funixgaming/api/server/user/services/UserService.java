@@ -1,13 +1,16 @@
 package fr.funixgaming.api.server.user.services;
 
+import fr.funixgaming.api.client.user.dtos.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
+import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.utils.encryption.Encryption;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
+import fr.funixgaming.api.server.user.mappers.UserAdminMapper;
 import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.mappers.UserTokenMapper;
@@ -39,6 +42,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     private final UserTokenRepository tokenRepository;
     private final UserTokenMapper tokenMapper;
     private final UserAuthMapper authMapper;
+    private final UserAdminMapper adminMapper;
     private final Encryption encryption;
 
     public UserService(UserRepository repository,
@@ -46,12 +50,14 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                        Encryption encryption,
                        UserTokenRepository userTokenRepository,
                        UserTokenMapper userTokenMapper,
+                       UserAdminMapper adminMapper,
                        UserAuthMapper userAuthMapper) {
         super(repository, mapper);
         this.encryption = encryption;
         this.tokenRepository = userTokenRepository;
         this.tokenMapper = userTokenMapper;
         this.authMapper = userAuthMapper;
+        this.adminMapper = adminMapper;
     }
 
     @Transactional
@@ -159,5 +165,38 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                 .orElseThrow(
                         () -> new UsernameNotFoundException(String.format("Utilisateur %s non trouvé", username))
                 );
+    }
+
+    @Transactional
+    public UserDTO create(UserAdminDTO request) {
+        final User creation = this.adminMapper.toEntity(request);
+        return this.getMapper().toDto(getRepository().save(creation));
+    }
+
+    @Transactional
+    public UserDTO update(UserAdminDTO request) {
+        if (request.getId() == null) {
+            throw new ApiException("Vous devez specifier un id.");
+        }
+
+        final Optional<User> search = getRepository().findByUuid(request.getId().toString());
+        if (search.isPresent()) {
+            User entity = search.get();
+            final User entRequest = this.adminMapper.toEntity(request);
+
+            entRequest.setId(null);
+            entRequest.setUpdatedAt(Date.from(Instant.now()));
+            this.adminMapper.patch(entRequest, entity);
+            entity = getRepository().save(entity);
+
+            return getMapper().toDto(entity);
+        } else {
+            throw new ApiException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
+        }
+    }
+
+    @Override
+    public void delete(String id) {
+        super.delete(id);
     }
 }
