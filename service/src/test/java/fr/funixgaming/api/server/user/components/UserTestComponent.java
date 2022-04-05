@@ -69,6 +69,17 @@ public class UserTestComponent {
         return userRepository.save(user);
     }
 
+    public User createBasicUser() {
+        cleanDb();
+
+        final User user = new User();
+
+        user.setUsername("user");
+        user.setPassword("oui");
+        user.setEmail("user@gmail.com");
+        return userRepository.save(user);
+    }
+
     public UserTokenDTO loginUser(final User user) throws Exception {
         final UserLoginDTO userLoginDTO = new UserLoginDTO();
         userLoginDTO.setUsername(user.getUsername());
