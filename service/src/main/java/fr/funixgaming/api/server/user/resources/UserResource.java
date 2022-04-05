@@ -9,6 +9,7 @@ import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
+import fr.funixgaming.api.core.google.services.GoogleCaptchaService;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,14 @@ import java.util.Set;
 public class UserResource {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
+    private final GoogleCaptchaService captchaService;
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
         userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+        if (!request.getUsername().equalsIgnoreCase("api")) {
+            captchaService.checkCode(servletRequest);
+        }
 
         if (request.getPassword().equals(request.getPasswordConfirmation())) {
             return this.userService.create(request);
@@ -43,6 +48,9 @@ public class UserResource {
     @PostMapping("login")
     public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
         userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+        if (!request.getUsername().equalsIgnoreCase("api")) {
+            captchaService.checkCode(servletRequest);
+        }
 
         try {
             final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
