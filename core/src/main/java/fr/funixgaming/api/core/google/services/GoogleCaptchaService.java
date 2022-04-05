@@ -8,7 +8,7 @@ import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.clients.GoogleCaptchaClient;
 import fr.funixgaming.api.core.google.config.GoogleCaptchaConfig;
 import fr.funixgaming.api.core.google.dtos.GoogleCaptchaSiteVerifyResponse;
-import fr.funixgaming.api.core.google.dtos.requests.GoogleCaptchaVerifyRequest;
+import fr.funixgaming.api.core.google.dtos.GoogleCaptchaVerifyRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,7 +19,8 @@ import java.util.regex.Pattern;
 @Service
 public class GoogleCaptchaService {
     private static final int MAX_ATTEMPT = 8;
-    private static final String HTTP_GOOGLE_CAPTCHA_PARAMETER = "g-recaptcha-response";
+    private static final String HTTP_GOOGLE_CAPTCHA_PARAMETER = "response";
+    private static final String REGISTER_ACTION = "register";
     private static final Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
     private final GoogleCaptchaConfig googleCaptchaConfig;
@@ -55,7 +56,7 @@ public class GoogleCaptchaService {
             googleRequest.setRemoteip(clientIp);
 
             final GoogleCaptchaSiteVerifyResponse response = googleCaptchaClient.verify(googleRequest);
-            if (response.isSuccess()) {
+            if (response.isSuccess() && response.getAction().equals(REGISTER_ACTION) && response.getScore() > googleCaptchaConfig.getThresold()) {
                 reCaptchaSucceeded(clientIp);
             } else {
                 reCaptchaFailed(clientIp);
