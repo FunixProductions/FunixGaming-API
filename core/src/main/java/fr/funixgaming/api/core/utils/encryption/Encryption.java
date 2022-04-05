@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.utils;
+package fr.funixgaming.api.core.utils.encryption;
 
 import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.core.exceptions.ApiException;
