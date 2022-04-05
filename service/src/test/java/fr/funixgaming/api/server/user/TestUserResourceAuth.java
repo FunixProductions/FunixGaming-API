@@ -1,14 +1,15 @@
 package fr.funixgaming.api.server.user;
 
-import com.google.gson.Gson;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
+import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
 import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
+import fr.funixgaming.api.server.utils.JsonHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,20 +28,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestUserResourceAuth {
 
     private final MockMvc mockMvc;
-    private final Gson gson;
     private final UserTestComponent userTestComponent;
+    private final JsonHelper jsonHelper;
+    private final ApiConfig apiConfig;
 
     @Autowired
     public TestUserResourceAuth(MockMvc mockMvc,
                                 UserRepository userRepository,
                                 UserTokenRepository userTokenRepository,
-                                UserTestComponent userTestComponent) {
+                                UserTestComponent userTestComponent,
+                                ApiConfig apiConfig,
+                                JsonHelper jsonHelper) {
         this.mockMvc = mockMvc;
-        this.gson = new Gson();
         this.userTestComponent = userTestComponent;
+        this.jsonHelper = jsonHelper;
+        this.apiConfig = apiConfig;
 
         userTokenRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    @Test
+    public void testKeyLength() {
+        assertEquals(192, apiConfig.getKeySize());
     }
 
     @Test
@@ -53,11 +63,11 @@ public class TestUserResourceAuth {
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(creationDTO)))
+                        .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        final UserDTO userDTO = gson.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
+        final UserDTO userDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(creationDTO.getUsername(), userDTO.getUsername());
         assertEquals(creationDTO.getEmail(), userDTO.getEmail());
         assertEquals(userDTO.getRole(), UserRole.USER);
@@ -73,7 +83,7 @@ public class TestUserResourceAuth {
 
         this.mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(creationDTO)))
+                        .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -87,12 +97,12 @@ public class TestUserResourceAuth {
 
         this.mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(creationDTO)))
+                        .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isOk());
 
         this.mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(creationDTO)))
+                        .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -106,11 +116,11 @@ public class TestUserResourceAuth {
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(loginDTO)))
+                        .content(jsonHelper.toJson(loginDTO)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        final UserTokenDTO tokenDTO = gson.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
+        final UserTokenDTO tokenDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
         assertEquals(tokenDTO.getUser(), account);
         assertNotNull(tokenDTO.getToken());
         assertNotNull(tokenDTO.getExpirationDate());
@@ -125,7 +135,7 @@ public class TestUserResourceAuth {
 
         this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(loginDTO)))
+                        .content(jsonHelper.toJson(loginDTO)))
                 .andExpect(status().isBadRequest());
     }
 

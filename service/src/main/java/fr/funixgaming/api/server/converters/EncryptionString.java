@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.converters;
 
-import fr.funixgaming.api.core.utils.ApiConverter;
-import fr.funixgaming.api.core.utils.Encryption;
+import fr.funixgaming.api.core.utils.encryption.ApiConverter;
+import fr.funixgaming.api.core.utils.encryption.Encryption;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

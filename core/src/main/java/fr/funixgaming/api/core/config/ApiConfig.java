@@ -15,4 +15,9 @@ public class ApiConfig {
      * (128, 192, or 256 bits)
      */
     private Integer keySize = 128;
+
+    /**
+     * Ip list who can do some actions
+     */
+    private String[] ipWhitelist = new String[0];
 }

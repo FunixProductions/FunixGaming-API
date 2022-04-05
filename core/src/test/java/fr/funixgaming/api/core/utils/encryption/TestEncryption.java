@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.utils;
+package fr.funixgaming.api.core.utils.encryption;
 
 import fr.funixgaming.api.core.TestApp;
 import org.junit.jupiter.api.Test;

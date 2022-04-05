@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.utils;
+package fr.funixgaming.api.core.utils.encryption;
 
 import javax.persistence.AttributeConverter;
 

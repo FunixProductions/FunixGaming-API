@@ -5,7 +5,7 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
-import fr.funixgaming.api.core.utils.Encryption;
+import fr.funixgaming.api.core.utils.encryption.Encryption;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
