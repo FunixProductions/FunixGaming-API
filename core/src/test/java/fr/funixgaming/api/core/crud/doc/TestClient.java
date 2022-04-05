@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.doc;
+package fr.funixgaming.api.core.crud.doc;
 
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import org.springframework.cloud.openfeign.FeignClient;

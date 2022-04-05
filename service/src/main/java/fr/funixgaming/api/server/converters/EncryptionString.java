@@ -1,23 +1,27 @@
 package fr.funixgaming.api.server.converters;
 
-import fr.funixgaming.api.server.configs.FunixApiConfig;
-import fr.funixgaming.api.core.exceptions.ApiException;
+import fr.funixgaming.api.core.utils.ApiConverter;
+import fr.funixgaming.api.core.utils.Encryption;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Converter;
 
+@Component
 @Converter
-public class EncryptionString extends Encryption<String> {
-    public EncryptionString(FunixApiConfig funixApiConfig) throws ApiException {
-        super(funixApiConfig);
-    }
+@RequiredArgsConstructor
+public class EncryptionString implements ApiConverter<String> {
+
+    private final Encryption encryption;
 
     @Override
     public String convertToDatabaseColumn(String attribute) {
-        return super.convertToDatabase(attribute);
+        return encryption.convertToDatabase(attribute);
     }
 
     @Override
     public String convertToEntityAttribute(String dbData) {
-        return super.convertToEntity(dbData);
+        return encryption.convertToEntity(dbData);
     }
+
 }

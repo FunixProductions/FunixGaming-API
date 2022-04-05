@@ -77,6 +77,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    @Transactional
     public void delete(String id) {
         final Optional<ENTITY> search = repository.findByUuid(id);
 
