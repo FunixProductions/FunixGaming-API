@@ -5,7 +5,7 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
-import fr.funixgaming.api.server.configs.FunixApiConfig;
+import fr.funixgaming.api.core.utils.Encryption;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
@@ -20,14 +20,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -38,19 +36,19 @@ import java.util.UUID;
 public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
     private final static String ISSUER = "FunixApi - api.funixgaming.fr";
 
-    private final FunixApiConfig funixApiConfig;
     private final UserTokenRepository tokenRepository;
     private final UserTokenMapper tokenMapper;
     private final UserAuthMapper authMapper;
+    private final Encryption encryption;
 
     public UserService(UserRepository repository,
                        UserMapper mapper,
-                       FunixApiConfig funixApiConfig,
+                       Encryption encryption,
                        UserTokenRepository userTokenRepository,
                        UserTokenMapper userTokenMapper,
                        UserAuthMapper userAuthMapper) {
         super(repository, mapper);
-        this.funixApiConfig = funixApiConfig;
+        this.encryption = encryption;
         this.tokenRepository = userTokenRepository;
         this.tokenMapper = userTokenMapper;
         this.authMapper = userAuthMapper;
@@ -99,7 +97,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                 .setIssuer(ISSUER)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiresAt))
-                .signWith(SignatureAlgorithm.HS512, funixApiConfig.getSecret())
+                .signWith(SignatureAlgorithm.HS512, encryption.getKey())
                 .compact());
 
         return tokenMapper.toDto(tokenRepository.save(userToken));
@@ -107,7 +105,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     public boolean isTokenValid(final String token) {
         try {
-            Jwts.parser().setSigningKey(funixApiConfig.getSecret()).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(encryption.getKey()).parseClaimsJws(token);
             final UserToken userToken = getToken(token);
 
             if (userToken == null) {
@@ -140,7 +138,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     @Nullable
     private UserToken getToken(final String token) {
         final Claims claims = Jwts.parser()
-                .setSigningKey(funixApiConfig.getSecret())
+                .setSigningKey(encryption.getKey())
                 .parseClaimsJws(token)
                 .getBody();
 

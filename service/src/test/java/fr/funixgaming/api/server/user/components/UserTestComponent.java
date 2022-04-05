@@ -1,14 +1,14 @@
 package fr.funixgaming.api.server.user.components;
 
-import com.google.gson.Gson;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
+import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
+import fr.funixgaming.api.server.utils.JsonHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -24,10 +24,12 @@ public class UserTestComponent {
 
     private final MockMvc mockMvc;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
-    private final Gson gson = new Gson();
+    private final UserTokenRepository userTokenRepository;
+    private final JsonHelper jsonHelper;
 
     public UserDTO createAccount() throws Exception {
+        cleanDb();
+
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail("test@gmail.com");
         creationDTO.setUsername("test");
@@ -36,14 +38,16 @@ public class UserTestComponent {
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(creationDTO)))
+                        .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return gson.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
+        return jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
     }
 
     public User createAdminAccount() {
+        cleanDb();
+
         final User user = new User();
 
         user.setUsername("admin");
@@ -54,6 +58,8 @@ public class UserTestComponent {
     }
 
     public User createModoAccount() {
+        cleanDb();
+
         final User user = new User();
 
         user.setUsername("modo");
@@ -70,11 +76,16 @@ public class UserTestComponent {
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(gson.toJson(userLoginDTO)))
+                        .content(jsonHelper.toJson(userLoginDTO)))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return gson.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
+        return jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
+    }
+
+    private void cleanDb() {
+        userTokenRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 }

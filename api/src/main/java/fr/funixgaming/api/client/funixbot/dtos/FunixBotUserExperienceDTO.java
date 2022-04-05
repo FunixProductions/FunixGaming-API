@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
@@ -16,15 +17,15 @@ public class FunixBotUserExperienceDTO extends ApiDTO {
     @NotBlank
     private String username;
 
-    @NotBlank
+    @NotNull
     private Integer xp;
 
-    @NotBlank
+    @NotNull
     private Integer xpNextLevel;
 
-    @NotBlank
+    @NotNull
     private Integer level;
 
-    @NotBlank
+    @NotNull
     private Date lastMessageDate;
 }

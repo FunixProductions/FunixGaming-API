@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.configs;
+package fr.funixgaming.api.core.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,10 +8,11 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "funix.api")
-public class FunixApiConfig {
+@ConfigurationProperties(prefix = "config.api")
+public class ApiConfig {
     /**
-     * Ip list who does not needs bearer token
+     * Keysize for encryption
+     * (128, 192, or 256 bits)
      */
-    private String[] whitelist;
+    private Integer keySize = 128;
 }

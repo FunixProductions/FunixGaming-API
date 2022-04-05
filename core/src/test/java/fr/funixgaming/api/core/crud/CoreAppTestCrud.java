@@ -1,8 +1,9 @@
-package fr.funixgaming.api.core;
+package fr.funixgaming.api.core.crud;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import fr.funixgaming.api.core.doc.*;
+import fr.funixgaming.api.core.TestApp;
+import fr.funixgaming.api.core.crud.doc.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
