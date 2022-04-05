@@ -54,12 +54,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .and();
 
         http.authorizeRequests()
-                .antMatchers("/funixbot/**").hasRole(UserRole.MODERATOR.getRole())
+                .antMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
 
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/{id}").authenticated()
-                .antMatchers("/user/**").hasRole(UserRole.ADMIN.getRole())
+                .antMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
 
                 .anyRequest().authenticated();
 

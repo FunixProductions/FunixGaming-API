@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/funixbot/users/xp")
+@RequestMapping("/funixbot/user/xp")
 public class FunixBotUseExperienceResource extends ApiResource<FunixBotUserExperienceDTO, FunixBotUserExperienceService> implements FunixBotUserExperienceClient {
     public FunixBotUseExperienceResource(FunixBotUserExperienceService funixBotUserExperienceService) {
         super(funixBotUserExperienceService);
