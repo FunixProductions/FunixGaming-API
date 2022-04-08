@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <script src='https://www.google.com/recaptcha/api.js?render=6Ldg71gfAAAAAGgG3d3vrIuroxue_Qasp6SGSYeh'></script>
+    <title>FunixAPI - Auth test</title>
+</head>
+<body>
+
+<form action="http://localhost:8080/user/register" method="POST" id="register">
+    <label for="fname">Username:</label><br>
+    <input type="text" id="fname" value="Username" name="username"><br><br>
+    <label for="lemail">Email</label><br>
+    <input type="text" id="lemail" name="email" value="email@test.fr"><br><br>
+    <label for="lpassword">Password</label><br>
+    <input type="password" id="lpassword" name="password" value="****"><br><br>
+    <label for="lpassconfirm">Password confirm</label><br>
+    <input type="password" id="lpassconfirm" name="passwordConfirmation" value="****"><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+
+
+<footer>
+    <script>
+        const siteKey = '6Ldg71gfAAAAAGgG3d3vrIuroxue_Qasp6SGSYeh';
+        const form = document.getElementById('register');
+        form.addEventListener('submit', logSubmit);
+
+        function logSubmit(event) {
+            event.preventDefault();
+
+            grecaptcha.ready(function() {
+                grecaptcha.execute(siteKey, {action: 'register'}).then(function(token) {
+                    const data = new FormData(event.target);
+                    const value = Object.fromEntries(data.entries());
+
+                    let xhr = new XMLHttpRequest();
+                    xhr.open("POST", "http://localhost:8080/user/register");
+                    xhr.setRequestHeader("Accept", "application/json");
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    xhr.setRequestHeader("google_reCaptcha", token.toString());
+
+                    xhr.send(JSON.stringify(value));
+                });
+            });
+        }
+    </script>
+</footer>
+
+</body>
+</html>
