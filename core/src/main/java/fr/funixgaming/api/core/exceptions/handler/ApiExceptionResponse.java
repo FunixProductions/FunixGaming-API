@@ -6,6 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class ApiExceptionResponse {
-    private final String message;
-    private final Integer code;
+    private final String error;
+    private final Integer status;
 }

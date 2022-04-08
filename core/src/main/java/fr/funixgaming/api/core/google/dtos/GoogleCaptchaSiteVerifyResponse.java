@@ -17,4 +17,7 @@ public class GoogleCaptchaSiteVerifyResponse {
     private float score;
 
     private String action;
+
+    @JsonProperty("error-codes")
+    private String[] errorCodes;
 }

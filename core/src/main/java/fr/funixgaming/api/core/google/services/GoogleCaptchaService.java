@@ -8,7 +8,8 @@ import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.clients.GoogleCaptchaClient;
 import fr.funixgaming.api.core.google.config.GoogleCaptchaConfig;
 import fr.funixgaming.api.core.google.dtos.GoogleCaptchaSiteVerifyResponse;
-import fr.funixgaming.api.core.google.dtos.GoogleCaptchaVerifyRequest;
+import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -16,11 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+@Getter
 @Service
 public class GoogleCaptchaService {
     private static final int MAX_ATTEMPT = 8;
-    private static final String HTTP_GOOGLE_CAPTCHA_PARAMETER = "response";
+    private static final String HTTP_GOOGLE_CAPTCHA_PARAMETER = "google_reCaptcha";
     private static final String REGISTER_ACTION = "register";
+    private static final String LOGIN_ACTION = "login";
     private static final Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
     private final GoogleCaptchaConfig googleCaptchaConfig;
@@ -35,14 +38,15 @@ public class GoogleCaptchaService {
         this.triesCache = CacheBuilder.newBuilder()
                 .expireAfterWrite(4, TimeUnit.HOURS).build(new CacheLoader<>() {
                     @Override
-                    public Integer load(String s) {
+                    @NonNull
+                    public Integer load(@NonNull String s) {
                         return 0;
                     }
                 });
     }
 
     public void checkCode(final HttpServletRequest request) {
-        final String captchaCode = request.getParameter(HTTP_GOOGLE_CAPTCHA_PARAMETER);
+        final String captchaCode = request.getHeader(HTTP_GOOGLE_CAPTCHA_PARAMETER);
         final String clientIp = request.getRemoteAddr();
 
         if (isBlocked(clientIp)) {
@@ -50,13 +54,16 @@ public class GoogleCaptchaService {
         }
 
         if (StringUtils.hasLength(captchaCode) && RESPONSE_PATTERN.matcher(captchaCode).matches()) {
-            final GoogleCaptchaVerifyRequest googleRequest = new GoogleCaptchaVerifyRequest();
-            googleRequest.setSecret(googleCaptchaConfig.getSecret());
-            googleRequest.setResponse(captchaCode);
-            googleRequest.setRemoteip(clientIp);
+            final GoogleCaptchaSiteVerifyResponse response = googleCaptchaClient.verify(
+                    googleCaptchaConfig.getSecret(),
+                    captchaCode,
+                    clientIp,
+                    " "
+            );
 
-            final GoogleCaptchaSiteVerifyResponse response = googleCaptchaClient.verify(googleRequest);
-            if (response.isSuccess() && response.getAction().equals(REGISTER_ACTION) && response.getScore() > googleCaptchaConfig.getThresold()) {
+            if (response.isSuccess() &&
+                    (response.getAction().equals(REGISTER_ACTION) || response.getAction().equals(LOGIN_ACTION)) &&
+                    response.getScore() > googleCaptchaConfig.getThreshold()) {
                 reCaptchaSucceeded(clientIp);
             } else {
                 reCaptchaFailed(clientIp);
