@@ -13,4 +13,5 @@ public class GoogleCaptchaConfig {
     private String site;
     private String secret;
     private Float threshold;
+    private boolean disabled = false;
 }

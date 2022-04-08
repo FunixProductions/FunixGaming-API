@@ -46,6 +46,10 @@ public class GoogleCaptchaService {
     }
 
     public void checkCode(final HttpServletRequest request) {
+        if (googleCaptchaConfig.isDisabled()) {
+            return;
+        }
+
         final String captchaCode = request.getHeader(HTTP_GOOGLE_CAPTCHA_PARAMETER);
         final String clientIp = request.getRemoteAddr();
 
