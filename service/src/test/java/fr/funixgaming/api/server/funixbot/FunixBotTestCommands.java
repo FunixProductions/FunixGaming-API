@@ -39,7 +39,7 @@ public class FunixBotTestCommands {
 
         this.mockMvc = mockMvc;
         this.jsonHelper = jsonHelper;
-        this.route = "/funixbot/commands";
+        this.route = "/funixbot/command";
         this.bearerToken = tokenDTO.getToken();
 
         commandRepository.deleteAll();

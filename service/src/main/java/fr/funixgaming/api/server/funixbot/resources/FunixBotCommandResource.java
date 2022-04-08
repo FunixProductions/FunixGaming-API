@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/funixbot/commands")
+@RequestMapping("/funixbot/command")
 public class FunixBotCommandResource extends ApiResource<FunixBotCommandDTO, FunixBotCommandsService> implements FunixBotCommandClient {
 
     public FunixBotCommandResource(FunixBotCommandsService service) {
