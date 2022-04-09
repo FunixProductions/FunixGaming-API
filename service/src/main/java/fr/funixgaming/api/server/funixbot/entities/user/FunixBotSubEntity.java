@@ -13,8 +13,9 @@ import javax.persistence.OneToOne;
 @Setter
 @MappedSuperclass
 public abstract class FunixBotSubEntity extends ApiEntity {
+
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "user_id", updatable = false, unique = true, nullable = false)
+    @JoinColumn(name = "user_id", unique = true)
     private FunixBotUser user;
+
 }

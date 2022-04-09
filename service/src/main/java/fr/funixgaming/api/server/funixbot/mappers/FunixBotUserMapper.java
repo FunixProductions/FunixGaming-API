@@ -1,12 +1,13 @@
-package fr.funixgaming.api.server.funixbot.mappers.user;
+package fr.funixgaming.api.server.funixbot.mappers;
 
 import fr.funixgaming.api.client.funixbot.dtos.user.FunixBotUserDTO;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.server.funixbot.entities.user.FunixBotUser;
+import fr.funixgaming.api.server.funixbot.mappers.user.FunixBotUserExperienceMapper;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", uses = {
-        FunixBotExperienceMapper.class
+        FunixBotUserExperienceMapper.class
 })
 public interface FunixBotUserMapper extends ApiMapper<FunixBotUser, FunixBotUserDTO> {
     @Override

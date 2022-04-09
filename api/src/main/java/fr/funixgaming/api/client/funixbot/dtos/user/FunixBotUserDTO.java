@@ -1,6 +1,5 @@
 package fr.funixgaming.api.client.funixbot.dtos.user;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +17,6 @@ public class FunixBotUserDTO extends ApiDTO {
     private String username;
 
     @NotNull
-    @JsonManagedReference
     private FunixBotUserExperienceDTO userExperience;
 
     @NotNull
