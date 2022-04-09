@@ -8,6 +8,7 @@ import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
+import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.encryption.Encryption;
 import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
@@ -180,23 +181,12 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     @Transactional
     public UserDTO update(UserAdminDTO request) {
-        if (request.getId() == null) {
-            throw new ApiException("Vous devez specifier un id.");
-        }
+        final UserAdminDTO adminDTO = ApiService.patch(request, adminMapper, getRepository());
 
-        final Optional<User> search = getRepository().findByUuid(request.getId().toString());
-        if (search.isPresent()) {
-            User entity = search.get();
-            final User entRequest = this.adminMapper.toEntity(request);
-
-            entRequest.setId(null);
-            entRequest.setUpdatedAt(Date.from(Instant.now()));
-            this.adminMapper.patch(entRequest, entity);
-            entity = getRepository().save(entity);
-
-            return getMapper().toDto(entity);
+        if (adminDTO != null) {
+            return adminDTO;
         } else {
-            throw new ApiException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
+            throw new ApiNotFoundException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
         }
     }
 

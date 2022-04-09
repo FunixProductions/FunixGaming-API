@@ -6,16 +6,17 @@ import fr.funixgaming.api.server.funixbot.entities.user.FunixBotUserExperience;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
-public interface FunixBotExperienceMapper extends ApiMapper<FunixBotUserExperience, FunixBotUserExperienceDTO> {
+public interface FunixBotUserExperienceMapper extends ApiMapper<FunixBotUserExperience, FunixBotUserExperienceDTO> {
     @Override
     @Mapping(target = "uuid", source = "id")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "user.uuid", source = "user.id")
+    @Mapping(target = "user.id", ignore = true)
     FunixBotUserExperience toEntity(FunixBotUserExperienceDTO dto);
 
     @Override
     @Mapping(target = "id", source = "uuid")
-    @Mapping(target = "user.id", source = "user.uuid")
+    @Mapping(target = "user", ignore = true)
     FunixBotUserExperienceDTO toDto(FunixBotUserExperience entity);
 
     @Override

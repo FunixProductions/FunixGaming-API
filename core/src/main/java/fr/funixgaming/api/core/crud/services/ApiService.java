@@ -5,6 +5,7 @@ import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.core.crud.repositories.ApiRepository;
+import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
@@ -59,21 +60,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Nullable
     @Transactional
     public DTO update(DTO request) {
-        final Optional<ENTITY> search = repository.findByUuid(request.getId().toString());
-
-        if (search.isPresent()) {
-            ENTITY entity = search.get();
-            final ENTITY entRequest = mapper.toEntity(request);
-
-            entRequest.setId(null);
-            entRequest.setUpdatedAt(Date.from(Instant.now()));
-            mapper.patch(entRequest, entity);
-            entity = repository.save(entity);
-
-            return mapper.toDto(entity);
-        } else {
-            return null;
-        }
+        return patch(request, getMapper(), getRepository());
     }
 
     @Override
@@ -84,6 +71,30 @@ public abstract class ApiService<DTO extends ApiDTO,
         if (search.isPresent()) {
             final ENTITY entity = search.get();
             repository.delete(entity);
+        }
+    }
+
+    @Nullable
+    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> DTO patch(DTO request,
+                                                                           ApiMapper<ENTITY, DTO> apiMapper,
+                                                                           ApiRepository<ENTITY> apiRepository) {
+        if (request.getId() == null) {
+            throw new ApiBadRequestException("Pas d'id spécifié pour patch.");
+        }
+
+        final Optional<ENTITY> search = apiRepository.findByUuid(request.getId().toString());
+        if (search.isPresent()) {
+            ENTITY entity = search.get();
+            final ENTITY entRequest = apiMapper.toEntity(request);
+
+            entRequest.setId(null);
+            entRequest.setUpdatedAt(Date.from(Instant.now()));
+            apiMapper.patch(entRequest, entity);
+            entity = apiRepository.save(entity);
+
+            return apiMapper.toDto(entity);
+        } else {
+            return null;
         }
     }
 }
