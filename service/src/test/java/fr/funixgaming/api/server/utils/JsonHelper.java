@@ -2,9 +2,13 @@ package fr.funixgaming.api.server.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Type;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +26,12 @@ public class JsonHelper {
 
     public <T> T fromJson(String payload, TypeReference<T> clazz) throws JsonProcessingException {
         return objectMapper.readValue(payload, clazz);
+    }
+
+    public <T> T fromJson(String payload, Type type) {
+        final Gson gson = new Gson();
+
+        return gson.fromJson(payload, type);
     }
 
 }
