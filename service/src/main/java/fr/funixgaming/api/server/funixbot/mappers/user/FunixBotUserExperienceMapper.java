@@ -10,13 +10,12 @@ public interface FunixBotUserExperienceMapper extends ApiMapper<FunixBotUserExpe
     @Override
     @Mapping(target = "uuid", source = "id")
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "user.uuid", source = "user.id")
-    @Mapping(target = "user.id", ignore = true)
+    @Mapping(target = "lastMessageDate", expression = "java(java.util.Date.from(java.time.Instant.ofEpochSecond(dto.getLastMessageDateSeconds())))")
     FunixBotUserExperience toEntity(FunixBotUserExperienceDTO dto);
 
     @Override
     @Mapping(target = "id", source = "uuid")
-    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "lastMessageDateSeconds", expression = "java(entity.getLastMessageDate().toInstant().getEpochSecond())")
     FunixBotUserExperienceDTO toDto(FunixBotUserExperience entity);
 
     @Override
