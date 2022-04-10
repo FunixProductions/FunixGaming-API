@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.mail.config;
+package fr.funixgaming.api.core.utils.mail.config;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,4 +1,4 @@
-package fr.funixgaming.api.client.mail.dtos;
+package fr.funixgaming.api.core.utils.mail.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

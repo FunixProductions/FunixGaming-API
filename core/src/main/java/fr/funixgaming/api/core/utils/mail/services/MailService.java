@@ -1,7 +1,7 @@
-package fr.funixgaming.api.server.mail.services;
+package fr.funixgaming.api.core.utils.mail.services;
 
-import fr.funixgaming.api.client.mail.dtos.MailDTO;
 import fr.funixgaming.api.core.exceptions.ApiException;
+import fr.funixgaming.api.core.utils.mail.dtos.MailDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
