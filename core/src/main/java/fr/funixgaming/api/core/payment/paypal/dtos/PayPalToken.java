@@ -1,4 +1,4 @@
-package fr.funixgaming.api.client.payment.paypal.dtos;
+package fr.funixgaming.api.core.payment.paypal.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

@@ -1,7 +1,8 @@
-package fr.funixgaming.api.server.payment.paypal;
+package fr.funixgaming.api.core.payment.paypal;
 
-import fr.funixgaming.api.client.payment.paypal.dtos.PayPalToken;
-import fr.funixgaming.api.server.payment.paypal.services.PayPalAuthService;
+import fr.funixgaming.api.core.TestApp;
+import fr.funixgaming.api.core.payment.paypal.dtos.PayPalToken;
+import fr.funixgaming.api.core.payment.paypal.services.PayPalAuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApp.class)
 @AutoConfigureMockMvc
 public class TestPayPalAuthService {
 

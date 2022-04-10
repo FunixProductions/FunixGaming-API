@@ -1,8 +1,7 @@
-package fr.funixgaming.api.client.payment.paypal.configs;
+package fr.funixgaming.api.core.payment.paypal.configs;
 
 import feign.auth.BasicAuthRequestInterceptor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
