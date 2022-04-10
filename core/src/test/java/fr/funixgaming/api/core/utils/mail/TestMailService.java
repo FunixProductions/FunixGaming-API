@@ -1,7 +1,7 @@
-package fr.funixgaming.api.server.mail.services;
+package fr.funixgaming.api.core.utils.mail;
 
-import fr.funixgaming.api.client.mail.dtos.MailDTO;
-import org.junit.jupiter.api.Test;
+import fr.funixgaming.api.core.utils.mail.dtos.MailDTO;
+import fr.funixgaming.api.core.utils.mail.services.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
