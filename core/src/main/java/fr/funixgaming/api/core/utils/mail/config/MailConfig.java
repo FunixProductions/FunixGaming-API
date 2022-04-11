@@ -20,6 +20,12 @@ public class MailConfig {
     private String username;
     private String password;
 
+    private String protocol = "smtp";
+    private boolean auth  = true;
+    private boolean tls = true;
+    private boolean ssl = true;
+    private boolean debug = false;
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -30,11 +36,11 @@ public class MailConfig {
         mailSender.setPassword(this.password);
 
         final Properties properties = mailSender.getJavaMailProperties();
-        properties.put("mail.transport.protocol", "smtp");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.ssl.enable", "true");
-        properties.put("mail.debug", "true");
+        properties.put("mail.transport.protocol", protocol);
+        properties.put("mail.smtp.auth", auth);
+        properties.put("mail.smtp.starttls.enable", tls);
+        properties.put("mail.smtp.ssl.enable", ssl);
+        properties.put("mail.debug", debug);
 
         return mailSender;
     }
