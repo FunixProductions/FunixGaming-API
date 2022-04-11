@@ -2,6 +2,7 @@ package fr.funixgaming.api.core.utils.mail;
 
 import fr.funixgaming.api.core.utils.mail.dtos.MailDTO;
 import fr.funixgaming.api.core.utils.mail.services.MailService;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ public class TestMailService {
         this.mailTest.setText("Body mail ! Sans HTML quel thug.");
     }
 
-    //@Test TODO impl mails
+    @Test
     public void testSendMail() {
         try {
             this.mailService.sendMail(mailTest);

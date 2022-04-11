@@ -16,6 +16,13 @@ services:
     ports:
       - "3306:3306"
 
+  mail:
+    image: maildev/maildev
+    container_name: funix_api_mail
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
 networks:
   funixweb:
     driver: bridge
