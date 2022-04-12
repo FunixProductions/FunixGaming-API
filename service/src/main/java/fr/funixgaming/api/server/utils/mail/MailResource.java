@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.utils.mail;
 
-import fr.funixgaming.api.core.utils.mail.dtos.MailDTO;
-import fr.funixgaming.api.core.utils.mail.services.MailService;
+import fr.funixgaming.api.core.mail.dtos.MailDTO;
+import fr.funixgaming.api.core.mail.services.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
