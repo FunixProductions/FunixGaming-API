@@ -1,15 +1,15 @@
 package fr.funixgaming.api.core.utils.socket;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 public abstract class ApiServerSocket {
 
     private final ServerSocket serverSocket;
@@ -18,19 +18,15 @@ public abstract class ApiServerSocket {
     public ApiServerSocket(final int port) throws ApiException {
         try {
             this.serverSocket = new ServerSocket(port);
-            new Thread(this::worker);
+            new Thread(this::worker).start();
         } catch (IOException e) {
             throw new ApiException("Une erreur est surveue lors de la création du socket serveur.", e);
         }
     }
 
     public ApiServerSocket(final int port, final SocketInfosSSL ssl) throws ApiException {
-        try {
-            final ServerSocketFactory serverSocketFactory = SSLServerSocketFactory.getDefault();
-            this.serverSocket = serverSocketFactory.createServerSocket(port);
-        } catch (IOException e) {
-            throw new ApiException("Une erreur est surveue lors de la création du socket serveur SSL.", e);
-        }
+        this.serverSocket = ssl.getServerSocket(port);
+        new Thread(this::worker).start();
     }
 
     public void closeServer() throws ApiException {
@@ -60,7 +56,9 @@ public abstract class ApiServerSocket {
                 this.clients.add(socket);
                 clients.removeIf(Socket::isClosed);
             } catch (IOException e) {
-                new ApiException("Une erreur est survenue lors de l'execution du socket client.", e).printStackTrace();
+                if (!this.serverSocket.isClosed()) {
+                    log.error("SocketServeur: Une erreur est survenue lors de l'execution du socket client.", e);
+                }
             }
         }
     }
