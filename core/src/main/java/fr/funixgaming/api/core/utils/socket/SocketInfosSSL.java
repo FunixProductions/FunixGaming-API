@@ -1,20 +1,19 @@
 package fr.funixgaming.api.core.utils.socket;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
-import lombok.Getter;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.*;
 import java.security.cert.CertificateException;
 
-@Getter
 public class SocketInfosSSL {
+
+    private final SSLServerSocketFactory sslServerSocketFactory;
+    private final SSLSocketFactory sslSocketFactory;
 
     /**
      * Used to secure ssl sockets
@@ -26,13 +25,40 @@ public class SocketInfosSSL {
         try {
             final char[] pass = password.toCharArray();
             final KeyStore keyStore = KeyStore.getInstance(jksFile, pass);
-            final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("NewSunX509");
+            final SSLContext context = getContext(keyStore, pass);
 
-            trustManagerFactory.init(keyStore);
-            keyManagerFactory.init(keyStore, pass);
-        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException e) {
+            this.sslServerSocketFactory = context.getServerSocketFactory();
+            this.sslSocketFactory = context.getSocketFactory();
+        } catch (IOException | KeyStoreException | NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyManagementException e) {
             throw new ApiException("Une erreur est survenue lors de la récupération des infos SSL.", e);
+        }
+    }
+
+    private SSLContext getContext(final KeyStore keyStore, final char[] pass) throws NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, KeyManagementException {
+        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        final KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance("NewSunX509");
+        final SSLContext context = SSLContext.getInstance("TLS");
+
+        trustManagerFactory.init(keyStore);
+        keyManagerFactory.init(keyStore, pass);
+        context.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        return context;
+    }
+
+    public ServerSocket getServerSocket(final int port) throws ApiException {
+        try {
+            return this.sslServerSocketFactory.createServerSocket(port);
+        } catch (IOException e) {
+            throw new ApiException("Impossible de créer le socket serveur.", e);
+        }
+    }
+
+    public Socket getClientSocket(final String address, final int port) throws ApiException {
+        try {
+            return this.sslSocketFactory.createSocket(address, port);
+        } catch (IOException e) {
+            throw new ApiException(String.format("Impossible de se connecter au socket %s:%d", address, port), e);
         }
     }
 

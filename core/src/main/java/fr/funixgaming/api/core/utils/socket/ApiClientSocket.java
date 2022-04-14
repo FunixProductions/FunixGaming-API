@@ -2,8 +2,8 @@ package fr.funixgaming.api.core.utils.socket;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 
-import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,20 +17,27 @@ public abstract class ApiClientSocket {
     private final PrintWriter writer;
     private final BufferedReader reader;
 
-    public ApiClientSocket(final String socketAddress, final int port, final boolean ssl) throws ApiException {
+    public ApiClientSocket(final String socketAddress, final int port, final SocketInfosSSL secure) throws ApiException {
         try {
-            if (ssl) {
-                this.socket = SSLSocketFactory.getDefault().createSocket(socketAddress, port);
-            } else {
-                this.socket = new Socket(socketAddress, port);
-            }
-
+            this.socket = secure.getClientSocket(socketAddress, port);
             this.writer = new PrintWriter(this.socket.getOutputStream(), true);
             this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
-            new Thread(this::worker);
+            new Thread(this::worker).start();
         } catch (IOException e) {
-            throw new ApiException("La création du socket à échoué.", e);
+            throw new ApiException(String.format("Impossible de se connecter au socket ssl %s:%d", socketAddress, port), e);
+        }
+    }
+
+    public ApiClientSocket(final String socketAddress, final int port) throws ApiException {
+        try {
+            this.socket = new Socket(socketAddress, port);
+            this.writer = new PrintWriter(this.socket.getOutputStream(), true);
+            this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+
+            new Thread(this::worker).start();
+        } catch (IOException e) {
+            throw new ApiException(String.format("Impossible de se connecter au socket %s:%d", socketAddress, port), e);
         }
     }
 
@@ -40,14 +47,16 @@ public abstract class ApiClientSocket {
             this.writer = new PrintWriter(this.socket.getOutputStream(), true);
             this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
-            new Thread(this::worker);
+            new Thread(this::worker).start();
         } catch (IOException e) {
             throw new ApiException("La création du socket à échoué.", e);
         }
     }
 
     public void sendMessage(final String message) {
-        new Thread(() -> this.writer.println(message)).start();
+        if (!Strings.isEmpty(message)) {
+            new Thread(() -> this.writer.println(message)).start();
+        }
     }
 
     public Socket getSocket() {
@@ -59,8 +68,7 @@ public abstract class ApiClientSocket {
             this.writer.close();
             this.reader.close();
             this.socket.close();
-        } catch (IOException e) {
-            log.error("Une erreur est survenue lors de la fermeture du client : {}", e.getMessage());
+        } catch (IOException ignored) {
         }
     }
 
@@ -70,9 +78,12 @@ public abstract class ApiClientSocket {
 
             try {
                 data = reader.readLine();
-                this.receiveData(data);
+
+                if (data != null) {
+                    this.receiveData(data);
+                }
             } catch (IOException e) {
-                log.error("Socket lecture erreur {}", e.getMessage());
+                log.error("SocketClient: lecture erreur {}", e.getMessage());
             }
         }
     }
