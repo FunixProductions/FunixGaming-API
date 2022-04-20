@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.payment.paypal.configs;
+package fr.funixgaming.api.server.payment.paypal.configs;
 
 import lombok.Getter;
 import lombok.Setter;

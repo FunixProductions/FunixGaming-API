@@ -1,7 +1,7 @@
-package fr.funixgaming.api.core.payment.paypal.services;
+package fr.funixgaming.api.server.payment.paypal.services;
 
-import fr.funixgaming.api.core.payment.paypal.clients.PayPalAuthClient;
-import fr.funixgaming.api.core.payment.paypal.dtos.PayPalToken;
+import fr.funixgaming.api.server.payment.paypal.clients.PayPalAuthClient;
+import fr.funixgaming.api.server.payment.paypal.dtos.PayPalToken;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
