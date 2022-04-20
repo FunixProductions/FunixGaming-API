@@ -23,6 +23,9 @@ public interface CrudClient<DTO extends ApiDTO> {
     @PatchMapping
     DTO update(@RequestBody DTO request);
 
+    @PatchMapping("batch")
+    Set<DTO> update(@RequestBody Set<DTO> request);
+
     @DeleteMapping
     void delete(@RequestParam String id);
 }

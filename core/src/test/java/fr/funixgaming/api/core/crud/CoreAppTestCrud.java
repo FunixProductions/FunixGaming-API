@@ -1,9 +1,9 @@
 package fr.funixgaming.api.core.crud;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import fr.funixgaming.api.core.TestApp;
 import fr.funixgaming.api.core.crud.doc.*;
+import fr.funixgaming.api.core.utils.JsonHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,16 +24,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CoreAppTestCrud {
     public static final String ROUTE = "/test";
 
-    private final Gson gson;
+    private final JsonHelper gson;
     private final MockMvc mockMvc;
     private final TestRepository repository;
 
     @Autowired
     public CoreAppTestCrud(MockMvc mockMvc,
-                           TestRepository repository) {
+                           TestRepository repository,
+                           JsonHelper gson) {
         this.mockMvc = mockMvc;
         this.repository = repository;
-        this.gson = new Gson();
+        this.gson = gson;
 
         repository.deleteAll();
     }
@@ -64,6 +65,7 @@ public class CoreAppTestCrud {
         MvcResult mvcResult = mockMvc.perform(post(ROUTE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(testDTO)))
+                .andExpect(status().isOk())
                 .andReturn();
 
         final TestDTO created = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
@@ -81,6 +83,64 @@ public class CoreAppTestCrud {
         assertNotEquals(created.getUpdatedAt(), result.getUpdatedAt());
         assertEquals(created.getId(), result.getId());
         assertEquals(created.getData(), result.getData());
+    }
+
+    @Test
+    public void testUpdateBatch() throws Exception {
+        final Set<TestDTO> list = new HashSet<>();
+
+        TestDTO testDTO = new TestDTO();
+        testDTO.setData("oui");
+        MvcResult mvcResult = mockMvc.perform(post(ROUTE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(testDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+        TestDTO created = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
+        list.add(created);
+
+        testDTO = new TestDTO();
+        testDTO.setData("oui2");
+        mvcResult = mockMvc.perform(post(ROUTE)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(testDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+        created = gson.fromJson(mvcResult.getResponse().getContentAsString(), TestDTO.class);
+        list.add(created);
+
+        int i = 0;
+        for (final TestDTO test : list) {
+            test.setData("oui " + i);
+        }
+
+        mvcResult = mockMvc.perform(patch(ROUTE + "/batch")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(list)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final Type type = new com.google.common.reflect.TypeToken<Set<TestDTO>>(){}.getType();
+        final Set<TestDTO> result = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+
+        for (final TestDTO dto : result) {
+            TestDTO compare = null;
+
+            for (final TestDTO search : list) {
+                if (search.equals(dto)) {
+                    compare = search;
+                }
+            }
+
+            if (compare != null) {
+                assertNotNull(dto.getCreatedAt());
+                assertNotEquals(compare.getUpdatedAt(), dto.getUpdatedAt());
+                assertEquals(compare.getId(), dto.getId());
+                assertEquals(compare.getData(), dto.getData());
+            } else {
+                fail("elem not found");
+            }
+        }
     }
 
     @Test

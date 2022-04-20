@@ -6,7 +6,6 @@ services:
     image: mariadb:latest
     container_name: funix_api_db
     volumes:
-      - db_data:/var/lib/mysql
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
     environment:
@@ -26,6 +25,3 @@ services:
 networks:
   funixweb:
     driver: bridge
-
-volumes:
-  db_data: {}
