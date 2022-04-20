@@ -38,16 +38,18 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
 
     @Override
     public DTO update(DTO request) {
-        if (request.getId() == null) {
-            throw new ApiBadRequestException("You need to specify the id of the object you want to update. Missing var id=uuid.");
-        }
-
         final DTO dto = service.update(request);
+
         if (dto == null) {
             throw new ApiNotFoundException(String.format("The object id: %s does not exists.", request.getId()));
         } else {
             return dto;
         }
+    }
+
+    @Override
+    public Set<DTO> update(Set<DTO> request) {
+        return service.update(request);
     }
 
     @Override

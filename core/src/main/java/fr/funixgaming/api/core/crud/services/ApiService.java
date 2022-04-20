@@ -65,6 +65,12 @@ public abstract class ApiService<DTO extends ApiDTO,
 
     @Override
     @Transactional
+    public Set<DTO> update(Set<DTO> request) {
+        return patch(request, getMapper(), getRepository());
+    }
+
+    @Override
+    @Transactional
     public void delete(String id) {
         final Optional<ENTITY> search = repository.findByUuid(id);
 
@@ -72,6 +78,19 @@ public abstract class ApiService<DTO extends ApiDTO,
             final ENTITY entity = search.get();
             repository.delete(entity);
         }
+    }
+
+    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> Set<DTO> patch(Set<DTO> request,
+                                                                                ApiMapper<ENTITY, DTO> apiMapper,
+                                                                                ApiRepository<ENTITY> apiRepository) {
+        final Set<DTO> toSend = new HashSet<>();
+
+        for (final DTO data : request) {
+            if (data.getId() != null) {
+                toSend.add(patch(data, apiMapper, apiRepository));
+            }
+        }
+        return toSend;
     }
 
     @Nullable
