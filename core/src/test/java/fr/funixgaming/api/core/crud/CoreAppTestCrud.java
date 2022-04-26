@@ -87,7 +87,7 @@ public class CoreAppTestCrud {
 
     @Test
     public void testUpdateBatch() throws Exception {
-        final Set<TestDTO> list = new HashSet<>();
+        final List<TestDTO> list = new ArrayList<>();
 
         TestDTO testDTO = new TestDTO();
         testDTO.setData("oui");
@@ -120,8 +120,8 @@ public class CoreAppTestCrud {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        final Type type = new com.google.common.reflect.TypeToken<Set<TestDTO>>(){}.getType();
-        final Set<TestDTO> result = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        final Type type = new com.google.common.reflect.TypeToken<List<TestDTO>>(){}.getType();
+        final List<TestDTO> result = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
 
         for (final TestDTO dto : result) {
             TestDTO compare = null;
@@ -177,8 +177,8 @@ public class CoreAppTestCrud {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Type type = new TypeToken<Set<TestDTO>>() {}.getType();
-        final Set<TestDTO> entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        Type type = new TypeToken<List<TestDTO>>() {}.getType();
+        final List<TestDTO> entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
 
         assertEquals(size, entities.size());
         for (final TestDTO entity : entities) {

@@ -2,12 +2,11 @@ package fr.funixgaming.api.core.crud.resources;
 
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
-import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
@@ -16,7 +15,7 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
     private final SERVICE service;
 
     @Override
-    public Set<DTO> getAll() {
+    public List<DTO> getAll() {
         return service.getAll();
     }
 
@@ -29,6 +28,11 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
         } else {
             throw new ApiNotFoundException(String.format("The entity id: %s is not found.", id));
         }
+    }
+
+    @Override
+    public List<DTO> search(String search, String page, String elemsPerPage) {
+        return service.search(search, page, elemsPerPage);
     }
 
     @Override
@@ -48,12 +52,17 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
     }
 
     @Override
-    public Set<DTO> update(Set<DTO> request) {
+    public List<DTO> update(List<DTO> request) {
         return service.update(request);
     }
 
     @Override
     public void delete(String id) {
         service.delete(id);
+    }
+
+    @Override
+    public void delete(String... ids) {
+        service.delete(ids);
     }
 }

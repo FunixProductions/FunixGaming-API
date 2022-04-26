@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("user")
@@ -82,7 +82,7 @@ public class UserResource {
     }
 
     @GetMapping
-    public Set<UserDTO> getAll() {
+    public List<UserDTO> getAll() {
         return userService.getAll();
     }
 
