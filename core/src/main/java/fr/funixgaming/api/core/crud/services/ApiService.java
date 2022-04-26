@@ -3,19 +3,25 @@ package fr.funixgaming.api.core.crud.services;
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
+import fr.funixgaming.api.core.crud.search.SearchBuilder;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.core.crud.repositories.ApiRepository;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 @RequiredArgsConstructor
@@ -28,8 +34,8 @@ public abstract class ApiService<DTO extends ApiDTO,
     private final MAPPER mapper;
 
     @Override
-    public Set<DTO> getAll() {
-        final Set<DTO> toSend = new HashSet<>();
+    public List<DTO> getAll() {
+        final List<DTO> toSend = new ArrayList<>();
 
         for (final ENTITY entity : repository.findAll()) {
             toSend.add(mapper.toDto(entity));
@@ -50,6 +56,33 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    public List<DTO> search(String search, String page, String elemsPerPage) {
+        final Page<ENTITY> data;
+        final SearchBuilder searchBuilder = new SearchBuilder();
+        final Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(elemsPerPage));
+
+        if (!Strings.isEmpty(search)) {
+            final Pattern pattern = Pattern.compile("(\\w+?)(=|<|>)(\\w+?),");
+            final Matcher matcher = pattern.matcher(search + ",");
+
+            while (matcher.find()) {
+                searchBuilder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+            }
+
+            final Specification<ENTITY> specification = searchBuilder.build();
+            data = repository.findAll(specification, pageable);
+        } else {
+            data = repository.findAll(pageable);
+        }
+
+        final List<DTO> result = new ArrayList<>();
+        for (final ENTITY entity : data) {
+            result.add(mapper.toDto(entity));
+        }
+        return result;
+    }
+
+    @Override
     @Transactional
     public DTO create(DTO request) {
         final ENTITY entity = mapper.toEntity(request);
@@ -65,7 +98,7 @@ public abstract class ApiService<DTO extends ApiDTO,
 
     @Override
     @Transactional
-    public Set<DTO> update(Set<DTO> request) {
+    public List<DTO> update(List<DTO> request) {
         return patch(request, getMapper(), getRepository());
     }
 
@@ -77,13 +110,22 @@ public abstract class ApiService<DTO extends ApiDTO,
         if (search.isPresent()) {
             final ENTITY entity = search.get();
             repository.delete(entity);
+        } else {
+            throw new ApiNotFoundException("L'entité que vous voulez supprimer n'existe pas.");
         }
     }
 
-    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> Set<DTO> patch(Set<DTO> request,
+    @Override
+    public void delete(String... ids) {
+        final Set<String> idList = new HashSet<>(Arrays.asList(ids));
+        final Iterable<ENTITY> search = this.repository.findAllByUuid(idList);
+        repository.deleteAll(search);
+    }
+
+    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> List<DTO> patch(List<DTO> request,
                                                                                 ApiMapper<ENTITY, DTO> apiMapper,
                                                                                 ApiRepository<ENTITY> apiRepository) {
-        final Set<DTO> toSend = new HashSet<>();
+        final List<DTO> toSend = new ArrayList<>();
 
         for (final DTO data : request) {
             if (data.getId() != null) {
