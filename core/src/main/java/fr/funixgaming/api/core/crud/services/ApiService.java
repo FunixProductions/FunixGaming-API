@@ -118,7 +118,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     public void delete(String... ids) {
         final Set<String> idList = new HashSet<>(Arrays.asList(ids));
-        final Iterable<ENTITY> search = this.repository.findAllByUuid(idList);
+        final Iterable<ENTITY> search = this.repository.findAllByUuidIn(idList);
         repository.deleteAll(search);
     }
 

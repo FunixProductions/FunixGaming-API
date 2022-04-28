@@ -7,13 +7,13 @@
     <parent>
         <artifactId>funix-api</artifactId>
         <groupId>fr.funixgaming.api</groupId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>fr.funixgaming.api.server</groupId>
     <artifactId>funix-api-server</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>fr.funixgaming.api.core</groupId>
             <artifactId>funix-api-core</artifactId>
-            <version>1.0.0</version>
+            <version>${funixgaming.core.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -48,6 +48,12 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
+            <version>${flyway.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
             <version>${flyway.version}</version>
         </dependency>
 

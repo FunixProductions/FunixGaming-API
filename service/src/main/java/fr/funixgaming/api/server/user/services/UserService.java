@@ -6,7 +6,6 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
-import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.encryption.Encryption;
@@ -28,14 +27,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -74,6 +71,8 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", userCreationDTO.getUsername()));
         } else {
             final User request = this.authMapper.toEntity(userCreationDTO);
+
+            //request.setPassword(passwordEncoder.encode(request.getPassword()));
             return this.getMapper().toDto(this.getRepository().save(request));
         }
 
@@ -113,6 +112,17 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                 .compact());
 
         return tokenMapper.toDto(tokenRepository.save(userToken));
+    }
+
+    @Transactional
+    public void invalidTokens(final UUID userUUID) {
+        final Optional<User> search = this.getRepository().findByUuid(userUUID.toString());
+
+        if (search.isPresent()) {
+            final User user = search.get();
+            final Set<UserToken> tokens = user.getTokens();
+            this.tokenRepository.deleteAll(tokens);
+        }
     }
 
     public boolean isTokenValid(final String token) {
@@ -184,6 +194,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         final UserAdminDTO adminDTO = ApiService.patch(request, adminMapper, getRepository());
 
         if (adminDTO != null) {
+            invalidTokens(request.getId());
             return adminDTO;
         } else {
             throw new ApiNotFoundException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
@@ -192,6 +203,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     @Override
     public void delete(String id) {
+        invalidTokens(UUID.fromString(id));
         super.delete(id);
     }
 

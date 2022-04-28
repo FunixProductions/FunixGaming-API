@@ -6,7 +6,7 @@
 
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funix-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -49,13 +49,14 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-
         <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
         </repository>
     </distributionManagement>
 
@@ -74,8 +75,10 @@
     <properties>
         <java.version>17</java.version>
 
-        <funixgaming.api.version>1.0.0</funixgaming.api.version>
-        <funixgaming.core.version>1.0.0</funixgaming.core.version>
+        <funixgaming.api.version>1.0.1</funixgaming.api.version>
+        <funixgaming.core.version>1.0.1</funixgaming.core.version>
+        <funixgaming.server.version>1.0.1</funixgaming.server.version>
+
         <mapstruct.version>1.4.2.Final</mapstruct.version>
         <maven.compiler.version>3.10.1</maven.compiler.version>
         <mariadb.version>3.0.3</mariadb.version>
@@ -129,5 +132,25 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Sign artifacts for uploading to maven central -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven.sign.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

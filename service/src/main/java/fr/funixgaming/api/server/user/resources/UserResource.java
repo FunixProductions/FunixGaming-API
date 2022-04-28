@@ -97,7 +97,7 @@ public class UserResource {
     }
 
     @DeleteMapping
-    public void delete(String id) {
+    public void delete(@RequestParam String id) {
         userService.delete(id);
     }
 }

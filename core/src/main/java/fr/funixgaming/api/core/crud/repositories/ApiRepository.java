@@ -13,5 +13,5 @@ import java.util.Set;
 @NoRepositoryBean
 public interface ApiRepository<ENTITY extends ApiEntity> extends JpaRepository<ENTITY, Long>, JpaSpecificationExecutor<ENTITY> {
     Optional<ENTITY> findByUuid(String uuid);
-    Iterable<ENTITY> findAllByUuid(Set<String> uuidList);
+    Iterable<ENTITY> findAllByUuidIn(Iterable<String> uuidList);
 }

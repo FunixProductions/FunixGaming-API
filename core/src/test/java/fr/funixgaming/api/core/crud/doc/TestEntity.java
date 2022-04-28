@@ -11,4 +11,5 @@ import javax.persistence.Entity;
 @Entity
 public class TestEntity extends ApiEntity {
     private String data;
+    private Integer number;
 }
