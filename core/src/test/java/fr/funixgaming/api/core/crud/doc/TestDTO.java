@@ -8,4 +8,5 @@ import lombok.Setter;
 @Setter
 public class TestDTO extends ApiDTO {
     private String data;
+    private Integer number;
 }
