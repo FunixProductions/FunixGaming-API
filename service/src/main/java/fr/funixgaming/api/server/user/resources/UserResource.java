@@ -82,8 +82,8 @@ public class UserResource {
     }
 
     @GetMapping
-    public List<UserDTO> getAll() {
-        return userService.getAll();
+    public List<UserDTO> getAll(String page, String elemsPerPage) {
+        return userService.getAll(page, elemsPerPage);
     }
 
     @PostMapping
