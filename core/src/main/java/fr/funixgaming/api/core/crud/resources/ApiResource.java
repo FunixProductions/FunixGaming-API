@@ -15,8 +15,8 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
     private final SERVICE service;
 
     @Override
-    public List<DTO> getAll() {
-        return service.getAll();
+    public List<DTO> getAll(String page, String elemsPerPage) {
+        return service.getAll(page, elemsPerPage);
     }
 
     @Override

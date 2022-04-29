@@ -12,7 +12,8 @@ import java.util.List;
  */
 public interface CrudClient<DTO extends ApiDTO> {
     @GetMapping
-    List<DTO> getAll();
+    List<DTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
+                     @RequestParam(value = "elemsPerPage", defaultValue = "1000") String elemsPerPage);
 
     @GetMapping("{id}")
     DTO findById(@PathVariable("id") String id);

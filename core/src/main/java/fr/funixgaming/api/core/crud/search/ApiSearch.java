@@ -26,7 +26,7 @@ public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY
         final String operation = search.getOperation();
 
         if (Strings.isEmpty(operation)) {
-            throw new ApiBadRequestException("Votre recherche ne comporte pas le bon symbole de comparaison. Utilisez: > < >= <= ou =");
+            throw new ApiBadRequestException("Votre recherche ne comporte pas le bon symbole de comparaison. Utilisez: > < >= <= ou :");
         } else if (Strings.isEmpty(search.getKey())) {
             throw new ApiBadRequestException("Vous n'avez pas spécifié de clé de recherche (nom du champ du DTO).");
         } else if (search.getValue() == null) {
@@ -37,10 +37,10 @@ public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY
             return criteriaBuilder.greaterThanOrEqualTo(root.get(search.getKey()), search.getValue().toString());
         } else if (operation.equalsIgnoreCase("<")) {
             return criteriaBuilder.lessThanOrEqualTo(root.get(search.getKey()), search.getValue().toString());
-        } else if (operation.equalsIgnoreCase("=")) {
+        } else if (operation.equalsIgnoreCase(":")) {
             return criteriaBuilder.equal(root.get(search.getKey()), search.getValue());
         } else {
-            throw new ApiBadRequestException("Votre recherche ne comporte pas le bon symbole de comparaison. Utilisez: > < >= <= ou =");
+            throw new ApiBadRequestException("Votre recherche ne comporte pas le bon symbole de comparaison. Utilisez: > < >= <= ou :");
         }
     }
 }

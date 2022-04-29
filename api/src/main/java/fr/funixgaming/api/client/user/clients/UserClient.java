@@ -21,7 +21,8 @@ public interface UserClient {
     UserTokenDTO login(@RequestBody @Valid UserLoginDTO request);
 
     @GetMapping
-    Set<UserDTO> getAll();
+    Set<UserDTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
+                        @RequestParam(value = "elemsPerPage", defaultValue = "1000") String elemsPerPage);
 
     @GetMapping("{id}")
     UserDTO findById(@PathVariable("id") String id);

@@ -34,10 +34,11 @@ public abstract class ApiService<DTO extends ApiDTO,
     private final MAPPER mapper;
 
     @Override
-    public List<DTO> getAll() {
+    public List<DTO> getAll(String page, String elemsPerPage) {
+        final Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(elemsPerPage));
         final List<DTO> toSend = new ArrayList<>();
 
-        for (final ENTITY entity : repository.findAll()) {
+        for (final ENTITY entity : repository.findAll(pageable)) {
             toSend.add(mapper.toDto(entity));
         }
         return toSend;
@@ -62,7 +63,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         final Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(elemsPerPage));
 
         if (!Strings.isEmpty(search)) {
-            final Pattern pattern = Pattern.compile("(\\w+?)(=|<|>)(\\w+?),");
+            final Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
             final Matcher matcher = pattern.matcher(search + ",");
 
             while (matcher.find()) {
