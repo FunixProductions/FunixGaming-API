@@ -1,6 +1,7 @@
 package fr.funixgaming.api.server.user.entities;
 
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
+import fr.funixgaming.api.server.converters.EncryptionString;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,7 @@ public class UserToken extends ApiEntity {
     private User user;
 
     @Column(nullable = false, unique = true, updatable = false, length = 2000)
+    @Convert(converter = EncryptionString.class)
     private String token;
 
     @Column(name = "expiration_date", updatable = false)

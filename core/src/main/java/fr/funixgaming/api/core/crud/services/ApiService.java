@@ -35,7 +35,30 @@ public abstract class ApiService<DTO extends ApiDTO,
 
     @Override
     public List<DTO> getAll(String page, String elemsPerPage) {
-        final Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(elemsPerPage));
+        final int nbrPage;
+        final int maxPerPage;
+
+        try {
+            if (Strings.isEmpty(page)) {
+                nbrPage = 0;
+            } else {
+                nbrPage = Integer.parseInt(page);
+            }
+
+            if (Strings.isEmpty(elemsPerPage)) {
+                maxPerPage = 300;
+            } else {
+                int max = Integer.parseInt(elemsPerPage);
+                if (max > 300) {
+                    max = 300;
+                }
+                maxPerPage = max;
+            }
+        } catch (NumberFormatException e) {
+            throw new ApiBadRequestException("Vous avez rentré un nombre invalide.", e);
+        }
+
+        final Pageable pageable = PageRequest.of(nbrPage, maxPerPage);
         final List<DTO> toSend = new ArrayList<>();
 
         for (final ENTITY entity : repository.findAll(pageable)) {

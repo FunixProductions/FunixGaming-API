@@ -121,6 +121,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         if (search.isPresent()) {
             final User user = search.get();
             final Set<UserToken> tokens = user.getTokens();
+
             this.tokenRepository.deleteAll(tokens);
         }
     }
@@ -195,6 +196,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
         if (adminDTO != null) {
             invalidTokens(request.getId());
+
             return adminDTO;
         } else {
             throw new ApiNotFoundException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
@@ -203,7 +205,6 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     @Override
     public void delete(String id) {
-        invalidTokens(UUID.fromString(id));
         super.delete(id);
     }
 

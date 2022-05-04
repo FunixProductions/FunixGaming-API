@@ -13,7 +13,7 @@ import java.util.List;
 public interface CrudClient<DTO extends ApiDTO> {
     @GetMapping
     List<DTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
-                     @RequestParam(value = "elemsPerPage", defaultValue = "1000") String elemsPerPage);
+                     @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage);
 
     @GetMapping("{id}")
     DTO findById(@PathVariable("id") String id);
@@ -21,7 +21,7 @@ public interface CrudClient<DTO extends ApiDTO> {
     @GetMapping("search")
     List<DTO> search(@RequestParam(value = "q", defaultValue = "") String search,
                      @RequestParam(value = "page", defaultValue = "0") String page,
-                     @RequestParam(value = "elemsPerPage", defaultValue = "1000") String elemsPerPage);
+                     @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage);
 
     @PostMapping
     DTO create(@RequestBody @Valid DTO request);
