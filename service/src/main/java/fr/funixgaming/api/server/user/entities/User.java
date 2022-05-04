@@ -36,7 +36,7 @@ public class User extends ApiEntity implements UserDetails {
     @Column(nullable = false)
     private Boolean banned = false;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserToken> tokens;
 
     @Override
