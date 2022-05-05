@@ -16,29 +16,47 @@ import java.util.UUID;
 @Setter
 @MappedSuperclass
 public abstract class ApiEntity implements Serializable {
+    /**
+     * <p>Unique id (private not on DTO)</p>
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
 
+    /**
+     * <p>Unique uuid public</p>
+     */
     @NaturalId
     @Column(name = "uuid", nullable = false, updatable = false, unique = true)
     private String uuid;
 
+    /**
+     * <p>Creation date entity</p>
+     */
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
 
+    /**
+     * <p>Last updated entity date</p>
+     */
     @LastModifiedDate
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    /**
+     * <p>Method called by JPA in creation</p>
+     */
     @PrePersist
     public void onCreate() {
         updateUuid();
         createdAt = Date.from(Instant.now());
     }
 
+    /**
+     * <p>Method called on last update</p>
+     */
     @PreUpdate
     public void onUpdate() {
         updateUuid();
@@ -51,6 +69,10 @@ public abstract class ApiEntity implements Serializable {
         }
     }
 
+    /**
+     * @param obj object to compare
+     * @return boolean
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof final ApiEntity apiEntity) {
@@ -64,6 +86,9 @@ public abstract class ApiEntity implements Serializable {
         }
     }
 
+    /**
+     * @return UUID unique uuid
+     */
     public UUID getUuid() {
         if (uuid == null) {
             return null;
@@ -72,6 +97,9 @@ public abstract class ApiEntity implements Serializable {
         }
     }
 
+    /**
+     * @param uuid unique UUID
+     */
     public void setUuid(final UUID uuid) {
         if (uuid == null) {
             this.uuid = null;
