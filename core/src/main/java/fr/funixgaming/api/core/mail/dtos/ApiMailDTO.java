@@ -1,16 +1,19 @@
-package fr.funixgaming.api.server.mail.dtos;
+package fr.funixgaming.api.core.mail.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class MailDTO {
+public abstract class ApiMailDTO {
+    @Email
     @NotBlank
     private String to;
 
+    @Email
     @NotBlank
     private String from;
 

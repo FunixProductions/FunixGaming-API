@@ -1,26 +1,24 @@
-package fr.funixgaming.api.server.mail.services;
+package fr.funixgaming.api.core.mail.services;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
-import fr.funixgaming.api.server.mail.dtos.MailDTO;
+import fr.funixgaming.api.core.mail.dtos.ApiMailDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 
-@Service
 @RequiredArgsConstructor
-public class MailService {
+public abstract class ApiMailService {
 
     private final JavaMailSender mailSender;
 
-    public void sendMail(final MailDTO mailDTO) throws ApiException {
+    public void sendMail(final ApiMailDTO mailDTO) throws ApiException {
         try {
             final SimpleMailMessage message = new SimpleMailMessage();
 
@@ -35,7 +33,7 @@ public class MailService {
         }
     }
 
-    public void sendMail(final MailDTO mailDTO, final File attachment) throws ApiException {
+    public void sendMail(final ApiMailDTO mailDTO, final File attachment) throws ApiException {
         try {
             final MimeMessage message = mailSender.createMimeMessage();
             final MimeMessageHelper helper = new MimeMessageHelper(message, true);

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "GoogleCaptcha", url = "https://www.google.com", path = "/recaptcha/api")
-
 public interface GoogleCaptchaClient {
 
     @PostMapping("siteverify")

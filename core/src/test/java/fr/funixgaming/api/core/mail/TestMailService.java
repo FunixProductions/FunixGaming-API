@@ -1,7 +1,6 @@
-package fr.funixgaming.api.server.utils.mail;
+package fr.funixgaming.api.core.mail;
 
-import fr.funixgaming.api.server.mail.dtos.MailDTO;
-import fr.funixgaming.api.server.mail.services.MailService;
+import fr.funixgaming.api.core.mail.dtos.ApiMailDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestMailService {
 
     private final MailService mailService;
-    private final MailDTO mailTest;
+    private final ApiMailDTO mailTest;
 
     @Autowired
-    public TestMailService(MailService mailService) throws Exception {
+    public TestMailService(MailService mailService) {
         this.mailService = mailService;
         this.mailTest = new MailDTO();
 
