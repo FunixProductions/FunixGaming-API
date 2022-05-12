@@ -1,4 +1,4 @@
-package fr.funixgaming.api.client.funixbot.dtos.user;
+package fr.funixgaming.api.client.funixbot.dtos;
 
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;

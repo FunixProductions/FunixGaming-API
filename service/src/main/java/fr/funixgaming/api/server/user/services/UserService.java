@@ -4,6 +4,7 @@ import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
+import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
@@ -27,7 +28,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -65,6 +65,10 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     @Transactional
     public UserDTO create(final UserCreationDTO userCreationDTO) {
+        if (!userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
+            throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
+        }
+
         final Optional<User> search = this.getRepository().findByUsername(userCreationDTO.getUsername());
 
         if (search.isPresent()) {
@@ -72,7 +76,9 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         } else {
             final User request = this.authMapper.toEntity(userCreationDTO);
 
-            //request.setPassword(passwordEncoder.encode(request.getPassword()));
+            if (request.getUsername().equals("api")) {
+                request.setRole(UserRole.ADMIN);
+            }
             return this.getMapper().toDto(this.getRepository().save(request));
         }
 

@@ -1,5 +1,6 @@
 package fr.funixgaming.api.server.user.resources;
 
+import fr.funixgaming.api.client.user.clients.UserCrudClient;
 import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
@@ -26,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
-public class UserResource {
+public class UserResource implements UserCrudClient {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final GoogleCaptchaService captchaService;
@@ -34,15 +35,12 @@ public class UserResource {
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
         userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
         }
 
-        if (request.getPassword().equals(request.getPasswordConfirmation())) {
-            return this.userService.create(request);
-        } else {
-            throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
-        }
+        return this.userService.create(request);
     }
 
     @PostMapping("login")
@@ -81,23 +79,24 @@ public class UserResource {
         }
     }
 
-    @GetMapping
-    public List<UserDTO> getAll(String page, String elemsPerPage) {
+    @Override
+    public List<UserDTO> getAll(String page,
+                                String elemsPerPage) {
         return userService.getAll(page, elemsPerPage);
     }
 
-    @PostMapping
-    public UserDTO create(@RequestBody @Valid UserAdminDTO request) {
+    @Override
+    public UserDTO create(UserAdminDTO request) {
         return userService.create(request);
     }
 
-    @PatchMapping
-    public UserDTO update(@RequestBody UserAdminDTO request) {
+    @Override
+    public UserDTO update(UserAdminDTO request) {
         return userService.update(request);
     }
 
-    @DeleteMapping
-    public void delete(@RequestParam String id) {
+    @Override
+    public void delete(String id) {
         userService.delete(id);
     }
 }
