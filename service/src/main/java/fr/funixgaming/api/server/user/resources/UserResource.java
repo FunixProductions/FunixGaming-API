@@ -11,6 +11,7 @@ import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.services.GoogleCaptchaService;
+import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class UserResource implements UserCrudClient {
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
-        userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+        userService.checkWhitelist(IPUtils.getClientIp(servletRequest), request.getUsername());
 
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
@@ -45,7 +46,7 @@ public class UserResource implements UserCrudClient {
 
     @PostMapping("login")
     public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
-        userService.checkWhitelist(servletRequest.getRemoteAddr(), request.getUsername());
+        userService.checkWhitelist(IPUtils.getClientIp(servletRequest), request.getUsername());
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
         }
