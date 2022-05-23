@@ -61,6 +61,13 @@ public class UserResource implements UserCrudClient {
         }
     }
 
+    /**
+     * Route used to check usage of token.
+     */
+    @GetMapping("valid")
+    public void valid() {
+    }
+
     @GetMapping("{id}")
     public UserDTO findById(@PathVariable("id") String id) {
         final UserDTO userDTO = userService.getCurrentUser();

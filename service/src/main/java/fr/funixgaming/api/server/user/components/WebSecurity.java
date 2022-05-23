@@ -57,6 +57,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/user/{id}").authenticated()
+                .antMatchers(HttpMethod.GET, "/user/valid").authenticated()
                 .antMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
 
                 .anyRequest().authenticated();
