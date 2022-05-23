@@ -2,8 +2,10 @@ package fr.funixgaming.api.core.utils.network;
 
 import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.core.exceptions.ApiException;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -47,6 +49,19 @@ public class IPUtils {
             }
         }
         return false;
+    }
+
+    public static String getClientIp(final HttpServletRequest request) {
+        final String remoteAddress;
+        String addressHeader = request.getHeader("X-FORWARDED-FOR");
+
+        if (Strings.isEmpty(addressHeader)) {
+            remoteAddress = request.getRemoteAddr();
+        } else {
+            remoteAddress = addressHeader;
+        }
+
+        return remoteAddress;
     }
 
 }
