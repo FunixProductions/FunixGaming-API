@@ -140,6 +140,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    @Transactional
     public void delete(String... ids) {
         final Set<String> idList = new HashSet<>(Arrays.asList(ids));
         final Iterable<ENTITY> search = this.repository.findAllByUuidIn(idList);
