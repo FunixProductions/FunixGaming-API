@@ -15,7 +15,6 @@ import java.time.Instant;
 import java.util.Date;
 
 @Slf4j
-@Component
 public class FunixApiAuthConfig implements RequestInterceptor {
 
     private final FunixApiConfig funixApiConfig;
