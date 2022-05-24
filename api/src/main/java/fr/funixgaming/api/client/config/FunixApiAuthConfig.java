@@ -7,10 +7,8 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -37,7 +35,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
             final UserTokenDTO token = getToken();
             template.header("Authorization", String.format("Bearer %s", token.getToken()));
         } catch (ApiException e) {
-            log.error("Une erreur est survenue lors de l'auth pour la funix api.", e);
+            log.error("Une erreur est survenue lors de l'auth pour la funix api. Erreur: {}", e.getMessage(), e);
         }
     }
 
