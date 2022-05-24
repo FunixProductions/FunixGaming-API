@@ -86,7 +86,7 @@
         <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
         <mariadb.version>3.0.4</mariadb.version>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-        <flyway.version>8.5.10</flyway.version>
+        <flyway.version>8.5.11</flyway.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt -->
         <jwt.version>0.9.1</jwt.version>
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
