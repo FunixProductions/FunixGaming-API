@@ -25,4 +25,29 @@ public class FunixApiConfig {
      * Auth password used to access the funix api
      */
     private String userApiPassword;
+
+    /**
+     * Email of the owner of the app
+     */
+    private String email;
+
+    /**
+     * PasswordGenerator amount of numbers
+     */
+    private Integer passwordNumbers = 2;
+
+    /**
+     * PasswordGenerator amount of spacial chars
+     */
+    private Integer passwordSpecials = 2;
+
+    /**
+     * PasswordGenerator amount of high cases
+     */
+    private Integer passwordCaps = 5;
+
+    /**
+     * PasswordGenerator amount of mini cases
+     */
+    private Integer passwordMin = 5;
 }

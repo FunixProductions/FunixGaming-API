@@ -20,4 +20,6 @@ public class ApiConfig {
      * Ip list who can do some actions
      */
     private String[] ipWhitelist = new String[0];
+
+    private boolean proxied = true;
 }

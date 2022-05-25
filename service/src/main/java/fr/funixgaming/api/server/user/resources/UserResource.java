@@ -32,10 +32,11 @@ public class UserResource implements UserCrudClient {
     private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final GoogleCaptchaService captchaService;
+    private final IPUtils ipUtils;
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
-        userService.checkWhitelist(IPUtils.getClientIp(servletRequest), request.getUsername());
+        userService.checkWhitelist(ipUtils.getClientIp(servletRequest), request.getUsername());
 
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
@@ -46,7 +47,7 @@ public class UserResource implements UserCrudClient {
 
     @PostMapping("login")
     public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
-        userService.checkWhitelist(IPUtils.getClientIp(servletRequest), request.getUsername());
+        userService.checkWhitelist(ipUtils.getClientIp(servletRequest), request.getUsername());
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
         }
