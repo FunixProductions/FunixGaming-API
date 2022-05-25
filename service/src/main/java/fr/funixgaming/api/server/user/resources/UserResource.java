@@ -1,5 +1,8 @@
 package fr.funixgaming.api.server.user.resources;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import fr.funixgaming.api.client.config.FunixApiConfig;
 import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
 import fr.funixgaming.api.client.user.clients.UserCrudClient;
@@ -17,6 +20,7 @@ import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.mail.services.FunixMailService;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,18 +32,30 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
 @RequestMapping("user")
 @RequiredArgsConstructor
 public class UserResource implements UserCrudClient {
+    private static final int MAX_ATTEMPT = 5;
+
     private final AuthenticationManager authenticationManager;
     private final GoogleCaptchaService captchaService;
     private final FunixMailService mailService;
     private final UserService userService;
     private final FunixApiConfig funixApiConfig;
     private final IPUtils ipUtils;
+
+    private final LoadingCache<String, Integer> triesCache = CacheBuilder.newBuilder()
+            .expireAfterWrite(1, TimeUnit.HOURS).build(new CacheLoader<>() {
+                @Override
+                @NonNull
+                public Integer load(@NonNull String s) {
+                    return 0;
+                }
+            });
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
@@ -59,13 +75,19 @@ public class UserResource implements UserCrudClient {
             captchaService.checkCode(servletRequest);
         }
 
+        if (isBlocked(servletRequest)) {
+            throw new ApiForbiddenException("Vous avez fait plus de 5 essais pour vous connecter. Veuillez patienter une heure.");
+        }
+
         try {
             final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
             final Authentication authenticate = authenticationManager.authenticate(auth);
             final User user = (User) authenticate.getPrincipal();
 
+            triesCache.invalidate(ipUtils.getClientIp(servletRequest));
             return userService.generateAccessToken(user);
         } catch (BadCredentialsException ex) {
+            failLogin(servletRequest);
             throw new ApiBadRequestException("Vos identifiants sont incorrects.", ex);
         }
     }
@@ -130,5 +152,16 @@ public class UserResource implements UserCrudClient {
     @Override
     public void delete(String id) {
         userService.delete(id);
+    }
+
+    private void failLogin(final HttpServletRequest servletRequest) {
+        final String key = ipUtils.getClientIp(servletRequest);
+
+        int attempts = triesCache.getUnchecked(key);
+        triesCache.put(key, attempts + 1);
+    }
+
+    private boolean isBlocked(final HttpServletRequest servletRequest) {
+        return triesCache.getUnchecked(ipUtils.getClientIp(servletRequest)) >= MAX_ATTEMPT;
     }
 }
