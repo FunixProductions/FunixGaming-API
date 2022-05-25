@@ -8,6 +8,7 @@ import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.clients.GoogleCaptchaClient;
 import fr.funixgaming.api.core.google.config.GoogleCaptchaConfig;
 import fr.funixgaming.api.core.google.dtos.GoogleCaptchaSiteVerifyResponse;
+import fr.funixgaming.api.core.utils.network.IPUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
@@ -29,11 +30,14 @@ public class GoogleCaptchaService {
     private final GoogleCaptchaConfig googleCaptchaConfig;
     private final GoogleCaptchaClient googleCaptchaClient;
     private final LoadingCache<String, Integer> triesCache;
+    private final IPUtils ipUtils;
 
     public GoogleCaptchaService(GoogleCaptchaConfig captchaConfig,
-                                GoogleCaptchaClient captchaClient) {
+                                GoogleCaptchaClient captchaClient,
+                                IPUtils ipUtils) {
         this.googleCaptchaConfig = captchaConfig;
         this.googleCaptchaClient = captchaClient;
+        this.ipUtils = ipUtils;
 
         this.triesCache = CacheBuilder.newBuilder()
                 .expireAfterWrite(4, TimeUnit.HOURS).build(new CacheLoader<>() {
@@ -51,7 +55,7 @@ public class GoogleCaptchaService {
         }
 
         final String captchaCode = request.getHeader(HTTP_GOOGLE_CAPTCHA_PARAMETER);
-        final String clientIp = request.getRemoteAddr();
+        final String clientIp = ipUtils.getClientIp(request);
 
         if (isBlocked(clientIp)) {
             throw new ApiForbiddenException(String.format("Vous avez fait plus de %d essais. Vous êtes donc bloqué pendant quelques heures. Veuillez réessayer plus tard.", MAX_ATTEMPT));
