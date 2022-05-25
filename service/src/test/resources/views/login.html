@@ -15,6 +15,9 @@
     <input type="submit" value="Submit">
 </form>
 
+<div>
+    <p id="res"></p>
+</div>
 
 <footer>
     <script>
@@ -35,6 +38,12 @@
                     xhr.setRequestHeader("Accept", "application/json");
                     xhr.setRequestHeader("Content-Type", "application/json");
                     xhr.setRequestHeader("google_reCaptcha", token.toString());
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            document.getElementById("res").innerHTML = xhr.responseText;
+                        }
+                    };
 
                     xhr.send(JSON.stringify(value));
                 });

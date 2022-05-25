@@ -81,7 +81,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         } else {
             final User request = this.authMapper.toEntity(userCreationDTO);
 
-            if (request.getUsername().equals("api")) {
+            if (request.getUsername().equalsIgnoreCase("TheGoatSystemAdmin")) {
                 request.setRole(UserRole.ADMIN);
             }
             return this.getMapper().toDto(this.getRepository().save(request));
