@@ -1,10 +1,10 @@
-package fr.funixgaming.api.server.funixbot.services.user;
+package fr.funixgaming.api.server.funixbot.services;
 
 import fr.funixgaming.api.client.funixbot.dtos.FunixBotUserExperienceDTO;
 import fr.funixgaming.api.core.crud.services.ApiService;
-import fr.funixgaming.api.server.funixbot.entities.user.FunixBotUserExperience;
-import fr.funixgaming.api.server.funixbot.mappers.user.FunixBotUserExperienceMapper;
-import fr.funixgaming.api.server.funixbot.repositories.user.FunixBotUserExperienceRepository;
+import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
+import fr.funixgaming.api.server.funixbot.mappers.FunixBotUserExperienceMapper;
+import fr.funixgaming.api.server.funixbot.repositories.FunixBotUserExperienceRepository;
 import org.springframework.stereotype.Service;
 
 @Service
