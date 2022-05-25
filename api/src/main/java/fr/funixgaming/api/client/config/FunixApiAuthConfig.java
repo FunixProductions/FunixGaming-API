@@ -9,7 +9,6 @@ import fr.funixgaming.api.core.exceptions.ApiException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Date;

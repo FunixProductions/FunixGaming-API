@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 
 @FeignClient(
         name = "FunixBotCommands",
-        url = "${app.domain.url}",
+        url = "${funix.api.app-domain-url}",
         path = "/funixbot/command/",
         configuration = FunixApiAuthConfig.class
 )

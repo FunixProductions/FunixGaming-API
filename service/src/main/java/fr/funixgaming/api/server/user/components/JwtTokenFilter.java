@@ -22,6 +22,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserService userService;
+    private final IPUtils ipUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -45,7 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final Object principal = authentication.getPrincipal();
 
         if (principal instanceof final User user) {
-            userService.checkWhitelist(IPUtils.getClientIp(request), user.getUsername());
+            userService.checkWhitelist(ipUtils.getClientIp(request), user.getUsername());
         }
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

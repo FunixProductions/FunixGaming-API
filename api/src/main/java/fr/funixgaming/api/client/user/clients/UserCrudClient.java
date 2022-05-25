@@ -11,7 +11,7 @@ import java.util.List;
 
 @FeignClient(
         name = "UserCrud",
-        url = "${app.domain.url}",
+        url = "${funix.api.app-domain-url}",
         path = "/user",
         configuration = FunixApiAuthConfig.class
 )

@@ -1,5 +1,6 @@
 package fr.funixgaming.api.server.user.services;
 
+import fr.funixgaming.api.client.config.FunixApiConfig;
 import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
@@ -11,6 +12,7 @@ import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.encryption.Encryption;
 import fr.funixgaming.api.core.utils.network.IPUtils;
+import fr.funixgaming.api.core.utils.string.PasswordGenerator;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import fr.funixgaming.api.server.user.mappers.UserAdminMapper;
@@ -44,6 +46,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     private final UserAuthMapper authMapper;
     private final UserAdminMapper adminMapper;
     private final Encryption encryption;
+    private final FunixApiConfig apiConfig;
     private final IPUtils ipUtils;
 
     public UserService(UserRepository repository,
@@ -53,6 +56,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                        UserTokenMapper userTokenMapper,
                        UserAdminMapper adminMapper,
                        UserAuthMapper userAuthMapper,
+                       FunixApiConfig apiConfig,
                        IPUtils ipUtils) {
         super(repository, mapper);
         this.encryption = encryption;
@@ -60,6 +64,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         this.tokenMapper = userTokenMapper;
         this.authMapper = userAuthMapper;
         this.adminMapper = adminMapper;
+        this.apiConfig = apiConfig;
         this.ipUtils = ipUtils;
     }
 
@@ -206,6 +211,30 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             return adminDTO;
         } else {
             throw new ApiNotFoundException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
+        }
+    }
+
+    @Transactional
+    public User getOrCreateApiUser() {
+        final Optional<User> search = this.getRepository().findByUsername("api");
+
+        if (search.isPresent()) {
+            return search.get();
+        } else {
+            final PasswordGenerator passwordGenerator = new PasswordGenerator();
+            passwordGenerator.setAlphaDown(apiConfig.getPasswordMin());
+            passwordGenerator.setAlphaUpper(apiConfig.getPasswordCaps());
+            passwordGenerator.setNumbersAmount(apiConfig.getPasswordNumbers());
+            passwordGenerator.setSpecialCharsAmount(apiConfig.getPasswordSpecials());
+
+            final UserAdminDTO apiUserRequest = new UserAdminDTO();
+            apiUserRequest.setUsername("api");
+            apiUserRequest.setPassword(passwordGenerator.generateRandomPassword());
+            apiUserRequest.setRole(UserRole.MODERATOR);
+            apiUserRequest.setEmail(apiConfig.getEmail());
+            final User creation = this.adminMapper.toEntity(apiUserRequest);
+
+            return this.getRepository().save(creation);
         }
     }
 

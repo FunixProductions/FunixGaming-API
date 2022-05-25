@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * FeignClient(name = "name", url = "${app.domain.url}", path = "/path")
+ * FeignClient(name = "name", url = "${funix.api.app-domain-url}", path = "/path")
  * @param <DTO> dto
  */
 public interface CrudClient<DTO extends ApiDTO> {

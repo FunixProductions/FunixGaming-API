@@ -13,10 +13,12 @@ import java.net.UnknownHostException;
 public class IPUtils {
 
     private final InetAddress[] whitelist;
+    private final ApiConfig apiConfig;
 
     public IPUtils(ApiConfig apiConfig) throws ApiException {
         final String[] listIp = apiConfig.getIpWhitelist();
         this.whitelist = new InetAddress[listIp.length];
+        this.apiConfig = apiConfig;
 
         for (int i = 0; i < listIp.length; ++i) {
             try {
@@ -51,11 +53,11 @@ public class IPUtils {
         return false;
     }
 
-    public static String getClientIp(final HttpServletRequest request) {
+    public String getClientIp(final HttpServletRequest request) {
         final String remoteAddress;
         String addressHeader = request.getHeader("X-FORWARDED-FOR");
 
-        if (Strings.isEmpty(addressHeader)) {
+        if (!this.apiConfig.isProxied() && Strings.isEmpty(addressHeader)) {
             remoteAddress = request.getRemoteAddr();
         } else {
             remoteAddress = addressHeader;

@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @FeignClient(
         name = "UserAuth",
-        url = "${app.domain.url}",
+        url = "${funix.api.app-domain-url}",
         path = "/user"
 )
 public interface UserAuthClient {
