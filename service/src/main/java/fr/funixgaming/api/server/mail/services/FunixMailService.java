@@ -21,6 +21,7 @@ public class FunixMailService extends ApiMailService {
 
     public FunixMailService(JavaMailSender javaMailSender) {
         super(javaMailSender);
+        //TODO get mails in db not sended and set in queue
     }
 
     public FunixMailDTO addMail(final FunixMailDTO request) {
