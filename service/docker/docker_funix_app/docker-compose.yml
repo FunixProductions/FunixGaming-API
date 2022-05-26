@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  funix-api:
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    container_name: funix_api
+    hostname: funix_api
+    networks:
+      - funixweb
+    restart: on-failure
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+    ports:
+      - "8080:8080"
+
+networks:
+  funixweb:
+    driver: bridge

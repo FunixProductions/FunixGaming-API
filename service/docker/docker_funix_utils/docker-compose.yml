@@ -18,6 +18,8 @@ services:
   mail:
     image: maildev/maildev
     container_name: funix_api_mail
+    networks:
+      - funixweb
     ports:
       - "1080:1080"
       - "1025:1025"
