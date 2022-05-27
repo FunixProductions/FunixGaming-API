@@ -104,7 +104,7 @@ paypal.client-id=${PAYPAL_CLIENT_ID}
 paypal.client-secret=${PAYPAL_CLIENT_SECRET}
 ````
 
-###Annotations requises pour le lancement spring
+### Annotations requises pour le lancement spring
 ````java
 @EnableAsync
 @EnableScheduling
