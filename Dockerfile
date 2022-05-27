@@ -16,7 +16,7 @@ COPY core/src ./core/src
 COPY service/pom.xml ./service/
 COPY service/src ./service/src
 
-RUN mvn clean package -Dspring-boot.run.profiles=docker
+RUN mvn clean package
 
 FROM openjdk:17 AS FINAL
 
