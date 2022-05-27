@@ -11,7 +11,7 @@ public class FunixMailDTO extends ApiMailDTO {
     private boolean send;
 
     @Override
-    public String getTo() {
+    public String toString() {
         return String.format("Mail: from %s to %s subject %s", super.getFrom(), super.getTo(), super.getSubject());
     }
 }

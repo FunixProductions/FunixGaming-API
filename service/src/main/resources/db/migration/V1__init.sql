@@ -53,3 +53,13 @@ create table funixbot_users_experience
     constraint UK_fbot_user_public_id unique (uuid),
     constraint UK_twitch_id_user unique (twitch_user_id)
 );
+
+create table funix_api_mails
+(
+    id         bigint auto_increment primary key,
+    created_at datetime(6)  not null,
+    updated_at datetime(6)  null,
+    uuid       varchar(255) not null,
+    send       bit          not null,
+    constraint UK_mail_id_public unique (uuid)
+);

@@ -267,7 +267,9 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             }
         }
 
-        final long seconds = TimeUtils.diffInMillisBetweenInstants(start, Instant.now());
-        log.info("{} tokens user invalides supprimés. ({} ms)", invalidedTokens, seconds);
+        if (invalidedTokens > 0) {
+            final long seconds = TimeUtils.diffInMillisBetweenInstants(start, Instant.now());
+            log.info("{} tokens user invalides supprimés. ({} ms)", invalidedTokens, seconds);
+        }
     }
 }

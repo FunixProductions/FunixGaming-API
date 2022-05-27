@@ -66,7 +66,9 @@ public class FunixMailService extends ApiMailService {
         }
 
         this.mailCrudService.update(mails);
-        log.info("{} mails envoyés.", mailsSend);
+        if (mailsSend > 0) {
+            log.info("{} mails envoyés.", mailsSend);
+        }
     }
 
 }

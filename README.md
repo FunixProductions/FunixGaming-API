@@ -1,7 +1,7 @@
 # FunixAPI
 API used for Funix Projects
 
-Version [![Maven Central](https://img.shields.io/maven-central/v/fr.funixgaming.api/funix-api.svg)](https://search.maven.org/artifact/fr.funixgaming.api/funix-api)
+[![Maven Central](https://img.shields.io/maven-central/v/fr.funixgaming.api/funix-api.svg)](https://search.maven.org/artifact/fr.funixgaming.api/funix-api)
 
 ### Importer le projet
 - Ajouter comme parent le projet funix-api (requis)

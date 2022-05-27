@@ -6,7 +6,6 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.funixgaming.api.core.TestApp;
 import fr.funixgaming.api.core.mail.dtos.ApiMailDTO;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,14 +20,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureMockMvc
 public class TestMailService {
 
-    @RegisterExtension
-    static GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP).withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
+    private final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP).withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
 
     private final MailService mailService;
     private final ApiMailDTO mailTest;
 
     @Autowired
     public TestMailService(MailService mailService) {
+        this.greenMail.start();
+
         this.mailService = mailService;
         this.mailTest = new MailDTO();
 
@@ -42,9 +42,11 @@ public class TestMailService {
     public void testSendMail() {
         try {
             this.mailService.sendMail(mailTest);
+            assertTrue(greenMail.waitForIncomingEmail(15000, 1));
         } catch (Exception e) {
             fail(e);
         }
+        this.greenMail.stop();
     }
 
 }
