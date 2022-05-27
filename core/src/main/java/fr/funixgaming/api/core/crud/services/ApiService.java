@@ -9,6 +9,7 @@ import fr.funixgaming.api.core.crud.repositories.ApiRepository;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
@@ -123,7 +124,14 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public List<DTO> update(List<DTO> request) {
-        return patch(request, getMapper(), getRepository());
+        final List<DTO> toSend = new ArrayList<>();
+
+        for (final DTO data : request) {
+            if (data.getId() != null) {
+                toSend.add(patch(data, getMapper(), getRepository()));
+            }
+        }
+        return toSend;
     }
 
     @Override
@@ -147,21 +155,8 @@ public abstract class ApiService<DTO extends ApiDTO,
         repository.deleteAll(search);
     }
 
-    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> List<DTO> patch(List<DTO> request,
-                                                                                ApiMapper<ENTITY, DTO> apiMapper,
-                                                                                ApiRepository<ENTITY> apiRepository) {
-        final List<DTO> toSend = new ArrayList<>();
-
-        for (final DTO data : request) {
-            if (data.getId() != null) {
-                toSend.add(patch(data, apiMapper, apiRepository));
-            }
-        }
-        return toSend;
-    }
-
     @Nullable
-    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> DTO patch(DTO request,
+    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> DTO patch(@NonNull DTO request,
                                                                            ApiMapper<ENTITY, DTO> apiMapper,
                                                                            ApiRepository<ENTITY> apiRepository) {
         if (request.getId() == null) {

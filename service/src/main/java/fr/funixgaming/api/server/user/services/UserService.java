@@ -13,6 +13,7 @@ import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.encryption.Encryption;
 import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
+import fr.funixgaming.api.core.utils.time.TimeUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import fr.funixgaming.api.server.user.mappers.UserAdminMapper;
@@ -24,6 +25,7 @@ import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -35,6 +37,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -247,5 +250,24 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         if (username.equalsIgnoreCase("api") && !ipUtils.canAccess(ip)) {
             throw new ApiForbiddenException("Vous n'êtes pas whitelisté.");
         }
+    }
+
+    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    public void removeInvalidTokens() {
+        final Iterable<UserToken> tokens = this.tokenRepository.findAll();
+        final Instant start = Instant.now();
+        int invalidedTokens = 0;
+
+        for (final UserToken token : tokens) {
+            final Instant expirationDate = token.getExpirationDate();
+
+            if (expirationDate.isBefore(start)) {
+                invalidedTokens++;
+                this.tokenRepository.delete(token);
+            }
+        }
+
+        final long seconds = TimeUtils.diffInMillisBetweenInstants(start, Instant.now());
+        log.info("{} tokens user invalides supprimés. ({} ms)", invalidedTokens, seconds);
     }
 }

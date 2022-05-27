@@ -43,7 +43,7 @@ public abstract class ApiMailService {
             helper.setTo(mailDTO.getTo());
             helper.setSubject(mailDTO.getSubject());
             helper.setText(mailDTO.getText());
-            helper.addAttachment("Invoice", file);
+            helper.addAttachment(attachment.getName(), file);
 
             mailSender.send(message);
         } catch (MessagingException | MailException e) {

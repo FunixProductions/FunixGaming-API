@@ -7,23 +7,41 @@ services:
     container_name: funix_api_db
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
-    restart: always
+    restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: root
     networks:
-      - funixweb
+      - funixweb_api
     ports:
       - "3306:3306"
 
   mail:
     image: maildev/maildev
     container_name: funix_api_mail
+    restart: on-failure
     networks:
-      - funixweb
+      - funixweb_api
     ports:
       - "1080:1080"
       - "1025:1025"
 
+  funix-api:
+    build:
+      context: ../../../
+      dockerfile: Dockerfile
+    depends_on:
+      - mysql
+      - mail
+    container_name: funix_api
+    hostname: funix_api
+    restart: on-failure
+    networks:
+      - funixweb_api
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+    ports:
+      - "8080:8080"
+
 networks:
-  funixweb:
+  funixweb_api:
     driver: bridge

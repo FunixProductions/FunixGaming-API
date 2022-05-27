@@ -1,16 +1,28 @@
 package fr.funixgaming.api.core.mail;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import fr.funixgaming.api.core.TestApp;
 import fr.funixgaming.api.core.mail.dtos.ApiMailDTO;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(
+        classes = {
+                TestApp.class
+        }
+)
 @AutoConfigureMockMvc
 public class TestMailService {
+
+    @RegisterExtension
+    static GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP).withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
 
     private final MailService mailService;
     private final ApiMailDTO mailTest;

@@ -23,4 +23,8 @@ public class UserToken extends ApiEntity {
 
     @Column(name = "expiration_date", updatable = false)
     private Date expirationDate;
+
+    public Instant getExpirationDate() {
+        return expirationDate.toInstant();
+    }
 }

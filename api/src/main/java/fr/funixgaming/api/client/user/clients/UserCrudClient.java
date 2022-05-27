@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient(
         name = "UserCrud",
         url = "${funix.api.app-domain-url}",
-        path = "/user",
+        path = "/user/",
         configuration = FunixApiAuthConfig.class
 )
 public interface UserCrudClient {
