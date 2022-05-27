@@ -10,19 +10,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+
 public class TestPayPalAuthService {
 
     private final PayPalAuthService authService;
 
-    @Autowired
+    //@Autowired
     public TestPayPalAuthService(PayPalAuthService authService) {
         this.authService = authService;
     }
 
     @Test
-    @Ignore //TODO temporal mesure due to not build github ci & docker
     public void testGetToken() {
         final PayPalToken token = authService.getToken();
 
