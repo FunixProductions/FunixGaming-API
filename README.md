@@ -2,6 +2,7 @@
 API used for Funix Projects
 
 [![Maven Central](https://img.shields.io/maven-central/v/fr.funixgaming.api/funix-api.svg)](https://search.maven.org/artifact/fr.funixgaming.api/funix-api)
+![example branch parameter](https://github.com/FunixProductions/FunixAPI/actions/workflows/main.yml/badge.svg?branch=master)
 
 ### Importer le projet
 - Ajouter comme parent le projet funix-api (requis)
