@@ -102,3 +102,16 @@ paypal.url.auth=https://api-m.sandbox.paypal.com
 paypal.client-id=${PAYPAL_CLIENT_ID}
 paypal.client-secret=${PAYPAL_CLIENT_SECRET}
 ````
+
+###Annotations requises pour le lancement spring
+````java
+@EnableAsync
+@EnableScheduling
+@EnableFeignClients(basePackages = "fr.funixgaming.api")
+@SpringBootApplication(scanBasePackages = "fr.funixgaming.api")
+public class FunixApiApp {
+    public static void main(final String[] args) {
+        SpringApplication.run(FunixApiApp.class, args);
+    }
+}
+````
