@@ -2,7 +2,13 @@
 API used for Funix Projects
 
 [![Maven Central](https://img.shields.io/maven-central/v/fr.funixgaming.api/funix-api.svg)](https://search.maven.org/artifact/fr.funixgaming.api/funix-api)
-![example branch parameter](https://github.com/FunixProductions/FunixAPI/actions/workflows/main.yml/badge.svg?branch=master)
+![Tests build](https://github.com/FunixProductions/FunixAPI/actions/workflows/main.yml/badge.svg?branch=master)
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
+![Spring app](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white)
+![Database](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+
 
 ### Importer le projet
 - Ajouter comme parent le projet funix-api (requis)
