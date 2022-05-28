@@ -57,9 +57,13 @@ create table funixbot_users_experience
 create table funix_api_mails
 (
     id         bigint auto_increment primary key,
-    created_at datetime(6)  not null,
-    updated_at datetime(6)  null,
-    uuid       varchar(255) not null,
-    send       bit          not null,
+    created_at datetime(6)    not null,
+    updated_at datetime(6)    null,
+    uuid       varchar(255)   not null,
+    from_mail  varchar(255)   not null,
+    subject    varchar(255)   not null,
+    text       varchar(10000) not null,
+    to_mail    varchar(255)   not null,
+    send       bit            not null,
     constraint UK_mail_id_public unique (uuid)
 );

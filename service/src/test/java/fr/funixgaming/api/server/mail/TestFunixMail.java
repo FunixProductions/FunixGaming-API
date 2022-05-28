@@ -64,6 +64,13 @@ public class TestFunixMail {
 
         final FunixMailDTO data = getMailById(response.getId().toString());
         assertTrue(data.isSend());
+        assertNotNull(data.getCreatedAt());
+        assertNotNull(data.getUpdatedAt());
+        assertNotNull(data.getId());
+        assertEquals(funixMailDTO.getText(), data.getText());
+        assertEquals(funixMailDTO.getSubject(), data.getSubject());
+        assertEquals(funixMailDTO.getTo(), data.getTo());
+        assertEquals(funixMailDTO.getFrom(), data.getFrom());
     }
 
     private FunixMailDTO sendMail(final FunixMailDTO request) throws Exception {

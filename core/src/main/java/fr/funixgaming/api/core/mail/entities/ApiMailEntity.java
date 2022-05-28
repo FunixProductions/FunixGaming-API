@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 @Getter
 @Setter
+@MappedSuperclass
 public abstract class ApiMailEntity extends ApiEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "to_mail")
     private String to;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "from_mail")
     private String from;
 
     @Column(nullable = false)
