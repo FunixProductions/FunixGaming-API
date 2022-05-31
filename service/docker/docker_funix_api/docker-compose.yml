@@ -7,6 +7,7 @@ services:
     container_name: funix_api_db
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - funix_api_db:/var/lib/mysql
     restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -33,6 +34,8 @@ services:
       - mysql
       - mail
     container_name: funix_api
+    volumes:
+      - funix_api_db:/container/java
     hostname: funix_api
     restart: on-failure
     networks:
@@ -47,3 +50,6 @@ services:
 networks:
   funixweb_api:
     driver: bridge
+
+volumes:
+  funix_api_db:

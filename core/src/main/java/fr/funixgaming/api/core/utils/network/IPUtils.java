@@ -31,6 +31,10 @@ public class IPUtils {
     }
 
     public boolean canAccess(final String ip) throws ApiException {
+        if (apiConfig.isDisableWhitelist()) {
+            return true;
+        }
+
         try {
             final InetAddress inetAddress = InetAddress.getByName(ip);
 
@@ -60,7 +64,8 @@ public class IPUtils {
         if (!this.apiConfig.isProxied() && Strings.isEmpty(addressHeader)) {
             remoteAddress = request.getRemoteAddr();
         } else {
-            remoteAddress = addressHeader;
+            final String[] addresses = addressHeader.split(",");
+            remoteAddress = addresses[0].replaceAll(" ", "");
         }
 
         return remoteAddress;

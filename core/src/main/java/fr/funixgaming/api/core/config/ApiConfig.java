@@ -21,5 +21,10 @@ public class ApiConfig {
      */
     private String[] ipWhitelist = new String[0];
 
+    /**
+     * Disable whitelist, used in dev mode
+     */
+    private boolean disableWhitelist = false;
+
     private boolean proxied = true;
 }

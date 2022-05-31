@@ -1,5 +1,6 @@
 package fr.funixgaming.api.client.config;
 
+import feign.FeignException;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import fr.funixgaming.api.client.user.clients.UserAuthClient;
@@ -33,7 +34,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
             final UserTokenDTO token = getToken();
             template.header("Authorization", String.format("Bearer %s", token.getToken()));
         } catch (ApiException e) {
-            log.error("Une erreur est survenue lors de l'auth pour la funix api. Erreur: {}", e.getMessage(), e);
+            log.error("Une erreur est survenue lors de l'auth pour la funix api. Erreur: {}", e.getMessage());
         }
     }
 
@@ -66,23 +67,25 @@ public class FunixApiAuthConfig implements RequestInterceptor {
     }
 
     private boolean isTokenUsable() {
-        final UserTokenDTO token = this.tokenCache;
-        final ResponseEntity<Void> response = this.userAuthClient.valid(token.getToken());
+        try {
+            final UserTokenDTO token = this.tokenCache;
+            this.userAuthClient.valid(token.getToken());
 
-        return response.getStatusCode().is2xxSuccessful();
+            return true;
+        } catch (FeignException e) {
+            return false;
+        }
     }
 
     private UserTokenDTO generateNewToken() throws ApiException {
-        final UserLoginDTO loginDTO = new UserLoginDTO();
-        loginDTO.setUsername(this.funixApiConfig.getUserApiUsername());
-        loginDTO.setPassword(this.funixApiConfig.getUserApiPassword());
+        try {
+            final UserLoginDTO loginDTO = new UserLoginDTO();
+            loginDTO.setUsername(this.funixApiConfig.getUserApiUsername());
+            loginDTO.setPassword(this.funixApiConfig.getUserApiPassword());
 
-        final ResponseEntity<UserTokenDTO> response = this.userAuthClient.login(loginDTO);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return response.getBody();
-        } else {
-            throw new ApiException(String.format("Erreur de connexion. Code erreur %d", response.getStatusCodeValue()));
+            return this.userAuthClient.login(loginDTO);
+        } catch (FeignException e) {
+            throw new ApiException(String.format("Erreur génération token. Erreur code: %s message: %s", e.status(), e.contentUTF8()));
         }
     }
 }

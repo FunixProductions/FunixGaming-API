@@ -21,9 +21,9 @@ public interface UserAuthClient {
     UserDTO register(@RequestBody @Valid UserCreationDTO request);
 
     @PostMapping("login")
-    ResponseEntity<UserTokenDTO> login(@RequestBody @Valid UserLoginDTO request);
+    UserTokenDTO login(@RequestBody @Valid UserLoginDTO request);
 
     @GetMapping("valid")
-    ResponseEntity<Void> valid(@RequestHeader("Authorization") String token);
+    void valid(@RequestHeader("Authorization") String token);
 
 }
