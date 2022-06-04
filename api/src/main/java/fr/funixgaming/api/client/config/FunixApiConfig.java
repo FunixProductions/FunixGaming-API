@@ -2,7 +2,6 @@ package fr.funixgaming.api.client.config;
 
 import lombok.Getter;
 import lombok.Setter;
-import okhttp3.OkHttpClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,8 +52,4 @@ public class FunixApiConfig {
      */
     private Integer passwordMin = 5;
 
-    @Bean
-    public OkHttpClient client() {
-        return new OkHttpClient();
-    }
 }

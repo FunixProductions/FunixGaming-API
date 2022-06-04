@@ -103,8 +103,6 @@
         <org.jacoco.coverage.version>0.8.8</org.jacoco.coverage.version>
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
         <greenmail.test.mail.version>1.6.9</greenmail.test.mail.version>
-        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp -->
-        <okhttp.client.version>11.8</okhttp.client.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
