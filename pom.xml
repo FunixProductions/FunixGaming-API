@@ -6,7 +6,7 @@
 
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funix-api</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>pom</packaging>
 
     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
@@ -75,9 +75,9 @@
     <properties>
         <java.version>17</java.version>
 
-        <funixgaming.api.version>1.0.4</funixgaming.api.version>
-        <funixgaming.core.version>1.0.4</funixgaming.core.version>
-        <funixgaming.server.version>1.0.4</funixgaming.server.version>
+        <funixgaming.api.version>1.0.5</funixgaming.api.version>
+        <funixgaming.core.version>1.0.5</funixgaming.core.version>
+        <funixgaming.server.version>1.0.5</funixgaming.server.version>
 
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <mapstruct.version>1.4.2.Final</mapstruct.version>
@@ -103,6 +103,8 @@
         <org.jacoco.coverage.version>0.8.8</org.jacoco.coverage.version>
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
         <greenmail.test.mail.version>1.6.9</greenmail.test.mail.version>
+        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp -->
+        <okhttp.client.version>11.8</okhttp.client.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
