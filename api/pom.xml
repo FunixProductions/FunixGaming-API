@@ -28,6 +28,12 @@
             <version>${funixgaming.core.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp FOR PATCH-->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-okhttp</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

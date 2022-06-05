@@ -3,12 +3,13 @@ package fr.funixgaming.api.client.config;
 import feign.FeignException;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import feign.okhttp.OkHttpClient;
 import fr.funixgaming.api.client.user.clients.UserAuthClient;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Bean;
 import org.springframework.lang.NonNull;
 
 import java.time.Instant;
@@ -87,5 +88,10 @@ public class FunixApiAuthConfig implements RequestInterceptor {
         } catch (FeignException e) {
             throw new ApiException(String.format("Erreur génération token. Erreur code: %s message: %s", e.status(), e.contentUTF8()));
         }
+    }
+
+    @Bean
+    public OkHttpClient client() {
+        return new OkHttpClient();
     }
 }
