@@ -1,6 +1,7 @@
 package fr.funixgaming.api.server.user.services;
 
 import fr.funixgaming.api.client.config.FunixApiConfig;
+import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
@@ -14,6 +15,7 @@ import fr.funixgaming.api.core.utils.encryption.Encryption;
 import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
 import fr.funixgaming.api.core.utils.time.TimeUtils;
+import fr.funixgaming.api.server.mail.services.FunixMailService;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.entities.UserToken;
 import fr.funixgaming.api.server.user.mappers.UserAdminMapper;
@@ -48,6 +50,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     private final UserTokenMapper tokenMapper;
     private final UserAuthMapper authMapper;
     private final UserAdminMapper adminMapper;
+    private final FunixMailService mailService;
     private final Encryption encryption;
     private final FunixApiConfig apiConfig;
     private final IPUtils ipUtils;
@@ -59,6 +62,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                        UserTokenMapper userTokenMapper,
                        UserAdminMapper adminMapper,
                        UserAuthMapper userAuthMapper,
+                       FunixMailService funixMailService,
                        FunixApiConfig apiConfig,
                        IPUtils ipUtils) {
         super(repository, mapper);
@@ -67,8 +71,11 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         this.tokenMapper = userTokenMapper;
         this.authMapper = userAuthMapper;
         this.adminMapper = adminMapper;
+        this.mailService = funixMailService;
         this.apiConfig = apiConfig;
         this.ipUtils = ipUtils;
+
+        sendApiUserMail();
     }
 
     @Transactional
@@ -271,5 +278,18 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             final long seconds = TimeUtils.diffInMillisBetweenInstants(start, Instant.now());
             log.info("{} tokens user invalides supprimés. ({} ms)", invalidedTokens, seconds);
         }
+    }
+
+    private void sendApiUserMail() {
+        final User user = this.getOrCreateApiUser();
+        final FunixMailDTO mailDTO = new FunixMailDTO();
+
+        mailDTO.setFrom("admin@funixgaming.fr");
+        mailDTO.setTo(apiConfig.getEmail());
+        mailDTO.setSubject("[FunixAPI] Identifiants pour le login api.");
+        mailDTO.setText(String.format("username: %s password: %s", user.getUsername(), user.getPassword()));
+
+        mailService.addMail(mailDTO);
+        log.info("Envoi de la requête pour récupérer les infos api par mail.");
     }
 }

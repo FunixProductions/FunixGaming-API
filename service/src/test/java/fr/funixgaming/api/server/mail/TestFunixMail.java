@@ -59,7 +59,7 @@ public class TestFunixMail {
         assertEquals(funixMailDTO.getTo(), response.getTo());
         assertEquals(funixMailDTO.getFrom(), response.getFrom());
 
-        assertTrue(greenMail.waitForIncomingEmail(15000, 1));
+        assertTrue(greenMail.waitForIncomingEmail(15000, 2));
         Thread.sleep(1000);
 
         final FunixMailDTO data = getMailById(response.getId().toString());

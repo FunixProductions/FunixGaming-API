@@ -43,9 +43,7 @@ public class UserResource implements UserCrudClient {
 
     private final AuthenticationManager authenticationManager;
     private final GoogleCaptchaService captchaService;
-    private final FunixMailService mailService;
     private final UserService userService;
-    private final FunixApiConfig funixApiConfig;
     private final IPUtils ipUtils;
 
     private final LoadingCache<String, Integer> triesCache = CacheBuilder.newBuilder()
@@ -115,22 +113,6 @@ public class UserResource implements UserCrudClient {
                 throw new ApiForbiddenException("Vous n'êtes pas admin pour effectuer cette opération.");
             }
         }
-    }
-
-    @GetMapping("apiAccount")
-    public String getApiInfos() {
-        final User user = this.userService.getOrCreateApiUser();
-        final FunixMailDTO mailDTO = new FunixMailDTO();
-
-        mailDTO.setFrom("admin@funixgaming.fr");
-        mailDTO.setTo(funixApiConfig.getEmail());
-        mailDTO.setSubject("[FunixAPI] Identifiants pour le login api.");
-        mailDTO.setText(String.format("username: %s password: %s", user.getUsername(), user.getPassword()));
-
-        mailService.addMail(mailDTO);
-        log.info("Envoi de la requête pour récupérer les infos api par mail.");
-
-        return "Les infos api ont été envoyées par mail.";
     }
 
     @Override
