@@ -6,7 +6,7 @@
 
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funix-api</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <packaging>pom</packaging>
 
     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
@@ -75,9 +75,9 @@
     <properties>
         <java.version>17</java.version>
 
-        <funixgaming.api.version>1.0.6</funixgaming.api.version>
-        <funixgaming.core.version>1.0.6</funixgaming.core.version>
-        <funixgaming.server.version>1.0.6</funixgaming.server.version>
+        <funixgaming.api.version>1.0.7</funixgaming.api.version>
+        <funixgaming.core.version>1.0.7</funixgaming.core.version>
+        <funixgaming.server.version>1.0.7</funixgaming.server.version>
 
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <mapstruct.version>1.4.2.Final</mapstruct.version>
