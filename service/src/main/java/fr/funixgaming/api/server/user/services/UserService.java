@@ -224,30 +224,6 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         }
     }
 
-    @Transactional
-    public User getOrCreateApiUser() {
-        final Optional<User> search = this.getRepository().findByUsername("api");
-
-        if (search.isPresent()) {
-            return search.get();
-        } else {
-            final PasswordGenerator passwordGenerator = new PasswordGenerator();
-            passwordGenerator.setAlphaDown(apiConfig.getPasswordMin());
-            passwordGenerator.setAlphaUpper(apiConfig.getPasswordCaps());
-            passwordGenerator.setNumbersAmount(apiConfig.getPasswordNumbers());
-            passwordGenerator.setSpecialCharsAmount(apiConfig.getPasswordSpecials());
-
-            final UserAdminDTO apiUserRequest = new UserAdminDTO();
-            apiUserRequest.setUsername("api");
-            apiUserRequest.setPassword(passwordGenerator.generateRandomPassword());
-            apiUserRequest.setRole(UserRole.MODERATOR);
-            apiUserRequest.setEmail(apiConfig.getEmail());
-            final User creation = this.adminMapper.toEntity(apiUserRequest);
-
-            return this.getRepository().save(creation);
-        }
-    }
-
     @Override
     public void delete(String id) {
         super.delete(id);
@@ -280,16 +256,32 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         }
     }
 
-    private void sendApiUserMail() {
-        final User user = this.getOrCreateApiUser();
-        final FunixMailDTO mailDTO = new FunixMailDTO();
+    @Transactional
+    public void sendApiUserMail() {
+        final Optional<User> search = this.getRepository().findByUsername("api");
 
-        mailDTO.setFrom("admin@funixgaming.fr");
-        mailDTO.setTo(apiConfig.getEmail());
-        mailDTO.setSubject("[FunixAPI] Identifiants pour le login api.");
-        mailDTO.setText(String.format("username: %s password: %s", user.getUsername(), user.getPassword()));
+        if (search.isEmpty()) {
+            final PasswordGenerator passwordGenerator = new PasswordGenerator();
+            passwordGenerator.setAlphaDown(apiConfig.getPasswordMin());
+            passwordGenerator.setAlphaUpper(apiConfig.getPasswordCaps());
+            passwordGenerator.setNumbersAmount(apiConfig.getPasswordNumbers());
+            passwordGenerator.setSpecialCharsAmount(apiConfig.getPasswordSpecials());
 
-        mailService.addMail(mailDTO);
-        log.info("Envoi de la requête pour récupérer les infos api par mail.");
+            final UserAdminDTO apiUserRequest = new UserAdminDTO();
+            apiUserRequest.setUsername("api");
+            apiUserRequest.setPassword(passwordGenerator.generateRandomPassword());
+            apiUserRequest.setRole(UserRole.MODERATOR);
+            apiUserRequest.setEmail(apiConfig.getEmail());
+            final User user = this.adminMapper.toEntity(apiUserRequest);
+
+            final FunixMailDTO mailDTO = new FunixMailDTO();
+            mailDTO.setFrom("admin@funixgaming.fr");
+            mailDTO.setTo(apiConfig.getEmail());
+            mailDTO.setSubject("[FunixAPI] Identifiants pour le login api.");
+            mailDTO.setText(String.format("username: %s password: %s", user.getUsername(), user.getPassword()));
+
+            mailService.addMail(mailDTO);
+            log.info("Envoi de la requête pour récupérer les infos api par mail.");
+        }
     }
 }
