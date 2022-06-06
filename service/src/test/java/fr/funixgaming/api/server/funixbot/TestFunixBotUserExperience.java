@@ -29,7 +29,6 @@ public class TestFunixBotUserExperience {
     private final MockMvc mockMvc;
     private final JsonHelper jsonHelper;
     private final String route;
-    private final String bearerToken;
 
     private final FunixBotUserExperience first;
     private final FunixBotUserExperience second;
@@ -39,12 +38,10 @@ public class TestFunixBotUserExperience {
     @Autowired
     public TestFunixBotUserExperience(MockMvc mockMvc,
                                       JsonHelper jsonHelper,
-                                      UserTestComponent userTestComponent,
                                       FunixBotUserExperienceRepository repository) throws Exception {
         this.mockMvc = mockMvc;
         this.jsonHelper = jsonHelper;
         this.route = "/funixbot/user/exp/";
-        this.bearerToken = userTestComponent.loginUser(userTestComponent.createModoAccount()).getToken();
 
         repository.deleteAll();
 
@@ -84,8 +81,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetAll() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        final MvcResult result = mockMvc.perform(get(route))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -100,8 +96,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetAllPagination() throws Exception {
-        MvcResult result = mockMvc.perform(get(route + "?page=0&elemsPerPage=2")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        MvcResult result = mockMvc.perform(get(route + "?page=0&elemsPerPage=2"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -111,8 +106,7 @@ public class TestFunixBotUserExperience {
         assertEquals(first.getTwitchUserId(), list.get(0).getTwitchUserId());
         assertEquals(second.getTwitchUserId(), list.get(1).getTwitchUserId());
 
-        result = mockMvc.perform(get(route + "?page=1&elemsPerPage=2")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        result = mockMvc.perform(get(route + "?page=1&elemsPerPage=2"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -125,8 +119,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetFirstRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=1"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -136,8 +129,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetSecondRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=2")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=2"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -147,8 +139,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetThirdRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=3")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=3"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -158,8 +149,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetFourthRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=4")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=4"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -169,8 +159,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetUnranked() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=ouiouiuiu")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=ouiouiuiu"))
                 .andExpect(status().isOk())
                 .andReturn();
 

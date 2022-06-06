@@ -52,6 +52,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .and();
 
         http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
                 .antMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
                 .antMatchers("/mail/**").hasAuthority(UserRole.MODERATOR.getRole())
 
