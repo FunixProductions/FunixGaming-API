@@ -13,4 +13,9 @@ public class FunixBotUserExperienceResource extends ApiResource<FunixBotUserExpe
     public FunixBotUserExperienceResource(FunixBotUserExperienceService funixBotUserExperienceService) {
         super(funixBotUserExperienceService);
     }
+
+    @Override
+    public Integer getRank(String twitchUserId) {
+        return this.getService().getRank(twitchUserId);
+    }
 }
