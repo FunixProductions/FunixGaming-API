@@ -125,7 +125,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetFirstRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "s/rank?twitchUserId=1")
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -136,7 +136,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetSecondRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "s/rank?twitchUserId=2")
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=2")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -147,7 +147,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetThirdRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "s/rank?twitchUserId=3")
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=3")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -158,7 +158,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetFourthRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "s/rank?twitchUserId=4")
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=4")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -169,7 +169,7 @@ public class TestFunixBotUserExperience {
 
     @Test
     public void testGetUnranked() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + "s/rank?twitchUserId=ouiouiuiu")
+        final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=ouiouiuiu")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
                 .andExpect(status().isOk())
                 .andReturn();
