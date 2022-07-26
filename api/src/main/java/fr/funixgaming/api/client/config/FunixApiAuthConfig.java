@@ -21,7 +21,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
     private final FunixApiConfig funixApiConfig;
     private final UserAuthClient userAuthClient;
 
-    private UserTokenDTO tokenCache;
+    private static UserTokenDTO tokenCache = null;
 
     public FunixApiAuthConfig(FunixApiConfig funixApiConfig,
                               UserAuthClient userAuthClient) {
@@ -44,7 +44,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
         final UserTokenDTO tokenDTO;
 
         if (isTokenValid()) {
-            tokenDTO = this.tokenCache;
+            tokenDTO = tokenCache;
         } else {
             tokenDTO = generateNewToken();
         }
@@ -52,7 +52,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
         if (tokenDTO == null) {
             throw new ApiException("Le token d'accès à la funix api est invalide. Veuillez vérifier les identifiants de connexion.");
         } else {
-            this.tokenCache = tokenDTO;
+            tokenCache = tokenDTO;
             return tokenDTO;
         }
     }
@@ -60,7 +60,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
     private boolean isTokenValid() {
         final Date now = Date.from(Instant.now().minusSeconds(60));
 
-        if (this.tokenCache == null || this.tokenCache.getExpirationDate().before(now)) {
+        if (tokenCache == null || tokenCache.getExpirationDate().before(now)) {
             return false;
         } else {
             return isTokenUsable();
@@ -69,7 +69,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
 
     private boolean isTokenUsable() {
         try {
-            final UserTokenDTO token = this.tokenCache;
+            final UserTokenDTO token = tokenCache;
             this.userAuthClient.valid(token.getToken());
 
             return true;
