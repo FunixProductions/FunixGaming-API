@@ -84,7 +84,7 @@ public class FunixApiAuthConfig implements RequestInterceptor {
             loginDTO.setUsername(this.funixApiConfig.getUserApiUsername());
             loginDTO.setPassword(this.funixApiConfig.getUserApiPassword());
 
-            return this.userAuthClient.login(loginDTO);
+            return this.userAuthClient.login(loginDTO, null);
         } catch (FeignException e) {
             throw new ApiException(String.format("Erreur génération token. Erreur code: %s message: %s", e.status(), e.contentUTF8()));
         }
