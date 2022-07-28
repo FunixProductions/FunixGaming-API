@@ -1,6 +1,5 @@
 package fr.funixgaming.api.core.utils.encryption;
 
-import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import org.springframework.stereotype.Component;
 
@@ -17,20 +16,20 @@ import java.util.Base64;
 
 @Component
 public class Encryption {
-    private static final String AES = "AES";
+    private static final String CRYPT_ALGORITHM = "AES";
 
     private final Base64.Encoder base64Encoder;
     private final Base64.Decoder base64Decoder;
     private final Cipher cipher;
     private final Key key;
 
-    public Encryption(final ApiConfig apiConfig) {
+    public Encryption() {
         this.base64Encoder = Base64.getEncoder();
         this.base64Decoder = Base64.getDecoder();
-        this.key = getKeyFromFile(apiConfig.getKeySize());
+        this.key = getKeyFromFile();
 
         try {
-            this.cipher = Cipher.getInstance(AES);
+            this.cipher = Cipher.getInstance(CRYPT_ALGORITHM);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
             throw new ApiException("Une erreur est survenue lors de l'initialisation de la classe de cryptage.", e);
         }
@@ -62,7 +61,7 @@ public class Encryption {
         }
     }
 
-    private static Key getKeyFromFile(final int keySize) {
+    private static Key getKeyFromFile() {
         final Base64.Encoder base64Encoder = Base64.getEncoder();
         final Base64.Decoder base64Decoder = Base64.getDecoder();
         final File keyFile = new File("crypt.key");
@@ -73,8 +72,8 @@ public class Encryption {
                     throw new ApiException("Impossible de créer un nouveau fichier d'encryption.");
                 }
 
-                final KeyGenerator keyGenerator = KeyGenerator.getInstance(AES);
-                keyGenerator.init(keySize);
+                final KeyGenerator keyGenerator = KeyGenerator.getInstance(CRYPT_ALGORITHM);
+                keyGenerator.init(256);
                 final Key key = keyGenerator.generateKey();
 
                 final String keyString = base64Encoder.encodeToString(key.getEncoded());
@@ -89,7 +88,7 @@ public class Encryption {
 
             final String keyString = Files.readString(keyFile.toPath(), StandardCharsets.UTF_8);
             final byte[] decodedKey = base64Decoder.decode(keyString);
-            return new SecretKeySpec(decodedKey, 0, decodedKey.length, AES);
+            return new SecretKeySpec(decodedKey, 0, decodedKey.length, CRYPT_ALGORITHM);
         } catch (Exception e)  {
             throw new ApiException("Une erreur est survenue lors de la création du fichier d'encryption.", e);
         }

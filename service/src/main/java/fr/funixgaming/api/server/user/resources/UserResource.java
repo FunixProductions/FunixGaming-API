@@ -3,12 +3,10 @@ package fr.funixgaming.api.server.user.resources;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import fr.funixgaming.api.client.config.FunixApiConfig;
-import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
 import fr.funixgaming.api.client.user.clients.UserCrudClient;
-import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
@@ -17,9 +15,9 @@ import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.services.GoogleCaptchaService;
 import fr.funixgaming.api.core.utils.network.IPUtils;
-import fr.funixgaming.api.server.mail.services.FunixMailService;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.UserTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +42,7 @@ public class UserResource implements UserCrudClient {
     private final AuthenticationManager authenticationManager;
     private final GoogleCaptchaService captchaService;
     private final UserService userService;
+    private final UserTokenService tokenService;
     private final IPUtils ipUtils;
 
     private final LoadingCache<String, Integer> triesCache = CacheBuilder.newBuilder()
@@ -83,7 +82,7 @@ public class UserResource implements UserCrudClient {
             final User user = (User) authenticate.getPrincipal();
 
             triesCache.invalidate(ipUtils.getClientIp(servletRequest));
-            return userService.generateAccessToken(user);
+            return tokenService.generateAccessToken(user);
         } catch (BadCredentialsException ex) {
             failLogin(servletRequest);
             throw new ApiBadRequestException("Vos identifiants sont incorrects.", ex);

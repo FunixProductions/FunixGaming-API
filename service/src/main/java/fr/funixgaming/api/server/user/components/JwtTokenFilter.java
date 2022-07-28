@@ -3,6 +3,7 @@ package fr.funixgaming.api.server.user.components;
 import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.UserTokenService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +22,9 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
+
     private final UserService userService;
+    private final UserTokenService tokenService;
     private final IPUtils ipUtils;
 
     @Override
@@ -35,14 +38,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get jwt token and validate
         final String token = header.split(" ")[1].trim();
-        if (!userService.isTokenValid(token)) {
+        if (!tokenService.isTokenValid(token)) {
             chain.doFilter(request, response);
             return;
         }
 
-        final UsernamePasswordAuthenticationToken authentication = userService.authenticateToken(token);
+        final UsernamePasswordAuthenticationToken authentication = tokenService.authenticateToken(token);
         final Object principal = authentication.getPrincipal();
 
         if (principal instanceof final User user) {

@@ -5,7 +5,6 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
-import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
 import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
@@ -30,27 +29,19 @@ public class TestUserResourceAuth {
     private final MockMvc mockMvc;
     private final UserTestComponent userTestComponent;
     private final JsonHelper jsonHelper;
-    private final ApiConfig apiConfig;
 
     @Autowired
     public TestUserResourceAuth(MockMvc mockMvc,
                                 UserRepository userRepository,
                                 UserTokenRepository userTokenRepository,
                                 UserTestComponent userTestComponent,
-                                ApiConfig apiConfig,
                                 JsonHelper jsonHelper) {
         this.mockMvc = mockMvc;
         this.userTestComponent = userTestComponent;
         this.jsonHelper = jsonHelper;
-        this.apiConfig = apiConfig;
 
         userTokenRepository.deleteAll();
         userRepository.deleteAll();
-    }
-
-    @Test
-    public void testKeyLength() {
-        assertEquals(192, apiConfig.getKeySize());
     }
 
     @Test
