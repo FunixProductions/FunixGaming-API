@@ -78,8 +78,6 @@ google.recaptcha.key.disabled=false
 
 #For securing some actions by ip on api (example: 127.0.0.1,10.2.4.5)
 config.api.ip-whitelist=${API_WHITELIST}
-#128, 192, or 256 bits for encryption key strength
-config.api.key-size=128
 
 #Mail config
 spring.mail.host=${MAIL_HOST}
