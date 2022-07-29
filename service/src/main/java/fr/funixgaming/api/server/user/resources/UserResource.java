@@ -96,6 +96,17 @@ public class UserResource implements UserCrudClient {
     public void valid() {
     }
 
+    @GetMapping("current")
+    public UserDTO currentUser() {
+        final UserDTO userDTO = this.userService.getCurrentUser();
+
+        if (userDTO == null) {
+            throw new ApiForbiddenException("Vous n'êtes pas connecté.");
+        } else {
+            return userDTO;
+        }
+    }
+
     @GetMapping("{id}")
     public UserDTO findById(@PathVariable("id") String id) {
         final UserDTO userDTO = userService.getCurrentUser();

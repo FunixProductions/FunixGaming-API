@@ -152,7 +152,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             final UserAdminDTO apiUserRequest = new UserAdminDTO();
             apiUserRequest.setUsername("api");
             apiUserRequest.setPassword(passwordGenerator.generateRandomPassword());
-            apiUserRequest.setRole(UserRole.MODERATOR);
+            apiUserRequest.setRole(UserRole.ADMIN);
             apiUserRequest.setEmail(apiConfig.getEmail());
             final User user = this.adminMapper.toEntity(apiUserRequest);
 

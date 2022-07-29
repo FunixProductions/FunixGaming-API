@@ -29,4 +29,7 @@ public interface UserAuthClient {
     @GetMapping("valid")
     void valid(@RequestHeader("Authorization") String token);
 
+    @GetMapping("current")
+    UserDTO current(@RequestHeader("Authorization") String token);
+
 }

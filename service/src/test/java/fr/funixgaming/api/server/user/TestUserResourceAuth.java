@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,6 +129,38 @@ public class TestUserResourceAuth {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(loginDTO)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetCurrentUser() throws Exception {
+        final UserDTO account = userTestComponent.createAccount();
+
+        final UserLoginDTO loginDTO = new UserLoginDTO();
+        loginDTO.setUsername(account.getUsername());
+        loginDTO.setPassword("passwordoui");
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(loginDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final UserTokenDTO tokenDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
+
+        mvcResult = this.mockMvc.perform(get("/user/current")
+                .header("Authorization", "Bearer " + tokenDTO.getToken())
+        ).andExpect(status().isOk()).andReturn();
+        final UserDTO userDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
+
+        assertEquals(tokenDTO.getUser().getUsername(), userDTO.getUsername());
+        assertEquals(tokenDTO.getUser().getEmail(), userDTO.getEmail());
+        assertEquals(tokenDTO.getUser().getRole(), userDTO.getRole());
+        assertEquals(tokenDTO.getUser().getId(), userDTO.getId());
+    }
+
+    @Test
+    public void testFailGetCurrentUserNoAuth() throws Exception {
+        this.mockMvc.perform(get("/user/current")).andExpect(status().isUnauthorized());
     }
 
 }
