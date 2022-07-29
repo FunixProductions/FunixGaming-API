@@ -9,9 +9,7 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
-import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
-import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.services.GoogleCaptchaService;
 import fr.funixgaming.api.core.utils.network.IPUtils;
@@ -109,20 +107,7 @@ public class UserResource implements UserCrudClient {
 
     @GetMapping("{id}")
     public UserDTO findById(@PathVariable("id") String id) {
-        final UserDTO userDTO = userService.getCurrentUser();
-        if (userDTO == null) {
-            throw new ApiException("Vous n'êtes pas connecté à l'application.");
-        }
-
-        if (id.equals("self")) {
-            return userDTO;
-        } else {
-            if (userDTO.getRole().equals(UserRole.ADMIN)) {
-                return userService.findById(id);
-            } else {
-                throw new ApiForbiddenException("Vous n'êtes pas admin pour effectuer cette opération.");
-            }
-        }
+        return userService.findById(id);
     }
 
     @Override
