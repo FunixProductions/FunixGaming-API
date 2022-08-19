@@ -3,9 +3,9 @@ package fr.funixgaming.api.core.crud.services;
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
-import fr.funixgaming.api.core.crud.search.SearchBuilder;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.core.crud.repositories.ApiRepository;
+import fr.funixgaming.api.core.crud.search.SearchBuilder;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
@@ -35,6 +35,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     private final MAPPER mapper;
 
     @Override
+    @Transactional
     public List<DTO> getAll(String page, String elemsPerPage) {
         final int nbrPage;
         final int maxPerPage;
@@ -70,6 +71,7 @@ public abstract class ApiService<DTO extends ApiDTO,
 
     @Override
     @Nullable
+    @Transactional
     public DTO findById(String id) {
         final Optional<ENTITY> entity = repository.findByUuid(id);
 
@@ -81,6 +83,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    @Transactional
     public List<DTO> search(String search, String page, String elemsPerPage) {
         final Page<ENTITY> data;
         final SearchBuilder searchBuilder = new SearchBuilder();
