@@ -12,6 +12,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
@@ -24,31 +28,32 @@ public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY
                                  @NonNull final CriteriaQuery<?> query,
                                  @NonNull final CriteriaBuilder criteriaBuilder) {
         final SearchOperation operation = search.getOperation();
+        final Object valueSearch = castToRequiredType(root.get(search.getKey()).getJavaType(), search.getValue());
 
         switch (operation) {
             case EQUALS -> {
-                return criteriaBuilder.equal(root.get(search.getKey()), search.getValue());
+                return criteriaBuilder.equal(root.get(search.getKey()), valueSearch);
             }
             case NOT_EQUALS -> {
-                return criteriaBuilder.notEqual(root.get(search.getKey()), search.getValue());
+                return criteriaBuilder.notEqual(root.get(search.getKey()), valueSearch);
             }
             case GREATER_THAN -> {
-                return criteriaBuilder.greaterThan(root.get(search.getKey()), search.getValue().toString());
+                return criteriaBuilder.greaterThan(root.get(search.getKey()), valueSearch.toString());
             }
             case GREATER_THAN_OR_EQUAL_TO -> {
-                return criteriaBuilder.greaterThanOrEqualTo(root.get(search.getKey()), search.getValue().toString());
+                return criteriaBuilder.greaterThanOrEqualTo(root.get(search.getKey()), valueSearch.toString());
             }
             case LESS_THAN -> {
-                return criteriaBuilder.lessThan(root.get(search.getKey()), search.getValue().toString());
+                return criteriaBuilder.lessThan(root.get(search.getKey()), valueSearch.toString());
             }
             case LESS_THAN_OR_EQUAL_TO -> {
-                return criteriaBuilder.lessThanOrEqualTo(root.get(search.getKey()), search.getValue().toString());
+                return criteriaBuilder.lessThanOrEqualTo(root.get(search.getKey()), valueSearch.toString());
             }
             case LIKE -> {
-                return criteriaBuilder.like(root.get(search.getKey()), "%" + search.getValue() + "%");
+                return criteriaBuilder.like(root.get(search.getKey()), "%" + valueSearch + "%");
             }
             case NOT_LIKE -> {
-                return criteriaBuilder.notLike(root.get(search.getKey()), "%" + search.getValue() + "%");
+                return criteriaBuilder.notLike(root.get(search.getKey()), "%" + valueSearch + "%");
             }
             case IS_NULL -> {
                 return criteriaBuilder.isNull(root.get(search.getKey()));
@@ -63,6 +68,35 @@ public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY
                 return criteriaBuilder.isFalse(root.get(search.getKey()));
             }
             default -> throw new ApiBadRequestException("Operation " + operation + " is not supported.");
+        }
+    }
+
+    @NonNull
+    private Object castToRequiredType(Class<?> fieldType, String value) {
+        try {
+            if (fieldType.isAssignableFrom(Double.class)) {
+                return Double.valueOf(value);
+            } else if (fieldType.isAssignableFrom(Integer.class)) {
+                return Integer.valueOf(value);
+            } else if (fieldType.isAssignableFrom(Long.class)) {
+                return Long.parseLong(value);
+            } else if (fieldType.isAssignableFrom(String.class)) {
+                return value;
+            } else if (fieldType.isEnum()) {
+                return Enum.valueOf((Class<? extends Enum>) fieldType, value);
+            } else if (fieldType.isAssignableFrom(Boolean.class)) {
+                return Boolean.valueOf(value);
+            } else if (fieldType.isAssignableFrom(UUID.class)) {
+                return UUID.fromString(value);
+            } else if (fieldType.isAssignableFrom(Float.class)) {
+                return Float.valueOf(value);
+            } else if (fieldType.isAssignableFrom(Date.class)) {
+                return Date.from(new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss").parse(value).toInstant());
+            } else {
+                throw new ApiBadRequestException("Type " + fieldType + " is not supported.");
+            }
+        } catch (ParseException e) {
+            throw new ApiBadRequestException("Une erreur est survenue lors de la récupération de la date de la recherche.");
         }
     }
 }

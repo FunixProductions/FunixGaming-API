@@ -65,7 +65,7 @@ public class SearchTests {
         checkSearchSuccess(testMapper.toDto(testDTO1), "data:" + SearchOperation.EQUALS.getOperation() + ":" + testDTO1.getData());
         checkSearchSuccess(testMapper.toDto(testDTO1), "number:" + SearchOperation.EQUALS.getOperation() + ":" + testDTO1.getNumber());
         checkSearchSuccess(testMapper.toDto(testDTO1), "number:" + SearchOperation.GREATER_THAN_OR_EQUAL_TO.getOperation() + ":11");
-        checkSearchSuccess(testMapper.toDto(testDTO1), "number:" + SearchOperation.LESS_THAN_OR_EQUAL_TO.getOperation() + ":10");
+        checkSearchSuccess(testMapper.toDto(testDTO), "number:" + SearchOperation.LESS_THAN_OR_EQUAL_TO.getOperation() + ":10");
         checkSearchSuccess(testMapper.toDto(testDTO), "number:" + SearchOperation.LESS_THAN_OR_EQUAL_TO.getOperation() + ":10,data:" + SearchOperation.EQUALS.getOperation() + ":ouiData");
     }
 

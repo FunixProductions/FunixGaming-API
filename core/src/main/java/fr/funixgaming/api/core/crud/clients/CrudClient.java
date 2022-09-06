@@ -19,6 +19,7 @@ public interface CrudClient<DTO extends ApiDTO> {
      * @param search search Query for search. If empty ignored, empty by default
      *               Example : ?search=field1:operation1:value1,field2:operation2:value2
      *               Real example : ?search=firstName:like:john,lastName:like:doe
+     *               Format for date search : dd-MM-yyyy_HH.mm.ss
      *               Operation can be
      *               - equals (equal)
      *               - not_equals (not equal)

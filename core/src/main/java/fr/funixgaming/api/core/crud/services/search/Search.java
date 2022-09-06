@@ -11,5 +11,5 @@ import lombok.Setter;
 public class Search {
     private String key;
     private SearchOperation operation;
-    private Object value;
+    private String value;
 }
