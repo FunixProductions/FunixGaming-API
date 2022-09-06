@@ -5,6 +5,7 @@ import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,8 +16,8 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
     private final SERVICE service;
 
     @Override
-    public List<DTO> getAll(String page, String elemsPerPage) {
-        return service.getAll(page, elemsPerPage);
+    public Page<DTO> getAll(String page, String elemsPerPage, String search, String sort) {
+        return service.getAll(page, elemsPerPage, search, sort);
     }
 
     @Override
@@ -26,13 +27,8 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
         if (dto != null) {
             return dto;
         } else {
-            throw new ApiNotFoundException(String.format("The entity id: %s is not found.", id));
+            throw new ApiNotFoundException(String.format("The object id: %s does not exists.", id));
         }
-    }
-
-    @Override
-    public List<DTO> search(String search, String page, String elemsPerPage) {
-        return service.search(search, page, elemsPerPage);
     }
 
     @Override
@@ -42,13 +38,7 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
 
     @Override
     public DTO update(DTO request) {
-        final DTO dto = service.update(request);
-
-        if (dto == null) {
-            throw new ApiNotFoundException(String.format("The object id: %s does not exists.", request.getId()));
-        } else {
-            return dto;
-        }
+        return service.update(request);
     }
 
     @Override

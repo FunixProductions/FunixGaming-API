@@ -1,13 +1,17 @@
 package fr.funixgaming.api.core.crud;
 
-import com.google.gson.reflect.TypeToken;
 import fr.funixgaming.api.core.TestApp;
-import fr.funixgaming.api.core.crud.doc.*;
+import fr.funixgaming.api.core.crud.doc.TestDTO;
+import fr.funixgaming.api.core.crud.doc.TestEntity;
+import fr.funixgaming.api.core.crud.doc.TestRepository;
+import fr.funixgaming.api.core.crud.doc.TestService;
 import fr.funixgaming.api.core.utils.JsonHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,24 +31,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 TestApp.class
         }
 )
-public class CoreAppTestCrud {
+public class CrudTests {
     public static final String ROUTE = "/test";
 
     private final JsonHelper gson;
     private final MockMvc mockMvc;
     private final TestRepository repository;
-    private final TestMapper testMapper;
+    private final TestService service;
 
     @Autowired
-    public CoreAppTestCrud(MockMvc mockMvc,
-                           TestRepository repository,
-                           TestMapper testMapper,
-                           JsonHelper gson) {
+    public CrudTests(MockMvc mockMvc,
+                     TestRepository repository,
+                     JsonHelper gson,
+                     TestService service) {
         this.mockMvc = mockMvc;
         this.repository = repository;
-        this.testMapper = testMapper;
         this.gson = gson;
+        this.service = service;
+    }
 
+    @BeforeEach
+    public void cleanDB() {
         repository.deleteAll();
     }
 
@@ -182,18 +189,80 @@ public class CoreAppTestCrud {
             this.repository.save(entity);
         }
 
-        MvcResult mvcResult = mockMvc.perform(get(ROUTE))
-                .andExpect(status().isOk())
-                .andReturn();
+        mockMvc.perform(get(ROUTE)).andExpect(status().isOk());
 
-        Type type = new TypeToken<List<TestDTO>>() {}.getType();
-        final List<TestDTO> entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        final Page<TestDTO> entities = service.getAll(null, null, null, null);
 
-        assertEquals(size, entities.size());
+        assertEquals(size, entities.getNumberOfElements());
         for (final TestDTO entity : entities) {
             assertNotNull(entity.getData());
             assertNotNull(entity.getId());
         }
+    }
+
+    @Test
+    public void testGetAllPaginated() throws Exception {
+        int size = 3;
+
+        for (int i = 0; i < size; ++i) {
+            final TestEntity entity = new TestEntity();
+
+            entity.setData(Integer.toString(i));
+            this.repository.save(entity);
+        }
+
+        mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1")).andExpect(status().isOk());
+
+        Page<TestDTO> entities = service.getAll("0", "1", null, null);
+        assertEquals(1, entities.getNumberOfElements());
+
+        mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=2")).andExpect(status().isOk());
+
+        entities = service.getAll("0", "2", null, null);
+        assertEquals(2, entities.getNumberOfElements());
+    }
+
+    @Test
+    public void testGetAllPaginatedAndSorted() throws Exception {
+        final int startInt = 1000;
+        final int minimalInt = -4000;
+
+        for (int i = 0; i < 3; ++i) {
+            final TestEntity entity = new TestEntity();
+
+            entity.setData(Integer.toString(i));
+            entity.setNumber(startInt + i);
+            this.repository.save(entity);
+        }
+
+        this.repository.save(new TestEntity("test", minimalInt));
+
+        mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
+        Page<TestDTO> entities = service.getAll("0", "1", null, "number:desc");
+        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(startInt + 2, entities.getContent().get(0).getNumber());
+
+        mockMvc.perform(get(ROUTE + "?page=1&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
+        entities = service.getAll("1", "1", null, "number:desc");
+        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(startInt + 1, entities.getContent().get(0).getNumber());
+
+        mockMvc.perform(get(ROUTE + "?page=2&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
+        entities = service.getAll("2", "1", null, "number:desc");
+        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(startInt, entities.getContent().get(0).getNumber());
+
+        mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=3&sort=number:desc")).andExpect(status().isOk());
+        entities = service.getAll("0", "3", null, "number:desc");
+        assertEquals(3, entities.getNumberOfElements());
+        assertEquals(startInt + 2, entities.getContent().get(0).getNumber());
+        assertEquals(startInt + 1, entities.getContent().get(1).getNumber());
+        assertEquals(startInt, entities.getContent().get(2).getNumber());
+
+        mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1&sort=number:asc")).andExpect(status().isOk());
+        entities = service.getAll("0", "1", null, "number:asc");
+        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(minimalInt, entities.getContent().get(0).getNumber());
     }
 
     @Test
@@ -220,23 +289,17 @@ public class CoreAppTestCrud {
 
     @Test
     public void testRemove() throws Exception {
-        Type type = new TypeToken<List<TestDTO>>() {}.getType();
-
         TestEntity entity = new TestEntity();
 
         entity.setData("TEST");
         entity = this.repository.save(entity);
 
-        MvcResult mvcResult = mockMvc.perform(get(ROUTE)).andReturn();
-        System.out.println(mvcResult.getResponse().getContentAsString());
-        List<TestDTO> entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        List<TestDTO> entities = service.getAll(null, null, null, null).getContent();
         assertEquals(1, entities.size());
 
-        mockMvc.perform(delete(ROUTE + "?id=" + entity.getUuid()))
-                .andExpect(status().isOk());
+        mockMvc.perform(delete(ROUTE + "?id=" + entity.getUuid())).andExpect(status().isOk());
 
-        mvcResult = mockMvc.perform(get(ROUTE)).andReturn();
-        entities = gson.fromJson(mvcResult.getResponse().getContentAsString(), type);
+        entities = service.getAll(null, null, null, null).getContent();
         assertEquals(0, entities.size());
     }
 
@@ -244,89 +307,6 @@ public class CoreAppTestCrud {
     public void testRemoveNoId() throws Exception {
         mockMvc.perform(delete(ROUTE))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testSearchNoPagination() throws Exception {
-        TestEntity testDTO = new TestEntity();
-        testDTO.setData("ouiData");
-        testDTO.setNumber(10);
-
-        TestEntity testDTO1 = new TestEntity();
-        testDTO1.setData("NonData");
-        testDTO1.setNumber(11);
-
-        this.repository.save(testDTO);
-        this.repository.save(testDTO1);
-
-        checkSearch(testMapper.toDto(testDTO), "data:" + testDTO.getData());
-        checkSearch(testMapper.toDto(testDTO), "number:" + testDTO.getNumber());
-        checkSearch(testMapper.toDto(testDTO1), "data:" + testDTO1.getData());
-        checkSearch(testMapper.toDto(testDTO1), "number:" + testDTO1.getNumber());
-        checkSearch(testMapper.toDto(testDTO1), "number>11");
-        checkSearch(testMapper.toDto(testDTO), "number<10");
-        checkSearch(testMapper.toDto(testDTO), "number<10,data:ouiData");
-    }
-
-    @Test
-    public void testSearchMultiple() throws Exception {
-        TestEntity testDTO = new TestEntity();
-        testDTO.setData("ouiData");
-        testDTO.setNumber(10);
-
-        TestEntity testDTO1 = new TestEntity();
-        testDTO1.setData("NonData");
-        testDTO1.setNumber(11);
-
-        TestEntity testDTO2 = new TestEntity();
-        testDTO1.setData("NonData");
-        testDTO1.setNumber(-1);
-
-        this.repository.save(testDTO);
-        this.repository.save(testDTO1);
-        this.repository.save(testDTO2);
-
-        checkSearchMultiple(2, "number>0");
-        checkSearchMultiple(2, "data:NonData");
-        checkSearchMultiple(0, "data:NonData2");
-    }
-
-    @Test
-    public void testSearchErrorString() throws Exception {
-        checkSearchFail("data-ouiData");
-        checkSearchFail("oui:");
-        checkSearchFail(":data");
-        checkSearchFail("sdkjqsdhfqkjdshqgfksjdhfgkqsjdhfgkjsdqhfgkqsjdhfgsqkjdhfgksqjdhgf");
-    }
-
-    private void checkSearch(final TestDTO toCheck, final String search) throws Exception {
-        MvcResult result = mockMvc.perform(get(ROUTE + "/search" + "?q=" + search))
-                .andExpect(status().isOk())
-                .andReturn();
-        Type type = new TypeToken<List<TestDTO>>() {}.getType();
-        final List<TestDTO> list = gson.fromJson(result.getResponse().getContentAsString(), type);
-
-        assertEquals(1, list.size());
-        final TestDTO check = list.get(0);
-        assertNotNull(check.getId());
-        assertNotNull(check.getCreatedAt());
-        assertEquals(toCheck.getData(), check.getData());
-        assertEquals(toCheck.getNumber(), check.getNumber());
-    }
-
-    private void checkSearchMultiple(final int nbrToGet, final String search) throws Exception {
-        MvcResult result = mockMvc.perform(get(ROUTE + "/search" + "?q=" + search))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        Type type = new TypeToken<List<TestDTO>>() {}.getType();
-        final List<TestDTO> list = gson.fromJson(result.getResponse().getContentAsString(), type);
-
-        assertEquals(nbrToGet, list.size());
-    }
-
-    private void checkSearchFail(final String search) throws Exception {
-        mockMvc.perform(get(ROUTE + "/search" + "?q=" + search)).andExpect(status().isBadRequest());
     }
 
 }
