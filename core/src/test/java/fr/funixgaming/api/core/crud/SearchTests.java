@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -71,21 +74,13 @@ public class SearchTests {
 
     @Test
     public void testSearchMultiple() throws Exception {
-        TestEntity testDTO = new TestEntity();
-        testDTO.setData("ouiData");
-        testDTO.setNumber(10);
+        final List<TestEntity> testEntities = new ArrayList<>();
 
-        TestEntity testDTO1 = new TestEntity();
-        testDTO1.setData("NonData");
-        testDTO1.setNumber(11);
+        testEntities.add(new TestEntity("ouiData", 10));
+        testEntities.add(new TestEntity("NonData", 11));
+        testEntities.add(new TestEntity("NonData", -1));
 
-        TestEntity testDTO2 = new TestEntity();
-        testDTO1.setData("NonData");
-        testDTO1.setNumber(-1);
-
-        this.repository.save(testDTO);
-        this.repository.save(testDTO1);
-        this.repository.save(testDTO2);
+        this.repository.saveAllAndFlush(testEntities);
 
         checkSearchMultiple(2, String.format("number:%s:0", SearchOperation.GREATER_THAN.getOperation()));
         checkSearchMultiple(1, String.format("number:%s:5", SearchOperation.LESS_THAN.getOperation()));
