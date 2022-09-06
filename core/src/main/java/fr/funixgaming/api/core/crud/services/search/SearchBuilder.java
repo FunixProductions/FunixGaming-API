@@ -12,7 +12,7 @@ public class SearchBuilder {
 
     private final List<Search> params = new ArrayList<>();
 
-    public SearchBuilder with(final String key, final String operation, final Object value) {
+    public SearchBuilder with(final String key, final String operation, final String value) {
         SearchOperation searchOperation = null;
 
         for (final SearchOperation search : SearchOperation.values()) {
