@@ -91,7 +91,7 @@ public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY
             } else if (fieldType.isAssignableFrom(Float.class)) {
                 return Float.valueOf(value);
             } else if (fieldType.isAssignableFrom(Date.class)) {
-                return Date.from(new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss").parse(value).toInstant());
+                return new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss").parse(value);
             } else {
                 throw new ApiBadRequestException("Type " + fieldType + " is not supported.");
             }

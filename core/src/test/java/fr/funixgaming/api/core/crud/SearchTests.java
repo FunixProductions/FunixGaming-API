@@ -12,7 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,9 +79,9 @@ public class SearchTests {
     public void testSearchMultiple() throws Exception {
         final List<TestEntity> testEntities = new ArrayList<>();
 
-        testEntities.add(new TestEntity("ouiData", 10));
-        testEntities.add(new TestEntity("NonData", 11));
-        testEntities.add(new TestEntity("NonData", -1));
+        testEntities.add(new TestEntity("ouiData", 10, Date.from(Instant.now()), null, null, null));
+        testEntities.add(new TestEntity("NonData", 11, null, null, null, null));
+        testEntities.add(new TestEntity("NonData", -1, null, null, null, null));
 
         this.repository.saveAllAndFlush(testEntities);
 
@@ -86,6 +89,72 @@ public class SearchTests {
         checkSearchMultiple(1, String.format("number:%s:5", SearchOperation.LESS_THAN.getOperation()));
         checkSearchMultiple(2, String.format("data:%s:NonData", SearchOperation.EQUALS.getOperation()));
         checkSearchMultiple(0, String.format("data:%s:NonData2", SearchOperation.EQUALS.getOperation()));
+    }
+
+    @Test
+    public void testSpacialOperations() throws Exception {
+        final String dateString = "06-09-2022_18.00.00";
+        final Instant now = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss").parse(dateString).toInstant();
+        final List<TestEntity> testEntities = new ArrayList<>();
+
+        testEntities.add(new TestEntity("ouiData", 10, Date.from(now.minusSeconds(100)), 1.f, 10.0, true));
+        testEntities.add(new TestEntity("NonData", 11, Date.from(now.plusSeconds(60)), 2.f, 5.0, true));
+        testEntities.add(new TestEntity("NonData", -1, Date.from(now.minusSeconds(60)), -10.f, null, false));
+
+        this.repository.saveAllAndFlush(testEntities);
+
+        Page<TestDTO> response = this.testService.getAll("", "", String.format("data:%s:NonData", SearchOperation.NOT_EQUALS.getOperation()), "");
+        assertEquals(1, response.getNumberOfElements());
+        assertEquals("ouiData", response.getContent().get(0).getData());
+
+        response = this.testService.getAll("", "", String.format("data:%s:Non", SearchOperation.LIKE.getOperation()), "");
+        assertEquals(2, response.getNumberOfElements());
+        assertEquals("NonData", response.getContent().get(0).getData());
+        assertEquals("NonData", response.getContent().get(1).getData());
+
+        response = this.testService.getAll("", "", String.format("data:%s:Non", SearchOperation.NOT_LIKE.getOperation()), "");
+        assertEquals(1, response.getNumberOfElements());
+        assertEquals("ouiData", response.getContent().get(0).getData());
+
+        response = this.testService.getAll("", "", String.format("number:%s:10", SearchOperation.GREATER_THAN.getOperation()), "");
+        assertEquals(1, response.getNumberOfElements());
+        assertEquals("NonData", response.getContent().get(0).getData());
+        assertEquals(11, response.getContent().get(0).getNumber());
+
+        response = this.testService.getAll("", "", String.format("number:%s:10", SearchOperation.LESS_THAN.getOperation()), "");
+        assertEquals(1, response.getNumberOfElements());
+        assertEquals("NonData", response.getContent().get(0).getData());
+        assertEquals(-1, response.getContent().get(0).getNumber());
+
+        response = this.testService.getAll("", "", String.format("number:%s:10", SearchOperation.GREATER_THAN_OR_EQUAL_TO.getOperation()), "number:asc");
+        assertEquals(2, response.getNumberOfElements());
+        assertEquals("ouiData", response.getContent().get(0).getData());
+        assertEquals("NonData", response.getContent().get(1).getData());
+
+        response = this.testService.getAll("", "", String.format("aDouble:%s:10", SearchOperation.IS_NULL.getOperation()), "");
+        assertEquals(1, response.getNumberOfElements());
+        assertEquals("NonData", response.getContent().get(0).getData());
+        assertEquals(-1, response.getContent().get(0).getNumber());
+
+        response = this.testService.getAll("", "", String.format("aDouble:%s:4", SearchOperation.GREATER_THAN.getOperation()), "aDouble:desc");
+        assertEquals(2, response.getNumberOfElements());
+        assertEquals(10.0, response.getContent().get(0).getADouble());
+        assertEquals(5.0, response.getContent().get(1).getADouble());
+
+        response = this.testService.getAll("", "", String.format("data:%s:o", SearchOperation.IS_NOT_NULL.getOperation()), "");
+        assertEquals(3, response.getNumberOfElements());
+
+        response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.LESS_THAN.getOperation(), dateString), "");
+        assertEquals(1, response.getNumberOfElements());
+
+        response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.GREATER_THAN.getOperation(), dateString), "");
+        assertEquals(0, response.getNumberOfElements());
+
+        response = this.testService.getAll("", "", String.format("aBoolean:%s:o", SearchOperation.IS_TRUE.getOperation()), "");
+        assertEquals(2, response.getNumberOfElements());
+
+        response = this.testService.getAll("", "", String.format("aBoolean:%s:o", SearchOperation.IS_FALSE.getOperation()), "");
+        assertEquals(1, response.getNumberOfElements());
     }
 
     @Test
