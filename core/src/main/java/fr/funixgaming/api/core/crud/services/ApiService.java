@@ -5,7 +5,7 @@ import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.core.crud.repositories.ApiRepository;
-import fr.funixgaming.api.core.crud.search.SearchBuilder;
+import fr.funixgaming.api.core.crud.services.search.SearchBuilder;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
@@ -15,14 +15,13 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Getter
 @RequiredArgsConstructor
@@ -36,7 +35,103 @@ public abstract class ApiService<DTO extends ApiDTO,
 
     @Override
     @Transactional
-    public List<DTO> getAll(String page, String elemsPerPage) {
+    public Page<DTO> getAll(@Nullable String page, @Nullable String elemsPerPage, @Nullable String search, @Nullable String sort) {
+        final Specification<ENTITY> specificationSearch = getSpecification(search);
+        final Pageable pageable = getPage(page, elemsPerPage, sort);
+
+        return repository.findAll(specificationSearch, pageable).map(mapper::toDto);
+    }
+
+    @Override
+    @Nullable
+    @Transactional
+    public DTO findById(String id) {
+        final Optional<ENTITY> entity = repository.findByUuid(id);
+        return entity.map(mapper::toDto).orElse(null);
+    }
+
+    @Override
+    @NonNull
+    @Transactional
+    public DTO create(DTO request) {
+        final ENTITY entity = mapper.toEntity(request);
+
+        beforeSavingEntity(request, entity);
+        return mapper.toDto(repository.save(entity));
+    }
+
+    @Override
+    @NonNull
+    @Transactional
+    public DTO update(DTO request) {
+        if (request.getId() == null) {
+            throw new ApiBadRequestException("Vous n'avez pas spécifié d'id.");
+        }
+
+        final Optional<ENTITY> search = repository.findByUuid(request.getId().toString());
+        if (search.isPresent()) {
+            ENTITY entity = search.get();
+            final ENTITY entRequest = mapper.toEntity(request);
+
+            entRequest.setId(null);
+            entRequest.setUpdatedAt(Date.from(Instant.now()));
+            mapper.patch(entRequest, entity);
+
+            beforeSavingEntity(request, entity);
+            entity = repository.save(entity);
+
+            return mapper.toDto(entity);
+        } else {
+            throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", request.getId()));
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<DTO> update(List<DTO> request) {
+        final List<DTO> toSend = new ArrayList<>();
+
+        for (final DTO data : request) {
+            if (data.getId() != null) {
+                toSend.add(this.update(data));
+            }
+        }
+        return toSend;
+    }
+
+    @Override
+    @Transactional
+    public void delete(String id) {
+        final Optional<ENTITY> search = repository.findByUuid(id);
+
+        if (search.isPresent()) {
+            final ENTITY entity = search.get();
+            repository.delete(entity);
+        } else {
+            throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", id));
+        }
+    }
+
+    @Override
+    @Transactional
+    public void delete(String... ids) {
+        final Set<String> idList = new HashSet<>(Arrays.asList(ids));
+        final Iterable<ENTITY> search = this.repository.findAllByUuidIn(idList);
+        repository.deleteAll(search);
+    }
+
+    /**
+     * Method used when you need to add some logic before saving an entity.
+     * Override it when you have specific logic to add.
+     *
+     * @param request request received.
+     * @param entity entity fetched from database.
+     */
+    public void beforeSavingEntity(DTO request, ENTITY entity) {
+    }
+
+    private Pageable getPage(final String page, final String elemsPerPage, @Nullable final String sortQuery) {
+        final Sort sort = getSort(sortQuery);
         final int nbrPage;
         final int maxPerPage;
 
@@ -57,128 +152,66 @@ public abstract class ApiService<DTO extends ApiDTO,
                 maxPerPage = max;
             }
         } catch (NumberFormatException e) {
-            throw new ApiBadRequestException("Vous avez rentré un nombre invalide.", e);
+            throw new ApiBadRequestException("Vous avez entré un nombre invalide.", e);
         }
 
-        final Pageable pageable = PageRequest.of(nbrPage, maxPerPage);
-        final List<DTO> toSend = new ArrayList<>();
-
-        for (final ENTITY entity : repository.findAll(pageable)) {
-            toSend.add(mapper.toDto(entity));
-        }
-        return toSend;
+        return PageRequest.of(nbrPage, maxPerPage, sort);
     }
 
-    @Override
-    @Nullable
-    @Transactional
-    public DTO findById(String id) {
-        final Optional<ENTITY> entity = repository.findByUuid(id);
-
-        if (entity.isPresent()) {
-            return mapper.toDto(entity.get());
+    private Sort getSort(@Nullable final String sortQuery) {
+        if (Strings.isEmpty(sortQuery)) {
+            return Sort.unsorted();
         } else {
+            final String[] sort = sortQuery.split(",");
+            final List<Sort.Order> orders = new ArrayList<>();
+
+            for (final String s : sort) {
+                final String[] sortElem = s.split(":");
+
+                if (sortElem.length == 2) {
+                    final String field = sortElem[0];
+                    final String order = sortElem[1];
+
+                    if (order.equalsIgnoreCase("asc")) {
+                        orders.add(Sort.Order.asc(field));
+                    } else if (order.equalsIgnoreCase("desc")) {
+                        orders.add(Sort.Order.desc(field));
+                    } else {
+                        throw new ApiBadRequestException("Vous avez entré un ordre de tri invalide. (asc ou desc)");
+                    }
+                } else {
+                    throw new ApiBadRequestException("Vous avez entré un ordre de tri invalide. (asc ou desc)");
+                }
+            }
+
+            return Sort.by(orders);
+        }
+    }
+
+    @Nullable
+    private Specification<ENTITY> getSpecification(@Nullable final String search) {
+        if (Strings.isEmpty(search)) {
             return null;
         }
-    }
 
-    @Override
-    @Transactional
-    public List<DTO> search(String search, String page, String elemsPerPage) {
-        final Page<ENTITY> data;
         final SearchBuilder searchBuilder = new SearchBuilder();
-        final Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(elemsPerPage));
+        final String[] searchs = search.split(",");
 
-        if (!Strings.isEmpty(search)) {
-            final Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-            final Matcher matcher = pattern.matcher(search + ",");
+        for (final String searchQuery : searchs) {
+            final String[] searchSplit = searchQuery.split(":");
 
-            while (matcher.find()) {
-                searchBuilder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-            }
+            if (searchSplit.length != 3) {
+                throw new ApiBadRequestException("La recherche est invalide. Vous devez respecter le format suivant : key:operation:value");
+            } else {
+                final String key = searchSplit[0];
+                final String operation = searchSplit[1];
+                final String value = searchSplit[2];
 
-            final Specification<ENTITY> specification = searchBuilder.build();
-            data = repository.findAll(specification, pageable);
-        } else {
-            data = repository.findAll(pageable);
-        }
-
-        final List<DTO> result = new ArrayList<>();
-        for (final ENTITY entity : data) {
-            result.add(mapper.toDto(entity));
-        }
-        return result;
-    }
-
-    @Override
-    @Transactional
-    public DTO create(DTO request) {
-        final ENTITY entity = mapper.toEntity(request);
-        return mapper.toDto(repository.save(entity));
-    }
-
-    @Override
-    @Nullable
-    @Transactional
-    public DTO update(DTO request) {
-        return patch(request, getMapper(), getRepository());
-    }
-
-    @Override
-    @Transactional
-    public List<DTO> update(List<DTO> request) {
-        final List<DTO> toSend = new ArrayList<>();
-
-        for (final DTO data : request) {
-            if (data.getId() != null) {
-                toSend.add(patch(data, getMapper(), getRepository()));
+                searchBuilder.with(key, operation, value);
             }
         }
-        return toSend;
+
+        return searchBuilder.build();
     }
 
-    @Override
-    @Transactional
-    public void delete(String id) {
-        final Optional<ENTITY> search = repository.findByUuid(id);
-
-        if (search.isPresent()) {
-            final ENTITY entity = search.get();
-            repository.delete(entity);
-        } else {
-            throw new ApiNotFoundException("L'entité que vous voulez supprimer n'existe pas.");
-        }
-    }
-
-    @Override
-    @Transactional
-    public void delete(String... ids) {
-        final Set<String> idList = new HashSet<>(Arrays.asList(ids));
-        final Iterable<ENTITY> search = this.repository.findAllByUuidIn(idList);
-        repository.deleteAll(search);
-    }
-
-    @Nullable
-    public static <DTO extends ApiDTO, ENTITY extends ApiEntity> DTO patch(@NonNull DTO request,
-                                                                           ApiMapper<ENTITY, DTO> apiMapper,
-                                                                           ApiRepository<ENTITY> apiRepository) {
-        if (request.getId() == null) {
-            throw new ApiBadRequestException("Pas d'id spécifié pour patch.");
-        }
-
-        final Optional<ENTITY> search = apiRepository.findByUuid(request.getId().toString());
-        if (search.isPresent()) {
-            ENTITY entity = search.get();
-            final ENTITY entRequest = apiMapper.toEntity(request);
-
-            entRequest.setId(null);
-            entRequest.setUpdatedAt(Date.from(Instant.now()));
-            apiMapper.patch(entRequest, entity);
-            entity = apiRepository.save(entity);
-
-            return apiMapper.toDto(entity);
-        } else {
-            return null;
-        }
-    }
 }

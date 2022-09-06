@@ -1,5 +1,6 @@
-package fr.funixgaming.api.core.crud.search;
+package fr.funixgaming.api.core.crud.services.search;
 
+import fr.funixgaming.api.core.crud.enums.SearchOperation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Search {
     private String key;
-    private String operation;
+    private SearchOperation operation;
     private Object value;
 }
