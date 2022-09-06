@@ -37,15 +37,16 @@ public class SearchBuilder {
 
         final List<Specification<ENTITY>> specifications = new ArrayList<>();
         for (final Search search : params) {
-            final ApiSearch<ENTITY> apiSearch = new ApiSearch<ENTITY>(search);
+            final ApiSearch<ENTITY> apiSearch = new ApiSearch<>(search);
+
             specifications.add(apiSearch);
         }
 
-        Specification<ENTITY> search = specifications.get(0);
+        Specification<ENTITY> search = Specification.where(specifications.get(0));
         final int size = specifications.size();
 
         for (int i = 1; i < size; ++i) {
-            search = Specification.where(search).and(specifications.get(i));
+            search = search.and(specifications.get(i));
         }
 
         return search;
