@@ -35,7 +35,7 @@ public class SearchBuilder {
             throw new ApiBadRequestException("Vous n'avez pas spécifié de champs de recherche.");
         }
 
-        final List<Specification<ENTITY>> specifications = new ArrayList<>();
+        final List<ApiSearch<ENTITY>> specifications = new ArrayList<>();
         for (final Search search : params) {
             final ApiSearch<ENTITY> apiSearch = new ApiSearch<>(search);
 
@@ -43,7 +43,7 @@ public class SearchBuilder {
         }
 
         Specification<ENTITY> search = Specification.where(specifications.get(0));
-        final int size = specifications.size();
+        final int size = params.size();
 
         for (int i = 1; i < size; ++i) {
             search = search.and(specifications.get(i));
