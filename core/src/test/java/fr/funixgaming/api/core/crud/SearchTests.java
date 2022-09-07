@@ -4,6 +4,7 @@ import fr.funixgaming.api.core.TestApp;
 import fr.funixgaming.api.core.crud.doc.*;
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
 import fr.funixgaming.api.core.utils.JsonHelper;
+import fr.funixgaming.api.core.utils.time.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class SearchTests {
 
     public static final String ROUTE = "/test";
+
+    private final String dateString = "06-09-2022_18.00.00";
 
     @Autowired
     private TestRepository repository;
@@ -79,9 +81,9 @@ public class SearchTests {
     public void testSearchMultiple() throws Exception {
         final List<TestEntity> testEntities = new ArrayList<>();
 
-        testEntities.add(new TestEntity("ouiData", 10, Date.from(Instant.now()), null, null, null));
-        testEntities.add(new TestEntity("NonData", 11, null, null, null, null));
-        testEntities.add(new TestEntity("NonData", -1, null, null, null, null));
+        testEntities.add(new TestEntity("ouiData", 10, Date.from(Instant.now()), null, null, null, null));
+        testEntities.add(new TestEntity("NonData", 11, null, null, null, null, null));
+        testEntities.add(new TestEntity("NonData", -1, null, null, null, null, null));
 
         this.repository.saveAllAndFlush(testEntities);
 
@@ -93,13 +95,12 @@ public class SearchTests {
 
     @Test
     public void testSpacialOperations() throws Exception {
-        final String dateString = "06-09-2022_18.00.00";
-        final Instant now = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss").parse(dateString).toInstant();
+        final Instant now = TimeUtils.getTimeFromFrenchZone("dd-MM-yyyy_HH.mm.ss", dateString);
         final List<TestEntity> testEntities = new ArrayList<>();
 
-        testEntities.add(new TestEntity("ouiData", 10, Date.from(now.minusSeconds(100)), 1.f, 10.0, true));
-        testEntities.add(new TestEntity("NonData", 11, Date.from(now.plusSeconds(60)), 2.f, 5.0, true));
-        testEntities.add(new TestEntity("NonData", -1, Date.from(now.minusSeconds(60)), -10.f, null, false));
+        testEntities.add(new TestEntity("ouiData", 10, Date.from(now.minusSeconds(100)), 1.f, 10.0, true, TestEnum.ONE));
+        testEntities.add(new TestEntity("NonData", 11, Date.from(now.plusSeconds(60)), 2.f, 5.0, true, TestEnum.TWO));
+        testEntities.add(new TestEntity("NonData", -1, Date.from(now.minusSeconds(60)), -10.f, null, false, TestEnum.THREE));
 
         this.repository.saveAllAndFlush(testEntities);
 
@@ -144,17 +145,24 @@ public class SearchTests {
         response = this.testService.getAll("", "", String.format("data:%s:o", SearchOperation.IS_NOT_NULL.getOperation()), "");
         assertEquals(3, response.getNumberOfElements());
 
-        response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.LESS_THAN.getOperation(), dateString), "");
-        assertEquals(1, response.getNumberOfElements());
-
-        response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.GREATER_THAN.getOperation(), dateString), "");
-        assertEquals(0, response.getNumberOfElements());
-
         response = this.testService.getAll("", "", String.format("aBoolean:%s:o", SearchOperation.IS_TRUE.getOperation()), "");
         assertEquals(2, response.getNumberOfElements());
 
         response = this.testService.getAll("", "", String.format("aBoolean:%s:o", SearchOperation.IS_FALSE.getOperation()), "");
         assertEquals(1, response.getNumberOfElements());
+
+        response = this.testService.getAll("", "", String.format("testEnum:%s:%s", SearchOperation.EQUALS.getOperation(), TestEnum.THREE), "");
+        assertEquals(1, response.getNumberOfElements());
+        assertEquals(TestEnum.THREE, response.getContent().get(0).getTestEnum());
+        assertEquals(-1, response.getContent().get(0).getNumber());
+    }
+
+    public void testSearchDate() {
+        Page<TestDTO> response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.LESS_THAN.getOperation(), dateString), "");
+        assertEquals(1, response.getNumberOfElements());
+
+        response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.GREATER_THAN.getOperation(), dateString), "");
+        assertEquals(0, response.getNumberOfElements());
     }
 
     @Test
@@ -169,6 +177,7 @@ public class SearchTests {
         checkSearchFail("data:slkdj:oui,oui:u:a");
         checkSearchFail("data:" + SearchOperation.EQUALS);
         checkSearchFail("data:" + SearchOperation.EQUALS + ":oui,oui:d");
+        checkSearchFail("proutDDDDDDD:" + SearchOperation.EQUALS + ":oui");
     }
 
     private void checkSearchSuccess(final TestDTO toCheck, final String search) throws Exception {
