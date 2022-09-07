@@ -15,4 +15,5 @@ public class TestDTO extends ApiDTO {
     private Float aFloat;
     private Double aDouble;
     private Boolean aBoolean;
+    private TestEnum testEnum;
 }

@@ -235,7 +235,7 @@ public class CrudTests {
             this.repository.save(entity);
         }
 
-        this.repository.save(new TestEntity("test", minimalInt, null, null, null, null));
+        this.repository.save(new TestEntity("test", minimalInt, null, null, null, null, null));
 
         mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
         Page<TestDTO> entities = service.getAll("0", "1", null, "number:desc");

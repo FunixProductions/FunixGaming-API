@@ -21,4 +21,5 @@ public class TestEntity extends ApiEntity {
     private Float aFloat;
     private Double aDouble;
     private Boolean aBoolean;
+    private TestEnum testEnum;
 }
