@@ -1,9 +1,11 @@
 package fr.funixgaming.api.server.user.entities;
 
+import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.server.converters.EncryptionString;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +20,14 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity(name = "api_users")
+@NoArgsConstructor
 public class User extends ApiEntity implements UserDetails {
+
+    public User(UserCreationDTO registerRequest) {
+        this.username = registerRequest.getUsername();
+        this.email = registerRequest.getEmail();
+    }
+
     @Column(nullable = false, unique = true)
     private String username;
 

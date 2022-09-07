@@ -123,9 +123,10 @@ public class UserTokenService {
     }
 
     @Transactional
-    public void invalidTokens(final UUID userUUID) {
-        final Optional<User> search = userRepository.findByUuid(userUUID.toString());
+    public void invalidTokens(@Nullable final UUID userUUID) {
+        if (userUUID == null) return;
 
+        final Optional<User> search = userRepository.findByUuid(userUUID.toString());
         if (search.isPresent()) {
             final User user = search.get();
             final Set<UserToken> tokens = user.getTokens();

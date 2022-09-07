@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class UserAdminDTO extends UserDTO {
+public class UserSecretsDTO extends UserDTO {
     @NotBlank
     private String password;
 }

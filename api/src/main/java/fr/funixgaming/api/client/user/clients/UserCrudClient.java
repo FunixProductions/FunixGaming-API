@@ -2,12 +2,12 @@ package fr.funixgaming.api.client.user.clients;
 
 import fr.funixgaming.api.client.config.FunixApiAuthConfig;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
-import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @FeignClient(
         name = "UserCrud",
@@ -17,17 +17,19 @@ import java.util.List;
 )
 public interface UserCrudClient {
     @GetMapping
-    List<UserDTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
-                         @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage);
+    Page<UserDTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
+                         @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage,
+                         @RequestParam(value = "search", defaultValue = "") String search,
+                         @RequestParam(value = "sort", defaultValue = "") String sort);
 
     @GetMapping("{id}")
     UserDTO findById(@PathVariable("id") String id);
 
     @PostMapping
-    UserDTO create(@RequestBody @Valid UserAdminDTO request);
+    UserDTO create(@RequestBody @Valid UserSecretsDTO request);
 
     @PatchMapping
-    UserDTO update(@RequestBody UserAdminDTO request);
+    UserDTO update(@RequestBody UserSecretsDTO request);
 
     @DeleteMapping
     void delete(@RequestParam String id);
