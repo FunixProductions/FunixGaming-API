@@ -38,30 +38,47 @@ public abstract class ApiService<DTO extends ApiDTO,
     public Page<DTO> getAll(@Nullable String page, @Nullable String elemsPerPage, @Nullable String search, @Nullable String sort) {
         final Specification<ENTITY> specificationSearch = getSpecification(search);
         final Pageable pageable = getPage(page, elemsPerPage, sort);
+        final Page<DTO> toReturn = repository.findAll(specificationSearch, pageable).map(mapper::toDto);
 
-        return repository.findAll(specificationSearch, pageable).map(mapper::toDto);
+        for (final DTO dto : toReturn) {
+            beforeSendingDTO(dto, null);
+        }
+        return toReturn;
     }
 
     @Override
     @Nullable
     @Transactional
     public DTO findById(String id) {
-        final Optional<ENTITY> entity = repository.findByUuid(id);
-        return entity.map(mapper::toDto).orElse(null);
+        final Optional<ENTITY> search = repository.findByUuid(id);
+
+        if (search.isPresent()) {
+            final ENTITY entity = search.get();
+            final DTO response = mapper.toDto(entity);
+
+            beforeSendingDTO(response, entity);
+            return response;
+        } else {
+            return null;
+        }
     }
 
-    @Override
     @NonNull
+    @Override
     @Transactional
     public DTO create(DTO request) {
-        final ENTITY entity = mapper.toEntity(request);
+        ENTITY entity = mapper.toEntity(request);
 
         beforeSavingEntity(request, entity);
-        return mapper.toDto(repository.save(entity));
+        entity = repository.save(entity);
+
+        final DTO dto = mapper.toDto(repository.save(entity));
+        beforeSendingDTO(dto, entity);
+        return dto;
     }
 
-    @Override
     @NonNull
+    @Override
     @Transactional
     public DTO update(DTO request) {
         if (request.getId() == null) {
@@ -80,7 +97,9 @@ public abstract class ApiService<DTO extends ApiDTO,
             beforeSavingEntity(request, entity);
             entity = repository.save(entity);
 
-            return mapper.toDto(entity);
+            final DTO dto = mapper.toDto(entity);
+            beforeSendingDTO(dto, entity);
+            return dto;
         } else {
             throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", request.getId()));
         }
@@ -106,6 +125,8 @@ public abstract class ApiService<DTO extends ApiDTO,
 
         if (search.isPresent()) {
             final ENTITY entity = search.get();
+
+            beforeDeletingEntity(entity);
             repository.delete(entity);
         } else {
             throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", id));
@@ -117,6 +138,10 @@ public abstract class ApiService<DTO extends ApiDTO,
     public void delete(String... ids) {
         final Set<String> idList = new HashSet<>(Arrays.asList(ids));
         final Iterable<ENTITY> search = this.repository.findAllByUuidIn(idList);
+
+        for (final ENTITY entity : search) {
+            beforeDeletingEntity(entity);
+        }
         repository.deleteAll(search);
     }
 
@@ -127,7 +152,24 @@ public abstract class ApiService<DTO extends ApiDTO,
      * @param request request received.
      * @param entity entity fetched from database.
      */
-    public void beforeSavingEntity(DTO request, ENTITY entity) {
+    public void beforeSavingEntity(@NonNull DTO request, @NonNull ENTITY entity) {
+    }
+
+    /**
+     * Method used to when you need to
+     * add some logic before sending DTO to client.
+     *
+     * @param dto dto fetched from database.
+     * @param entity entity fetched from database.
+     */
+    public void beforeSendingDTO(@NonNull DTO dto, @Nullable ENTITY entity) {
+    }
+
+    /**
+     * Method used when you need to add some logic before removing an entity.
+     * @param entity entity fetched from database.
+     */
+    public void beforeDeletingEntity(@NonNull ENTITY entity) {
     }
 
     private Pageable getPage(final String page, final String elemsPerPage, @Nullable final String sortQuery) {

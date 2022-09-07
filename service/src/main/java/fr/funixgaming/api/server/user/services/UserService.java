@@ -15,6 +15,7 @@ import fr.funixgaming.api.server.mail.services.FunixMailService;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.lang.Nullable;
@@ -86,7 +87,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     }
 
     @Override
-    public void beforeSavingEntity(UserDTO request, User entity) {
+    public void beforeSavingEntity(@NonNull UserDTO request, @NonNull User entity) {
         if (request instanceof final UserSecretsDTO secretsDTO) {
 
             if (Strings.isNotBlank(secretsDTO.getPassword())) {
