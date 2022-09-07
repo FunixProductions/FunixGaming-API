@@ -3,22 +3,20 @@ package fr.funixgaming.api.server.user.services;
 import fr.funixgaming.api.client.config.FunixApiConfig;
 import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
-import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
-import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
 import fr.funixgaming.api.server.mail.services.FunixMailService;
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.mappers.UserAdminMapper;
-import fr.funixgaming.api.server.user.mappers.UserAuthMapper;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -34,9 +32,6 @@ import java.util.Optional;
 @Service
 public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
 
-    private final UserAuthMapper authMapper;
-    private final UserAdminMapper adminMapper;
-
     private final FunixMailService mailService;
     private final UserTokenService tokenService;
 
@@ -45,15 +40,11 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     public UserService(UserRepository repository,
                        UserMapper mapper,
-                       UserAdminMapper adminMapper,
-                       UserAuthMapper userAuthMapper,
                        FunixMailService funixMailService,
                        UserTokenService tokenService,
                        FunixApiConfig apiConfig,
                        IPUtils ipUtils) {
         super(repository, mapper);
-        this.authMapper = userAuthMapper;
-        this.adminMapper = adminMapper;
         this.mailService = funixMailService;
         this.apiConfig = apiConfig;
         this.tokenService = tokenService;
@@ -63,24 +54,53 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
     }
 
     @Transactional
-    public UserDTO create(final UserCreationDTO userCreationDTO) {
+    public UserDTO register(final UserCreationDTO userCreationDTO) {
         if (!userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
             throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
         }
 
         final Optional<User> search = this.getRepository().findByUsername(userCreationDTO.getUsername());
-
         if (search.isPresent()) {
             throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", userCreationDTO.getUsername()));
         } else {
-            final User request = this.authMapper.toEntity(userCreationDTO);
+            final User request = new User(userCreationDTO);
 
-            if (request.getUsername().equalsIgnoreCase("TheGoatSystemAdmin")) {
-                request.setRole(UserRole.ADMIN);
+            if (userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
+                request.setPassword(userCreationDTO.getPassword());
+                return getMapper().toDto(getRepository().save(request));
+            } else {
+                throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
             }
-            return this.getMapper().toDto(this.getRepository().save(request));
         }
 
+    }
+
+    @Transactional
+    public UserDTO create(UserSecretsDTO request) {
+        return super.create(request);
+    }
+
+    @Transactional
+    public UserDTO update(UserSecretsDTO request) {
+        return super.update(request);
+    }
+
+    @Override
+    public void beforeSavingEntity(UserDTO request, User entity) {
+        if (request instanceof final UserSecretsDTO secretsDTO) {
+
+            if (Strings.isNotBlank(secretsDTO.getPassword())) {
+                entity.setPassword(secretsDTO.getPassword());
+                tokenService.invalidTokens(request.getId());
+            }
+
+        }
+    }
+
+    public void checkWhitelist(final String ip, final String username) {
+        if (username.equalsIgnoreCase("api") && !ipUtils.canAccess(ip)) {
+            throw new ApiForbiddenException("Vous n'êtes pas whitelisté.");
+        }
     }
 
     @Nullable
@@ -108,38 +128,7 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                 );
     }
 
-    @Transactional
-    public UserDTO create(UserAdminDTO request) {
-        final User creation = this.adminMapper.toEntity(request);
-        return this.getMapper().toDto(getRepository().save(creation));
-    }
-
-    @Transactional
-    public UserDTO update(UserAdminDTO request) {
-        final UserAdminDTO adminDTO = ApiService.patch(request, adminMapper, getRepository());
-
-        if (adminDTO != null) {
-            tokenService.invalidTokens(request.getId());
-
-            return adminDTO;
-        } else {
-            throw new ApiNotFoundException(String.format("L'utilisateur id %s n'existe pas.", request.getId()));
-        }
-    }
-
-    @Override
-    public void delete(String id) {
-        super.delete(id);
-    }
-
-    public void checkWhitelist(final String ip, final String username) {
-        if (username.equalsIgnoreCase("api") && !ipUtils.canAccess(ip)) {
-            throw new ApiForbiddenException("Vous n'êtes pas whitelisté.");
-        }
-    }
-
-    @Transactional
-    public void sendApiUserMail() {
+    private void sendApiUserMail() {
         final Optional<User> search = this.getRepository().findByUsername("api");
 
         if (search.isEmpty()) {
@@ -149,12 +138,12 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             passwordGenerator.setNumbersAmount(apiConfig.getPasswordNumbers());
             passwordGenerator.setSpecialCharsAmount(apiConfig.getPasswordSpecials());
 
-            final UserAdminDTO apiUserRequest = new UserAdminDTO();
-            apiUserRequest.setUsername("api");
-            apiUserRequest.setPassword(passwordGenerator.generateRandomPassword());
-            apiUserRequest.setRole(UserRole.ADMIN);
-            apiUserRequest.setEmail(apiConfig.getEmail());
-            final User user = this.adminMapper.toEntity(apiUserRequest);
+            User user = new User();
+            user.setUsername("api");
+            user.setPassword(passwordGenerator.generateRandomPassword());
+            user.setRole(UserRole.ADMIN);
+            user.setEmail(apiConfig.getEmail());
+            user = super.getRepository().save(user);
 
             final FunixMailDTO mailDTO = new FunixMailDTO();
             mailDTO.setFrom("admin@funixgaming.fr");

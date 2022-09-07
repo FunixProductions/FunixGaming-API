@@ -70,7 +70,7 @@ public class WebSecurity {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager() {
         return new FunixApiAuth(userService);
     }
 

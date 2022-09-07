@@ -6,9 +6,9 @@ import com.google.common.cache.LoadingCache;
 import fr.funixgaming.api.client.user.clients.UserCrudClient;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
-import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.services.GoogleCaptchaService;
@@ -19,6 +19,7 @@ import fr.funixgaming.api.server.user.services.UserTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("user")
 @RequiredArgsConstructor
 public class UserResource implements UserCrudClient {
-    private static final int MAX_ATTEMPT = 5;
+    private static final int MAX_ATTEMPT = 8;
 
     private final AuthenticationManager authenticationManager;
     private final GoogleCaptchaService captchaService;
@@ -44,7 +44,7 @@ public class UserResource implements UserCrudClient {
     private final IPUtils ipUtils;
 
     private final LoadingCache<String, Integer> triesCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(1, TimeUnit.HOURS).build(new CacheLoader<>() {
+            .expireAfterWrite(10, TimeUnit.MINUTES).build(new CacheLoader<>() {
                 @Override
                 @NonNull
                 public Integer load(@NonNull String s) {
@@ -60,7 +60,7 @@ public class UserResource implements UserCrudClient {
             captchaService.checkCode(servletRequest);
         }
 
-        return this.userService.create(request);
+        return this.userService.register(request);
     }
 
     @PostMapping("login")
@@ -111,18 +111,17 @@ public class UserResource implements UserCrudClient {
     }
 
     @Override
-    public List<UserDTO> getAll(String page,
-                                String elemsPerPage) {
-        return userService.getAll(page, elemsPerPage);
+    public Page<UserDTO> getAll(String page, String elemsPerPage, String search, String sort) {
+        return userService.getAll(page, elemsPerPage, search, sort);
     }
 
     @Override
-    public UserDTO create(UserAdminDTO request) {
+    public UserDTO create(UserSecretsDTO request) {
         return userService.create(request);
     }
 
     @Override
-    public UserDTO update(UserAdminDTO request) {
+    public UserDTO update(UserSecretsDTO request) {
         return userService.update(request);
     }
 

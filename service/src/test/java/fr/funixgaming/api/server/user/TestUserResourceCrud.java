@@ -1,9 +1,8 @@
 package fr.funixgaming.api.server.user;
 
-import com.google.common.reflect.TypeToken;
-import fr.funixgaming.api.client.user.dtos.requests.UserAdminDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
@@ -20,12 +19,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Set;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,32 +79,25 @@ public class TestUserResourceCrud {
 
     @Test
     public void testGetAll() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route)
+        mockMvc.perform(get(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        final Type type = new TypeToken<Set<UserDTO>>(){}.getType();
-        final Set<UserDTO> users = jsonHelper.fromJson(result.getResponse().getContentAsString(), type);
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testCreate() throws Exception {
-        final UserAdminDTO userDTO = createUser();
+        final UserSecretsDTO userDTO = createUser();
 
-        final MvcResult result = mockMvc.perform(post(route)
+        mockMvc.perform(post(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(userDTO)))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        final UserDTO user = getResponse(result);
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testPatch() throws Exception {
-        final UserAdminDTO userDTO = createUser();
+        final UserSecretsDTO userDTO = createUser();
 
         MvcResult result = mockMvc.perform(post(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
@@ -114,22 +105,33 @@ public class TestUserResourceCrud {
                         .content(jsonHelper.toJson(userDTO)))
                 .andExpect(status().isOk())
                 .andReturn();
-        UserDTO user = getResponse(result);
+        final UserDTO user = getResponse(result);
 
         user.setUsername("sdkjfhsdkjh");
-        result = mockMvc.perform(patch(route)
+        mockMvc.perform(patch(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(user)))
-                .andExpect(status().isOk())
-                .andReturn();
+                .andExpect(status().isOk());
 
-        user = getResponse(result);
+        final UserSecretsDTO requestChangePassword = new UserSecretsDTO();
+        requestChangePassword.setPassword("newPassword");
+        requestChangePassword.setId(user.getId());
+
+        mockMvc.perform(patch(route)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(requestChangePassword)))
+                .andExpect(status().isOk());
+
+        final Optional<User> search = userRepository.findByUuid(user.getId().toString());
+        assertTrue(search.isPresent());
+        assertEquals(requestChangePassword.getPassword(), search.get().getPassword());
     }
 
     @Test
     public void testFindById() throws Exception {
-        final UserAdminDTO userDTO = createUser();
+        final UserSecretsDTO userDTO = createUser();
 
         MvcResult result = mockMvc.perform(post(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
@@ -139,16 +141,14 @@ public class TestUserResourceCrud {
                 .andReturn();
         UserDTO user = getResponse(result);
 
-        result = mockMvc.perform(get(route + "/" + user.getId())
+        mockMvc.perform(get(route + "/" + user.getId())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
-                .andExpect(status().isOk())
-                .andReturn();
-        user = getResponse(result);
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testRemoveId() throws Exception {
-        final UserAdminDTO userDTO = createUser();
+        final UserSecretsDTO userDTO = createUser();
 
         MvcResult result = mockMvc.perform(post(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
@@ -175,8 +175,8 @@ public class TestUserResourceCrud {
         return jsonHelper.fromJson(result.getResponse().getContentAsString(), UserDTO.class);
     }
 
-    private UserAdminDTO createUser() {
-        final UserAdminDTO userDTO = new UserAdminDTO();
+    private UserSecretsDTO createUser() {
+        final UserSecretsDTO userDTO = new UserSecretsDTO();
 
         userDTO.setUsername("OUI");
         userDTO.setRole(UserRole.USER);

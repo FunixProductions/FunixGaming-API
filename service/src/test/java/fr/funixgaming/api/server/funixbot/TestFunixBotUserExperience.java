@@ -1,22 +1,17 @@
 package fr.funixgaming.api.server.funixbot;
 
-import com.google.common.reflect.TypeToken;
-import fr.funixgaming.api.client.funixbot.dtos.FunixBotUserExperienceDTO;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
 import fr.funixgaming.api.server.funixbot.repositories.FunixBotUserExperienceRepository;
-import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.utils.JsonHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -77,44 +72,6 @@ public class TestFunixBotUserExperience {
         this.second = repository.save(second);
         this.third = repository.save(third);
         this.fourth = repository.save(fourth);
-    }
-
-    @Test
-    public void testGetAll() throws Exception {
-        final MvcResult result = mockMvc.perform(get(route))
-                .andExpect(status().isOk())
-                .andReturn();
-
-
-        final List<FunixBotUserExperienceDTO> list = jsonHelper.fromJson(result.getResponse().getContentAsString(), new TypeToken<List<FunixBotUserExperienceDTO>>() {}.getType());
-        assertEquals(4, list.size());
-        assertEquals(first.getTwitchUserId(), list.get(0).getTwitchUserId());
-        assertEquals(second.getTwitchUserId(), list.get(1).getTwitchUserId());
-        assertEquals(third.getTwitchUserId(), list.get(2).getTwitchUserId());
-        assertEquals(fourth.getTwitchUserId(), list.get(3).getTwitchUserId());
-    }
-
-    @Test
-    public void testGetAllPagination() throws Exception {
-        MvcResult result = mockMvc.perform(get(route + "?page=0&elemsPerPage=2"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-
-        List<FunixBotUserExperienceDTO> list = jsonHelper.fromJson(result.getResponse().getContentAsString(), new TypeToken<List<FunixBotUserExperienceDTO>>() {}.getType());
-        assertEquals(2, list.size());
-        assertEquals(first.getTwitchUserId(), list.get(0).getTwitchUserId());
-        assertEquals(second.getTwitchUserId(), list.get(1).getTwitchUserId());
-
-        result = mockMvc.perform(get(route + "?page=1&elemsPerPage=2"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-
-        list = jsonHelper.fromJson(result.getResponse().getContentAsString(), new TypeToken<List<FunixBotUserExperienceDTO>>() {}.getType());
-        assertEquals(2, list.size());
-        assertEquals(third.getTwitchUserId(), list.get(0).getTwitchUserId());
-        assertEquals(fourth.getTwitchUserId(), list.get(1).getTwitchUserId());
     }
 
     @Test
