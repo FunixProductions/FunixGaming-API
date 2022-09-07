@@ -2,6 +2,7 @@ package fr.funixgaming.api.core.crud.services;
 
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.core.crud.repositories.ApiRepository;
@@ -35,7 +36,7 @@ public abstract class ApiService<DTO extends ApiDTO,
 
     @Override
     @Transactional
-    public Page<DTO> getAll(@Nullable String page, @Nullable String elemsPerPage, @Nullable String search, @Nullable String sort) {
+    public PageDTO<DTO> getAll(@Nullable String page, @Nullable String elemsPerPage, @Nullable String search, @Nullable String sort) {
         final Specification<ENTITY> specificationSearch = getSpecification(search);
         final Pageable pageable = getPage(page, elemsPerPage, sort);
         final Page<DTO> toReturn = repository.findAll(specificationSearch, pageable).map(mapper::toDto);
@@ -43,7 +44,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         for (final DTO dto : toReturn) {
             beforeSendingDTO(dto, null);
         }
-        return toReturn;
+        return new PageDTO<>(toReturn);
     }
 
     @Override

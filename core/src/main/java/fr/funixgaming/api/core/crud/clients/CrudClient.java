@@ -1,7 +1,7 @@
 package fr.funixgaming.api.core.crud.clients;
 
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
-import org.springframework.data.domain.Page;
+import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -36,10 +36,10 @@ public interface CrudClient<DTO extends ApiDTO> {
      * @return pagination
      */
     @GetMapping
-    Page<DTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
-                     @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage,
-                     @RequestParam(value = "search", defaultValue = "") String search,
-                     @RequestParam(value = "sort", defaultValue = "") String sort);
+    PageDTO<DTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
+                        @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage,
+                        @RequestParam(value = "search", defaultValue = "") String search,
+                        @RequestParam(value = "sort", defaultValue = "") String sort);
 
     @GetMapping("{id}")
     DTO findById(@PathVariable("id") String id);

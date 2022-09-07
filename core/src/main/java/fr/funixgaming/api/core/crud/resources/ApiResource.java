@@ -2,10 +2,10 @@ package fr.funixgaming.api.core.crud.resources;
 
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
+import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
     private final SERVICE service;
 
     @Override
-    public Page<DTO> getAll(String page, String elemsPerPage, String search, String sort) {
+    public PageDTO<DTO> getAll(String page, String elemsPerPage, String search, String sort) {
         return service.getAll(page, elemsPerPage, search, sort);
     }
 

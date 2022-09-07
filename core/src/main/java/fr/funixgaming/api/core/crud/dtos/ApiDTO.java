@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public abstract class ApiDTO implements Serializable {
+public abstract class ApiDTO implements Serializable, RequestDTO {
     private UUID id;
     private Date createdAt;
     private Date updatedAt;

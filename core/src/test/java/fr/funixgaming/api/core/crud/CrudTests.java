@@ -5,13 +5,13 @@ import fr.funixgaming.api.core.crud.doc.TestDTO;
 import fr.funixgaming.api.core.crud.doc.TestEntity;
 import fr.funixgaming.api.core.crud.doc.TestRepository;
 import fr.funixgaming.api.core.crud.doc.TestService;
+import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.utils.JsonHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -191,10 +191,10 @@ public class CrudTests {
 
         mockMvc.perform(get(ROUTE)).andExpect(status().isOk());
 
-        final Page<TestDTO> entities = service.getAll(null, null, null, null);
+        final PageDTO<TestDTO> entities = service.getAll(null, null, null, null);
 
-        assertEquals(size, entities.getNumberOfElements());
-        for (final TestDTO entity : entities) {
+        assertEquals(size, entities.getTotalElementsThisPage());
+        for (final TestDTO entity : entities.getContent()) {
             assertNotNull(entity.getData());
             assertNotNull(entity.getId());
         }
@@ -213,13 +213,13 @@ public class CrudTests {
 
         mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1")).andExpect(status().isOk());
 
-        Page<TestDTO> entities = service.getAll("0", "1", null, null);
-        assertEquals(1, entities.getNumberOfElements());
+        PageDTO<TestDTO> entities = service.getAll("0", "1", null, null);
+        assertEquals(1, entities.getTotalElementsThisPage());
 
         mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=2")).andExpect(status().isOk());
 
         entities = service.getAll("0", "2", null, null);
-        assertEquals(2, entities.getNumberOfElements());
+        assertEquals(2, entities.getTotalElementsThisPage());
     }
 
     @Test
@@ -238,30 +238,30 @@ public class CrudTests {
         this.repository.save(new TestEntity("test", minimalInt, null, null, null, null, null));
 
         mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
-        Page<TestDTO> entities = service.getAll("0", "1", null, "number:desc");
-        assertEquals(1, entities.getNumberOfElements());
+        PageDTO<TestDTO> entities = service.getAll("0", "1", null, "number:desc");
+        assertEquals(1, entities.getTotalElementsThisPage());
         assertEquals(startInt + 2, entities.getContent().get(0).getNumber());
 
         mockMvc.perform(get(ROUTE + "?page=1&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
         entities = service.getAll("1", "1", null, "number:desc");
-        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(1, entities.getTotalElementsThisPage());
         assertEquals(startInt + 1, entities.getContent().get(0).getNumber());
 
         mockMvc.perform(get(ROUTE + "?page=2&elemsPerPage=1&sort=number:desc")).andExpect(status().isOk());
         entities = service.getAll("2", "1", null, "number:desc");
-        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(1, entities.getTotalElementsThisPage());
         assertEquals(startInt, entities.getContent().get(0).getNumber());
 
         mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=3&sort=number:desc")).andExpect(status().isOk());
         entities = service.getAll("0", "3", null, "number:desc");
-        assertEquals(3, entities.getNumberOfElements());
+        assertEquals(3, entities.getTotalElementsThisPage());
         assertEquals(startInt + 2, entities.getContent().get(0).getNumber());
         assertEquals(startInt + 1, entities.getContent().get(1).getNumber());
         assertEquals(startInt, entities.getContent().get(2).getNumber());
 
         mockMvc.perform(get(ROUTE + "?page=0&elemsPerPage=1&sort=number:asc")).andExpect(status().isOk());
         entities = service.getAll("0", "1", null, "number:asc");
-        assertEquals(1, entities.getNumberOfElements());
+        assertEquals(1, entities.getTotalElementsThisPage());
         assertEquals(minimalInt, entities.getContent().get(0).getNumber());
     }
 

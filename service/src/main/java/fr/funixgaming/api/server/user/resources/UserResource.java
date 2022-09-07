@@ -9,6 +9,7 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
+import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.google.services.GoogleCaptchaService;
@@ -19,7 +20,6 @@ import fr.funixgaming.api.server.user.services.UserTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -111,7 +111,7 @@ public class UserResource implements UserCrudClient {
     }
 
     @Override
-    public Page<UserDTO> getAll(String page, String elemsPerPage, String search, String sort) {
+    public PageDTO<UserDTO> getAll(String page, String elemsPerPage, String search, String sort) {
         return userService.getAll(page, elemsPerPage, search, sort);
     }
 
