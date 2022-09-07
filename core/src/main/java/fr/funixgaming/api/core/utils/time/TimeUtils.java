@@ -45,6 +45,7 @@ public class TimeUtils {
     /**
      * Returns actual date in French format
      * @param datePattern parsing pattern
+     * @param dateString date to parse
      * @return Instant date
      */
     public static Instant getTimeFromFrenchZone(final String datePattern, final String dateString) {
