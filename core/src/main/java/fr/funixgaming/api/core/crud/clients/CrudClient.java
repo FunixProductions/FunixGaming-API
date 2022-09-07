@@ -33,7 +33,7 @@ public interface CrudClient<DTO extends ApiDTO> {
      *             Direction can be
      *             - asc (ascending)
      *             - desc (descending)
-     * @return Page<ApiDTO> pagination
+     * @return pagination
      */
     @GetMapping
     Page<DTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
