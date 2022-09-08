@@ -7,6 +7,7 @@ import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Getter
@@ -33,6 +34,11 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
 
     @Override
     public DTO create(DTO request) {
+        return service.create(request);
+    }
+
+    @Override
+    public List<DTO> create(List<@Valid DTO> request) {
         return service.create(request);
     }
 

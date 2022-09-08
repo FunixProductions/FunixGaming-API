@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.time.Instant;
 import java.util.*;
 
@@ -76,6 +77,16 @@ public abstract class ApiService<DTO extends ApiDTO,
         final DTO dto = mapper.toDto(repository.save(entity));
         beforeSendingDTO(dto, entity);
         return dto;
+    }
+
+    @Override
+    public List<DTO> create(List<@Valid DTO> request) {
+        final List<DTO> toReturn = new ArrayList<>();
+
+        for (final DTO dto : request) {
+            toReturn.add(create(dto));
+        }
+        return toReturn;
     }
 
     @NonNull

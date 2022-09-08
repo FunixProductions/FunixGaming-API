@@ -47,6 +47,9 @@ public interface CrudClient<DTO extends ApiDTO> {
     @PostMapping
     DTO create(@RequestBody @Valid DTO request);
 
+    @PostMapping("batch")
+    List<DTO> create(@RequestBody @Valid List<@Valid DTO> request);
+
     @PatchMapping
     DTO update(@RequestBody DTO request);
 
