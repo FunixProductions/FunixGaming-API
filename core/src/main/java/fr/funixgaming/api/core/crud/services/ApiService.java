@@ -80,6 +80,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Override
+    @Transactional
     public List<DTO> create(List<@Valid DTO> request) {
         final List<DTO> toReturn = new ArrayList<>();
 

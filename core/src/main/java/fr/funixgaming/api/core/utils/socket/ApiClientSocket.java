@@ -138,6 +138,7 @@ public abstract class ApiClientSocket {
                     try {
                         Thread.sleep(this.cooldownMessages);
                     } catch (InterruptedException ignored) {
+                        Thread.currentThread().interrupt();
                     }
                 }
             }

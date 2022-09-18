@@ -16,7 +16,7 @@ import java.util.Base64;
 
 @Component
 public class Encryption {
-    private static final String CRYPT_ALGORITHM = "AES";
+    private static final String CRYPT_ALGORITHM = "AES/GCM/NoPadding";
 
     private final Base64.Encoder base64Encoder;
     private final Base64.Decoder base64Decoder;
@@ -80,7 +80,9 @@ public class Encryption {
                 try {
                     Files.writeString(keyFile.toPath(), keyString, StandardOpenOption.TRUNCATE_EXISTING);
                 } catch (Exception e) {
-                    keyFile.delete();
+                    if (!keyFile.delete()) {
+                        throw new ApiException("Impossible de supprimer le fichier d'encryption. Lors d'une erreur.", e);
+                    }
                     throw e;
                 }
                 return key;
