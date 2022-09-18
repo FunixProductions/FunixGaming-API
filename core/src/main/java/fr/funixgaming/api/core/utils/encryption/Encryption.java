@@ -16,7 +16,7 @@ import java.util.Base64;
 
 @Component
 public class Encryption {
-    private static final String CRYPT_ALGORITHM = "AES/GCM/NoPadding";
+    private static final String CRYPT_ALGORITHM = "AES";
 
     private final Base64.Encoder base64Encoder;
     private final Base64.Decoder base64Decoder;
