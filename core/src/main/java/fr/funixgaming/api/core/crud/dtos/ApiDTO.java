@@ -26,4 +26,13 @@ public abstract class ApiDTO implements Serializable, RequestDTO {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
+        }
+    }
 }

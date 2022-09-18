@@ -70,23 +70,6 @@ public abstract class ApiEntity implements Serializable {
     }
 
     /**
-     * @param obj object to compare
-     * @return boolean
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof final ApiEntity apiEntity) {
-            if (this.id != null && apiEntity.getId() != null) {
-                return apiEntity.getId().equals(this.id);
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * @return UUID unique uuid
      */
     public UUID getUuid() {
@@ -105,6 +88,32 @@ public abstract class ApiEntity implements Serializable {
             this.uuid = null;
         } else {
             this.uuid = uuid.toString();
+        }
+    }
+
+    /**
+     * @param obj object to compare
+     * @return boolean
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof final ApiEntity apiEntity) {
+            if (this.id != null && apiEntity.getId() != null) {
+                return apiEntity.getId().equals(this.id);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null) {
+            return id.hashCode();
+        } else {
+            return super.hashCode();
         }
     }
 }
