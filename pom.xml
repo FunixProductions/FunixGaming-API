@@ -111,6 +111,8 @@
         <mockito.version>4.7.0</mockito.version>
         <!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
         <wiremock.version>2.27.2</wiremock.version>
+        <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
+        <sonarqube.plugin.version>3.9.1.2184</sonarqube.plugin.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -194,6 +196,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonarqube.plugin.version}</version>
             </plugin>
 
             <plugin>
