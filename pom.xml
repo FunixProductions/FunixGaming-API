@@ -50,12 +50,15 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+            <id>funixprod-mvn-repository</id>
+            <name>FunixProductions Maven Repository</name>
+            <url>https://maven.funixgaming.fr/snapshots</url>
         </snapshotRepository>
+
         <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>funixprod-mvn-repository</id>
+            <name>FunixProductions Maven Repository</name>
+            <url>https://maven.funixgaming.fr/releases</url>
         </repository>
     </distributionManagement>
 
@@ -101,8 +104,6 @@
         <maven.javadoc.version>3.4.1</maven.javadoc.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
         <maven.sources.version>3.2.1</maven.sources.version>
-        <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
-        <nexus.staging.plugin.version>1.6.13</nexus.staging.plugin.version>
         <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
         <org.jacoco.coverage.version>0.8.8</org.jacoco.coverage.version>
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
@@ -172,7 +173,7 @@
 
     <build>
         <plugins>
-            <!-- Sign artifacts for uploading to maven central -->
+            <!-- Sign artifacts for uploading to maven repo -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -192,18 +193,6 @@
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
                 <version>${sonarqube.plugin.version}</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus.staging.plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
 
             <!-- Attach source jars-->
