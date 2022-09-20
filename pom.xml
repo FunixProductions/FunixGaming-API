@@ -6,7 +6,7 @@
 
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funix-api</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
     <packaging>pom</packaging>
 
     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
@@ -65,7 +65,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2021.0.3</version>
+                <version>2021.0.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -75,9 +75,9 @@
     <properties>
         <java.version>17</java.version>
 
-        <funixgaming.api.version>1.1.4</funixgaming.api.version>
-        <funixgaming.core.version>1.1.4</funixgaming.core.version>
-        <funixgaming.server.version>1.1.4</funixgaming.server.version>
+        <funixgaming.api.version>1.1.5</funixgaming.api.version>
+        <funixgaming.core.version>1.1.5</funixgaming.core.version>
+        <funixgaming.server.version>1.1.5</funixgaming.server.version>
 
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <mapstruct.version>1.5.2.Final</mapstruct.version>
@@ -86,7 +86,7 @@
         <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
         <mariadb.version>3.0.7</mariadb.version>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-        <flyway.version>9.2.2</flyway.version>
+        <flyway.version>9.3.0</flyway.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <jwt-api.version>0.11.5</jwt-api.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
@@ -108,9 +108,7 @@
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
         <greenmail.test.mail.version>1.6.10</greenmail.test.mail.version>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <mockito.version>4.7.0</mockito.version>
-        <!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
-        <wiremock.version>2.27.2</wiremock.version>
+        <mockito.version>4.8.0</mockito.version>
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
         <sonarqube.plugin.version>3.9.1.2184</sonarqube.plugin.version>
 
@@ -170,14 +168,6 @@
             <version>${greenmail.test.mail.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Used to mock some clients https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
-        <dependency>
-            <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock</artifactId>
-            <version>${wiremock.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -218,6 +208,7 @@
 
             <!-- Attach source jars-->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven.sources.version}</version>
                 <executions>
