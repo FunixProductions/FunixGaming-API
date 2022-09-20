@@ -62,6 +62,14 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>funixprod-mvn-repository-releases</id>
+            <name>FunixProductions Maven Repository</name>
+            <url>https://maven.funixgaming.fr/releases</url>
+        </repository>
+    </repositories>
+
     <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies -->
     <dependencyManagement>
         <dependencies>
