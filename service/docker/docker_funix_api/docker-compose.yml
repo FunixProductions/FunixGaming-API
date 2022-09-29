@@ -27,7 +27,7 @@ services:
     depends_on:
       - mysql
       - mail
-    container_name: funix_api
+    container_name: funix-api
     volumes:
       - funix_api_db:/container/java
     hostname: funixapi
