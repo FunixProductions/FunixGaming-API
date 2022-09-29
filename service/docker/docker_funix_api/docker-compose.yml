@@ -38,6 +38,7 @@ services:
     ports:
       - "8080:8080"
 
+#Don't forget to create network in docker : docker network create funixprod_net_local
 networks:
   default:
     name: funixprod_net_local
