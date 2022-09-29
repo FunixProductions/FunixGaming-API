@@ -1,4 +1,4 @@
-version: '3'
+version: "3.9"
 
 services:
 
@@ -8,20 +8,14 @@ services:
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
       - funix_api_db:/var/lib/mysql
-    restart: on-failure
     environment:
       MYSQL_ROOT_PASSWORD: root
-    networks:
-      - funixweb_api
     ports:
       - "3306:3306"
 
   mail:
     image: maildev/maildev
     container_name: funix_api_mail
-    restart: on-failure
-    networks:
-      - funixweb_api
     ports:
       - "1080:1080"
       - "1025:1025"
@@ -36,10 +30,7 @@ services:
     container_name: funix_api
     volumes:
       - funix_api_db:/container/java
-    hostname: funix_api
-    restart: on-failure
-    networks:
-      - funixweb_api
+    hostname: funixapi
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
@@ -48,8 +39,9 @@ services:
       - "8080:8080"
 
 networks:
-  funixweb_api:
-    driver: bridge
+  default:
+    name: funixprod_net_local
+    external: true
 
 volumes:
   funix_api_db:
