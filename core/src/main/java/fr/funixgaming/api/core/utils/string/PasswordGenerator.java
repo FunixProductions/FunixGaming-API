@@ -42,7 +42,7 @@ public class PasswordGenerator {
 
     private Stream<Character> generateRandomSpecialChars(int count) {
         final Random random = new SecureRandom();
-        final IntStream specialChars = random.ints(count, 33, 47);
+        final IntStream specialChars = random.ints(count, 35, 38);
         return specialChars.mapToObj(data -> (char) data);
     }
 
