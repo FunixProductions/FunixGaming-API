@@ -18,8 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -164,6 +163,7 @@ public class SearchTests {
 
         testEntities.add(new TestEntity("ouiData2", 10, Date.from(now.minusSeconds(100)), 1.f, 10.0, true, TestEnum.ONE));
         testEntities.add(new TestEntity("NonData2", 11, Date.from(now.plusSeconds(60)), 2.f, 5.0, true, TestEnum.TWO));
+        testEntities.add(new TestEntity("dd", 11, Date.from(now.plusSeconds(60)), 2.f, 5.0, true, TestEnum.THREE));
 
         this.repository.saveAllAndFlush(testEntities);
 
@@ -182,6 +182,12 @@ public class SearchTests {
         // put the comparatives after the bracket search, otherwise it will not work, the brackets will override the number oprand here
         response = this.testService.getAll("", "", String.format("number:%s:10,data:%s:[ouiData2|NonData2]", SearchOperation.EQUALS.getOperation(), SearchOperation.EQUALS.getOperation()), "");
         assertEquals(2, response.getTotalElementsThisPage());
+
+        response = this.testService.getAll("", "", String.format("testEnum:%s:[TWO|THREE]", SearchOperation.EQUALS.getOperation()), "");
+        assertEquals(2, response.getTotalElementsThisPage());
+        for (final TestDTO testDTO : response.getContent()) {
+            assertTrue(testDTO.getTestEnum() == TestEnum.TWO || testDTO.getTestEnum() == TestEnum.THREE);
+        }
     }
 
     @Test
