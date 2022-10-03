@@ -12,9 +12,15 @@ import java.net.UnknownHostException;
 @Component
 public class IPUtils {
 
+    private static final String IP_PROXY_CLIENT_IP = "X-FORWARDED-FOR";
     private final InetAddress[] whitelist;
     private final ApiConfig apiConfig;
 
+    /**
+     * Init the IPUtils with the whitelist
+     * @param apiConfig config to set up ip tools
+     * @throws ApiException if the whitelist is not valid
+     */
     public IPUtils(ApiConfig apiConfig) throws ApiException {
         final String[] listIp = apiConfig.getIpWhitelist();
         this.whitelist = new InetAddress[listIp.length];
@@ -30,6 +36,12 @@ public class IPUtils {
 
     }
 
+    /**
+     * Can access to the API. If is present in whitelist
+     * @param ip ip string fetrched from request
+     * @return bool access or not
+     * @throws ApiException if ip is not valid
+     */
     public boolean canAccess(final String ip) throws ApiException {
         if (apiConfig.isDisableWhitelist()) {
             return true;
@@ -44,6 +56,29 @@ public class IPUtils {
         }
     }
 
+    /**
+     * Get the client IP address from the request.
+     * @param request http request to fetch ip
+     * @return IP in string
+     */
+    public String getClientIp(final HttpServletRequest request) {
+        final String addressHeader = request.getHeader(IP_PROXY_CLIENT_IP);
+        final String remoteAddress;
+
+        if (!this.apiConfig.isProxied()) {
+            remoteAddress = request.getRemoteAddr();
+        } else {
+            if (Strings.isEmpty(addressHeader)) {
+                remoteAddress = request.getRemoteAddr();
+            } else {
+                final String[] addresses = addressHeader.split(",");
+                remoteAddress = addresses[0].replaceAll(" ", "");
+            }
+        }
+
+        return remoteAddress;
+    }
+
     private boolean isIpLocalAddress(final InetAddress ip) throws ApiException {
         return ip.isAnyLocalAddress() || ip.isLoopbackAddress();
     }
@@ -55,20 +90,6 @@ public class IPUtils {
             }
         }
         return false;
-    }
-
-    public String getClientIp(final HttpServletRequest request) {
-        final String remoteAddress;
-        String addressHeader = request.getHeader("X-FORWARDED-FOR");
-
-        if (!this.apiConfig.isProxied() && Strings.isEmpty(addressHeader)) {
-            remoteAddress = request.getRemoteAddr();
-        } else {
-            final String[] addresses = addressHeader.split(",");
-            remoteAddress = addresses[0].replaceAll(" ", "");
-        }
-
-        return remoteAddress;
     }
 
 }
