@@ -71,7 +71,7 @@ public class UserResource implements UserCrudClient {
         }
 
         if (isBlocked(servletRequest)) {
-            throw new ApiForbiddenException("Vous avez fait plus de 5 essais pour vous connecter. Veuillez patienter une heure.");
+            throw new ApiForbiddenException("Vous avez fait plus de 5 essais pour vous connecter. Veuillez patienter 10 minutes.");
         }
 
         try {

@@ -157,12 +157,31 @@ public class SearchTests {
         assertEquals(-1, response.getContent().get(0).getNumber());
     }
 
-    public void testSearchDate() {
-        PageDTO<TestDTO> response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.LESS_THAN.getOperation(), dateString), "");
+    @Test
+    public void testBracketsSearch() {
+        final Instant now = TimeUtils.getTimeFromFrenchZone("dd-MM-yyyy_HH.mm.ss", dateString);
+        final List<TestEntity> testEntities = new ArrayList<>();
+
+        testEntities.add(new TestEntity("ouiData2", 10, Date.from(now.minusSeconds(100)), 1.f, 10.0, true, TestEnum.ONE));
+        testEntities.add(new TestEntity("NonData2", 11, Date.from(now.plusSeconds(60)), 2.f, 5.0, true, TestEnum.TWO));
+
+        this.repository.saveAllAndFlush(testEntities);
+
+        PageDTO<TestDTO> response = this.testService.getAll("", "", String.format("data:%s:[ouiData2]", SearchOperation.EQUALS.getOperation()), "");
         assertEquals(1, response.getTotalElementsThisPage());
 
-        response = this.testService.getAll("", "", String.format("aDouble:%s:10,date:%s:%s", SearchOperation.EQUALS.getOperation(), SearchOperation.GREATER_THAN.getOperation(), dateString), "");
-        assertEquals(0, response.getTotalElementsThisPage());
+        response = this.testService.getAll("", "", String.format("data:%s:[ouiData2|NonData2]", SearchOperation.EQUALS.getOperation()), "");
+        assertEquals(2, response.getTotalElementsThisPage());
+
+        response = this.testService.getAll("", "", String.format("data:%s:[ouiData2|NonData3]", SearchOperation.EQUALS.getOperation()), "");
+        assertEquals(1, response.getTotalElementsThisPage());
+
+        response = this.testService.getAll("", "", String.format("data:%s:[ouiData2|NonData2],number:%s:10", SearchOperation.EQUALS.getOperation(), SearchOperation.EQUALS.getOperation()), "");
+        assertEquals(1, response.getTotalElementsThisPage());
+
+        // put the comparatives after the bracket search, otherwise it will not work, the brackets will override the number oprand here
+        response = this.testService.getAll("", "", String.format("number:%s:10,data:%s:[ouiData2|NonData2]", SearchOperation.EQUALS.getOperation(), SearchOperation.EQUALS.getOperation()), "");
+        assertEquals(2, response.getTotalElementsThisPage());
     }
 
     @Test
