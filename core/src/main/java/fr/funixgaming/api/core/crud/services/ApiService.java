@@ -249,7 +249,7 @@ public abstract class ApiService<DTO extends ApiDTO,
             return null;
         }
 
-        final SearchBuilder searchBuilder = new SearchBuilder();
+        final SearchBuilder<ENTITY> searchBuilder = new SearchBuilder<>();
         final String[] searchs = search.split(",");
 
         for (final String searchQuery : searchs) {
@@ -266,7 +266,7 @@ public abstract class ApiService<DTO extends ApiDTO,
             }
         }
 
-        return searchBuilder.build();
+        return searchBuilder.getSpecificationSearch();
     }
 
 }

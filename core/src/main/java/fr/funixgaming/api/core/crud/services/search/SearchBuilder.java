@@ -3,16 +3,21 @@ package fr.funixgaming.api.core.crud.services.search;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 
-import java.util.ArrayList;
-import java.util.List;
+@Getter
+public class SearchBuilder<ENTITY extends ApiEntity> {
 
-public class SearchBuilder {
+    private Specification<ENTITY> specificationSearch = null;
 
-    private final List<Search> params = new ArrayList<>();
-
-    public SearchBuilder with(final String key, final String operation, final String value) {
+    /**
+     * Add search parameter to the list.
+     * @param key The key of the search parameter. This is one of the fields of the entity.
+     * @param operation Operation Key.
+     * @param value Value of the search parameter. You can add [value1,value2] to search between two values.
+     */
+    public void with(final String key, final String operation, final String value) {
         SearchOperation searchOperation = null;
 
         for (final SearchOperation search : SearchOperation.values()) {
@@ -25,31 +30,31 @@ public class SearchBuilder {
         if (searchOperation == null) {
             throw new ApiBadRequestException("Votre recherche ne comporte pas la bonne opération. Utilisez un des enums de SearchOperation de la librairie FunixApi.");
         } else {
-            params.add(new Search(key, searchOperation, value));
-            return this;
+            addSearch(new Search(key, searchOperation, value, false));
         }
     }
 
-    public <ENTITY extends ApiEntity> Specification<ENTITY> build() {
-        if (params.isEmpty()) {
-            throw new ApiBadRequestException("Vous n'avez pas spécifié de champs de recherche.");
-        }
+    private void addSearch(final Search search) {
+        if (search.getValue().contains("[") && search.getValue().contains("]")) {
+            final String valuesNoBrackets = search.getValue().replace("[", "").replace("]", "");
+            final String[] values = valuesNoBrackets.split("\\|");
 
-        final List<ApiSearch<ENTITY>> specifications = new ArrayList<>();
-        for (final Search search : params) {
+            for (final String value : values) {
+                addSearch(new Search(search.getKey(), search.getOperation(), value, true));
+            }
+        } else {
             final ApiSearch<ENTITY> apiSearch = new ApiSearch<>(search);
 
-            specifications.add(apiSearch);
+            if (specificationSearch == null) {
+                specificationSearch = Specification.where(apiSearch);
+            } else {
+                if (search.isOrPredicate()) {
+                    specificationSearch = specificationSearch.or(apiSearch);
+                } else {
+                    specificationSearch = specificationSearch.and(apiSearch);
+                }
+            }
         }
-
-        Specification<ENTITY> search = Specification.where(specifications.get(0));
-        final int size = params.size();
-
-        for (int i = 1; i < size; ++i) {
-            search = search.and(specifications.get(i));
-        }
-
-        return search;
     }
 
 }

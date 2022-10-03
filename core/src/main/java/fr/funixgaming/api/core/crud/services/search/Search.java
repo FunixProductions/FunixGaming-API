@@ -12,4 +12,5 @@ public class Search {
     private String key;
     private SearchOperation operation;
     private String value;
+    private boolean orPredicate;
 }

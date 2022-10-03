@@ -3,7 +3,6 @@ package fr.funixgaming.api.core.crud.services.search;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
-import fr.funixgaming.api.core.utils.time.TimeUtils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -92,8 +90,6 @@ public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY
             return UUID.fromString(value);
         } else if (fieldType.isAssignableFrom(Float.class)) {
             return Float.valueOf(value);
-        } else if (fieldType.isAssignableFrom(Date.class)) {
-            return Date.from(TimeUtils.getTimeFromFrenchZone("dd-MM-yyyy_HH.mm.ss", value));
         } else {
             throw new ApiBadRequestException("Type " + fieldType + " is not supported.");
         }
