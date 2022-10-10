@@ -30,29 +30,29 @@ public class SearchBuilder<ENTITY extends ApiEntity> {
         if (searchOperation == null) {
             throw new ApiBadRequestException("Votre recherche ne comporte pas la bonne opération. Utilisez un des enums de SearchOperation de la librairie FunixApi.");
         } else {
-            addSearch(new Search(key, searchOperation, value, false));
+            if (value.contains("[") && value.contains("]")) {
+                final String valuesNoBrackets = value.replace("[", "").replace("]", "");
+                final String[] values = valuesNoBrackets.split("\\|");
+
+                for (final String valueGet : values) {
+                    addSearch(new Search(key, searchOperation, valueGet), true);
+                }
+            } else {
+                addSearch(new Search(key, searchOperation, value), false);
+            }
         }
     }
 
-    private void addSearch(final Search search) {
-        if (search.getValue().contains("[") && search.getValue().contains("]")) {
-            final String valuesNoBrackets = search.getValue().replace("[", "").replace("]", "");
-            final String[] values = valuesNoBrackets.split("\\|");
+    private void addSearch(final Search search, boolean orPredicate) {
+        final ApiSearch<ENTITY> apiSearch = new ApiSearch<>(search);
 
-            for (final String value : values) {
-                addSearch(new Search(search.getKey(), search.getOperation(), value, true));
-            }
+        if (specificationSearch == null) {
+            specificationSearch = Specification.where(apiSearch);
         } else {
-            final ApiSearch<ENTITY> apiSearch = new ApiSearch<>(search);
-
-            if (specificationSearch == null) {
-                specificationSearch = Specification.where(apiSearch);
+            if (orPredicate) {
+                specificationSearch = specificationSearch.or(apiSearch);
             } else {
-                if (search.isOrPredicate()) {
-                    specificationSearch = specificationSearch.or(apiSearch);
-                } else {
-                    specificationSearch = specificationSearch.and(apiSearch);
-                }
+                specificationSearch = specificationSearch.and(apiSearch);
             }
         }
     }

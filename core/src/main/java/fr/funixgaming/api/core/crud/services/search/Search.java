@@ -1,16 +1,13 @@
 package fr.funixgaming.api.core.crud.services.search;
 
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class Search {
-    private String key;
-    private SearchOperation operation;
-    private String value;
-    private boolean orPredicate;
+    private final String key;
+    private final SearchOperation operation;
+    private final String value;
 }
