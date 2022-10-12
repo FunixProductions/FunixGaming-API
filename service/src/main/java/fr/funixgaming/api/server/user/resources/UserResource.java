@@ -54,7 +54,8 @@ public class UserResource implements UserCrudClient {
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
-        userService.checkWhitelist(ipUtils.getClientIp(servletRequest), request.getUsername());
+        final String clientIp = ipUtils.getClientIp(servletRequest);
+        userService.checkWhitelist(clientIp, request.getUsername());
 
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
@@ -66,6 +67,7 @@ public class UserResource implements UserCrudClient {
     @PostMapping("login")
     public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
         userService.checkWhitelist(ipUtils.getClientIp(servletRequest), request.getUsername());
+
         if (!request.getUsername().equalsIgnoreCase("api")) {
             captchaService.checkCode(servletRequest);
         }

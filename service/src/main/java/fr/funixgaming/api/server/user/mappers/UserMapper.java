@@ -1,6 +1,8 @@
 package fr.funixgaming.api.server.user.mappers;
 
 import fr.funixgaming.api.client.user.dtos.UserDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
+import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.server.user.entities.User;
 import org.mapstruct.*;
@@ -23,4 +25,11 @@ public interface UserMapper extends ApiMapper<User, UserDTO> {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "authorities", ignore = true)
     void patch(User request, @MappingTarget User toPatch);
+
+
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    UserSecretsDTO toSecretsDto(UserCreationDTO creationDTO);
 }
