@@ -75,6 +75,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         entity = repository.save(entity);
 
         final DTO dto = mapper.toDto(repository.save(entity));
+        afterSavingEntity(dto, entity);
         beforeSendingDTO(dto, entity);
         return dto;
     }
@@ -111,6 +112,7 @@ public abstract class ApiService<DTO extends ApiDTO,
             entity = repository.save(entity);
 
             final DTO dto = mapper.toDto(entity);
+            afterSavingEntity(dto, entity);
             beforeSendingDTO(dto, entity);
             return dto;
         } else {
@@ -163,9 +165,17 @@ public abstract class ApiService<DTO extends ApiDTO,
      * Override it when you have specific logic to add.
      *
      * @param request request received.
-     * @param entity entity fetched from database.
+     * @param entity entity mapped from mapper.
      */
     public void beforeSavingEntity(@NonNull DTO request, @NonNull ENTITY entity) {
+    }
+
+    /**
+     * Method used when you need to add some logic after an entity save.
+     * @param dto dto mapped by mapper.
+     * @param entity entity fetched from database.
+     */
+    public void afterSavingEntity(@NonNull DTO dto, @NonNull ENTITY entity) {
     }
 
     /**

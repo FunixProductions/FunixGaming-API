@@ -20,43 +20,44 @@ public class Encryption {
 
     private final Base64.Encoder base64Encoder;
     private final Base64.Decoder base64Decoder;
-    private final Cipher cipher;
     private final Key key;
 
     public Encryption() {
+        this.key = getKeyFromFile();
         this.base64Encoder = Base64.getEncoder();
         this.base64Decoder = Base64.getDecoder();
-        this.key = getKeyFromFile();
-
-        try {
-            this.cipher = Cipher.getInstance(CRYPT_ALGORITHM);
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
-            throw new ApiException("Une erreur est survenue lors de l'initialisation de la classe de cryptage.", e);
-        }
     }
 
-    public String convertToDatabase(final String object) throws ApiException {
+    public synchronized String convertToDatabase(final String object) throws ApiException {
         try {
             if (object == null) {
                 return null;
             }
 
+            final Cipher cipher = Cipher.getInstance(CRYPT_ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            return base64Encoder.encodeToString(cipher.doFinal(object.getBytes()));
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+
+            final byte[] objectBytes = object.getBytes(StandardCharsets.UTF_8);
+            final byte[] encrypted = cipher.doFinal(objectBytes);
+            return base64Encoder.encodeToString(encrypted);
+        } catch (IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new ApiException("Une erreur est survenue lors de l'encryption.", e);
         }
     }
 
-    public String convertToEntity(final String dbData) throws ApiException {
+    public synchronized String convertToEntity(final String dbData) throws ApiException {
         try {
             if (dbData == null) {
                 return null;
             }
 
+            final Cipher cipher = Cipher.getInstance(CRYPT_ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, key);
-            return new String(cipher.doFinal(base64Decoder.decode(dbData)));
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+
+            final byte[] base64Decoded = base64Decoder.decode(dbData);
+            final byte[] decrypted = cipher.doFinal(base64Decoded);
+            return new String(decrypted, StandardCharsets.UTF_8);
+        } catch (IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new ApiException("Une erreur est survenue lors du décryptage.", e);
         }
     }
