@@ -1,6 +1,7 @@
 # FunixAPI
 API used for Funix Projects
 
+![Maven Central](https://img.shields.io/maven-central/v/fr.funixgaming.api/funix-api.svg)
 ![Tests build](https://github.com/FunixProductions/FunixAPI/actions/workflows/main.yml/badge.svg?branch=master)
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
@@ -12,20 +13,8 @@ API used for Funix Projects
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/c/funixgaming)
 [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/funixgaming)
 
-### Récupérer le dernier numéro de version
-* Allez sur le repository maven de la FunixProduction : [FunixProductions > FunixAPI](https://maven.funixgaming.fr/#/releases/fr/funixgaming/api)
-
-### Ajoutez le repository maven
-```xml
-<repository>
-    <id>funixprod-mvn-repository-releases</id>
-    <name>FunixProductions Maven Repository</name>
-    <url>https://maven.funixgaming.fr/releases</url>
-</repository>
-```
-
 ### Importer le projet
-- Ajouter comme parent le projet funix-api (requis)
+- Ajouter comme parent le projet funix-api
 ```xml
 <parent>
     <artifactId>funix-api</artifactId>
