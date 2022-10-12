@@ -6,9 +6,12 @@ import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
+import fr.funixgaming.api.server.user.entities.User;
+import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
 import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
 import fr.funixgaming.api.server.utils.JsonHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,20 +30,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class TestUserResourceAuth {
 
-    private final MockMvc mockMvc;
-    private final UserTestComponent userTestComponent;
-    private final JsonHelper jsonHelper;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Autowired
-    public TestUserResourceAuth(MockMvc mockMvc,
-                                UserRepository userRepository,
-                                UserTokenRepository userTokenRepository,
-                                UserTestComponent userTestComponent,
-                                JsonHelper jsonHelper) {
-        this.mockMvc = mockMvc;
-        this.userTestComponent = userTestComponent;
-        this.jsonHelper = jsonHelper;
+    private UserTestComponent userTestComponent;
 
+    @Autowired
+    private JsonHelper jsonHelper;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserTokenRepository userTokenRepository;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @BeforeEach
+    public void cleanDb() {
         userTokenRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -100,11 +109,11 @@ public class TestUserResourceAuth {
 
     @Test
     public void testLoginSuccess() throws Exception {
-        final UserDTO account = userTestComponent.createAccount();
+        final User account = userTestComponent.createBasicUser();
 
         final UserLoginDTO loginDTO = new UserLoginDTO();
         loginDTO.setUsername(account.getUsername());
-        loginDTO.setPassword("passwordoui");
+        loginDTO.setPassword(account.getPassword());
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +122,7 @@ public class TestUserResourceAuth {
                 .andReturn();
 
         final UserTokenDTO tokenDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
-        assertEquals(tokenDTO.getUser(), account);
+        assertEquals(tokenDTO.getUser().getId(), account.getUuid());
         assertNotNull(tokenDTO.getToken());
         assertNotNull(tokenDTO.getExpirationDate());
     }
@@ -133,11 +142,11 @@ public class TestUserResourceAuth {
 
     @Test
     public void testGetCurrentUser() throws Exception {
-        final UserDTO account = userTestComponent.createAccount();
+        final User account = userTestComponent.createBasicUser();
 
         final UserLoginDTO loginDTO = new UserLoginDTO();
         loginDTO.setUsername(account.getUsername());
-        loginDTO.setPassword("passwordoui");
+        loginDTO.setPassword(account.getPassword());
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -161,6 +170,13 @@ public class TestUserResourceAuth {
     @Test
     public void testFailGetCurrentUserNoAuth() throws Exception {
         this.mockMvc.perform(get("/user/current")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void testFailGetCurrentUserBadAuth() throws Exception {
+        this.mockMvc.perform(get("/user/current")
+                .header("Authorization", "Bearer " + "BADTOKEN"))
+                .andExpect(status().isUnauthorized());
     }
 
 }

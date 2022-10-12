@@ -56,24 +56,14 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     @Transactional
     public UserDTO register(final UserCreationDTO userCreationDTO) {
-        if (!userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
+        if (userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
+            final UserSecretsDTO userSecretsDTO = this.getMapper().toSecretsDto(userCreationDTO);
+            userSecretsDTO.setRole(UserRole.USER);
+
+            return super.create(userSecretsDTO);
+        } else {
             throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
         }
-
-        final Optional<User> search = this.getRepository().findByUsername(userCreationDTO.getUsername());
-        if (search.isPresent()) {
-            throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", userCreationDTO.getUsername()));
-        } else {
-            final User request = new User(userCreationDTO);
-
-            if (userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
-                request.setPassword(userCreationDTO.getPassword());
-                return getMapper().toDto(getRepository().save(request));
-            } else {
-                throw new ApiBadRequestException("Les mots de passe ne correspondent pas.");
-            }
-        }
-
     }
 
     @Transactional
@@ -88,13 +78,18 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
 
     @Override
     public void beforeSavingEntity(@NonNull UserDTO request, @NonNull User entity) {
-        if (request instanceof final UserSecretsDTO secretsDTO) {
+        if (request.getId() == null) {
+            final Optional<User> search = this.getRepository().findByUsername(request.getUsername());
+            if (search.isPresent()) {
+                throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", request.getUsername()));
+            }
+        }
 
+        if (request instanceof final UserSecretsDTO secretsDTO) {
             if (Strings.isNotBlank(secretsDTO.getPassword())) {
                 entity.setPassword(secretsDTO.getPassword());
                 tokenService.invalidTokens(request.getId());
             }
-
         }
     }
 

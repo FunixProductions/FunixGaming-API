@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -178,7 +179,7 @@ public class TestUserResourceCrud {
     private UserSecretsDTO createUser() {
         final UserSecretsDTO userDTO = new UserSecretsDTO();
 
-        userDTO.setUsername("OUI");
+        userDTO.setUsername(UUID.randomUUID().toString());
         userDTO.setRole(UserRole.USER);
         userDTO.setEmail("oui@ggmail.com");
         userDTO.setPassword("password");
