@@ -1,8 +1,8 @@
 package fr.funixgaming.api.server.funixbot;
 
+import fr.funixgaming.api.server.beans.JsonHelper;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
 import fr.funixgaming.api.server.funixbot.repositories.FunixBotUserExperienceRepository;
-import fr.funixgaming.api.server.utils.JsonHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

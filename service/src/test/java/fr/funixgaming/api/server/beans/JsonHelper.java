@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.utils;
+package fr.funixgaming.api.server.beans;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

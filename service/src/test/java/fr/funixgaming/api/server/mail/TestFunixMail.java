@@ -1,14 +1,14 @@
 package fr.funixgaming.api.server.mail;
 
-import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
+import fr.funixgaming.api.server.beans.GreenMailTestServer;
+import fr.funixgaming.api.server.beans.JsonHelper;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
-import fr.funixgaming.api.server.utils.JsonHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -23,9 +23,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ImportAutoConfiguration(GreenMailTestServer.class)
 public class TestFunixMail {
 
-    private final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP).withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
+    @Autowired
+    private GreenMail greenMail;
 
     private final String route = "/mail/";
     private final JsonHelper jsonHelper;
@@ -36,7 +38,6 @@ public class TestFunixMail {
     public TestFunixMail(UserTestComponent userTestComponent,
                          MockMvc mockMvc,
                          JsonHelper jsonHelper) throws Exception {
-        this.greenMail.start();
         this.tokenDTO = userTestComponent.loginUser(userTestComponent.createModoAccount());
         this.mockMvc = mockMvc;
         this.jsonHelper = jsonHelper;
@@ -51,6 +52,8 @@ public class TestFunixMail {
         funixMailDTO.setFrom("test@test.fr");
 
         final FunixMailDTO response = sendMail(funixMailDTO);
+        assertTrue(greenMail.waitForIncomingEmail(15000, 2));
+
         assertNotNull(response.getCreatedAt());
         assertNotNull(response.getId());
         assertFalse(response.isSend());
@@ -59,7 +62,6 @@ public class TestFunixMail {
         assertEquals(funixMailDTO.getTo(), response.getTo());
         assertEquals(funixMailDTO.getFrom(), response.getFrom());
 
-        assertTrue(greenMail.waitForIncomingEmail(15000, 1));
         Thread.sleep(1000);
 
         final FunixMailDTO data = getMailById(response.getId().toString());
