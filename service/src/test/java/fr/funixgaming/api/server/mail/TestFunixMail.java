@@ -16,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -61,7 +63,12 @@ public class TestFunixMail {
         assertEquals(funixMailDTO.getTo(), response.getTo());
         assertEquals(funixMailDTO.getFrom(), response.getFrom());
 
-        assertTrue(greenMail.waitForIncomingEmail(20000, 2));
+        final Instant start = Instant.now();
+        while (start.plusSeconds(10).isAfter(Instant.now())) {
+            if (getMailById(response.getId().toString()).isSend()) {
+                break;
+            }
+        }
 
         final FunixMailDTO data = getMailById(response.getId().toString());
         assertTrue(data.isSend());
