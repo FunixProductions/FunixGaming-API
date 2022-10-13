@@ -1,12 +1,12 @@
 package fr.funixgaming.api.core.crud;
 
 import fr.funixgaming.api.core.TestApp;
+import fr.funixgaming.api.core.beans.JsonHelper;
 import fr.funixgaming.api.core.crud.doc.TestDTO;
 import fr.funixgaming.api.core.crud.doc.TestEntity;
 import fr.funixgaming.api.core.crud.doc.TestRepository;
 import fr.funixgaming.api.core.crud.doc.TestService;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
-import fr.funixgaming.api.core.utils.JsonHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

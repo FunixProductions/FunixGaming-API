@@ -1,10 +1,10 @@
 package fr.funixgaming.api.core.crud;
 
 import fr.funixgaming.api.core.TestApp;
+import fr.funixgaming.api.core.beans.JsonHelper;
 import fr.funixgaming.api.core.crud.doc.*;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
-import fr.funixgaming.api.core.utils.JsonHelper;
 import fr.funixgaming.api.core.utils.time.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

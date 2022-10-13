@@ -1,52 +1,60 @@
 package fr.funixgaming.api.core.mail;
 
-import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.util.GreenMail;
-import com.icegreen.greenmail.util.ServerSetupTest;
 import fr.funixgaming.api.core.TestApp;
-import fr.funixgaming.api.core.mail.dtos.ApiMailDTO;
+import fr.funixgaming.api.core.beans.GreenMailTestServer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.File;
 
-@SpringBootTest(
-        classes = {
-                TestApp.class
-        }
-)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+@SpringBootTest(classes = TestApp.class)
+@ImportAutoConfiguration(GreenMailTestServer.class)
 @AutoConfigureMockMvc
 public class TestMailService {
 
-    private final GreenMail greenMail = new GreenMail(ServerSetupTest.SMTP).withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
-
-    private final MailService mailService;
-    private final ApiMailDTO mailTest;
+    @Autowired
+    private GreenMail greenMail;
 
     @Autowired
-    public TestMailService(MailService mailService) {
-        this.greenMail.start();
-
-        this.mailService = mailService;
-        this.mailTest = new MailDTO();
-
-        this.mailTest.setFrom("test@localhost.fr");
-        this.mailTest.setTo("funixgaming7@gmail.com");
-        this.mailTest.setSubject("Un mail de test envoyé par un test unitaire");
-        this.mailTest.setText("Body mail ! Sans HTML quel thug.");
-    }
+    private MailService mailService;
 
     @Test
     public void testSendMail() {
         try {
+            final MailDTO mailTest = new MailDTO();
+            mailTest.setFrom("test@localhost.fr");
+            mailTest.setTo("funixgaming7@gmail.com");
+            mailTest.setSubject("Un mail de test envoyé par un test unitaire");
+            mailTest.setText("Body mail ! Sans HTML quel thug.");
+
             this.mailService.sendMail(mailTest);
             assertTrue(greenMail.waitForIncomingEmail(15000, 1));
         } catch (Exception e) {
             fail(e);
         }
-        this.greenMail.stop();
+    }
+
+    @Test
+    public void testSendMailWithAttachment() {
+        try {
+            final MailDTO mailTest = new MailDTO();
+            mailTest.setFrom("test@localhost.fr");
+            mailTest.setTo("funixgaming7@gmail.com");
+            mailTest.setSubject("Un mail de test envoyé par un test unitaire avec un fichier en pièce jointe");
+            mailTest.setText("Body mail ! Sans HTML quel thug.");
+
+            this.mailService.sendMail(mailTest, new File("pom.xml"));
+            assertTrue(greenMail.waitForIncomingEmail(15000, 1));
+        } catch (Exception e) {
+            fail(e);
+        }
     }
 
 }
