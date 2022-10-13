@@ -52,7 +52,6 @@ public class TestFunixMail {
         funixMailDTO.setFrom("test@test.fr");
 
         final FunixMailDTO response = sendMail(funixMailDTO);
-        assertTrue(greenMail.waitForIncomingEmail(15000, 2));
 
         assertNotNull(response.getCreatedAt());
         assertNotNull(response.getId());
