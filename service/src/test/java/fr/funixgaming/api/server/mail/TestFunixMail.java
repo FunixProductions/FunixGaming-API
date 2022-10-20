@@ -64,7 +64,7 @@ public class TestFunixMail {
         assertEquals(funixMailDTO.getFrom(), response.getFrom());
 
         final Instant start = Instant.now();
-        while (start.plusSeconds(10).isAfter(Instant.now())) {
+        while (start.plusSeconds(20).isAfter(Instant.now())) {
             if (getMailById(response.getId().toString()).isSend()) {
                 break;
             }
