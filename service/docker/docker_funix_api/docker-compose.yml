@@ -3,15 +3,16 @@ version: "3.9"
 services:
 
   mysql:
-    image: mariadb:latest
+    image: postgres:latest
     container_name: funix_api_db
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
       - funix_api_db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: root
     ports:
-      - "3306:3306"
+      - "3306:5432"
 
   mail:
     image: maildev/maildev
@@ -25,16 +26,16 @@ services:
       context: ../../../
       dockerfile: Dockerfile
     depends_on:
-      - mysql
-      - mail
+      mysql:
+        condition: service_started
+      mail:
+        condition: service_started
     container_name: funix-api
     volumes:
       - funix_api_db:/container/java
     hostname: funixapi
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - PAYPAL_CLIENT_ID=${PAYPAL_CLIENT_ID}
-      - PAYPAL_CLIENT_SECRET=${PAYPAL_CLIENT_SECRET}
     ports:
       - "8080:8080"
 
