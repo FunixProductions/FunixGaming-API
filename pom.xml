@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.4</version>
+        <version>2.7.5</version>
     </parent>
 
     <modules>
@@ -65,7 +65,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2021.0.4</version>
+                <version>2021.0.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -83,10 +83,10 @@
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
         <maven.compiler.version>3.10.1</maven.compiler.version>
-        <!-- https://mvnrepository.com/artifact/org.mariadb.jdbc/mariadb-java-client -->
-        <mariadb.version>3.0.8</mariadb.version>
-        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-        <flyway.version>9.4.0</flyway.version>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
+        <flyway.version>9.7.0</flyway.version>
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <postgres.version>42.5.0</postgres.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <jwt-api.version>0.11.5</jwt-api.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
@@ -106,7 +106,7 @@
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
         <greenmail.test.mail.version>1.6.11</greenmail.test.mail.version>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <mockito.version>4.8.0</mockito.version>
+        <mockito.version>4.8.1</mockito.version>
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
         <sonarqube.plugin.version>3.9.1.2184</sonarqube.plugin.version>
         <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->

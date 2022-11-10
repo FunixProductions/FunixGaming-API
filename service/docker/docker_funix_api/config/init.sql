@@ -1,5 +1,2 @@
-CREATE DATABASE IF NOT EXISTS funixgaming_web;
-CREATE DATABASE IF NOT EXISTS funixgaming_web_docker;
-
-CREATE USER 'funix'@'%' IDENTIFIED BY 'funix';
-GRANT ALL PRIVILEGES ON *.* TO 'funix'@'%';
+CREATE DATABASE funix_api;
+CREATE DATABASE funix_api_docker;
