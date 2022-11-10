@@ -1,7 +1,5 @@
 package fr.funixgaming.api.server.user.services;
 
-import fr.funixgaming.api.client.config.FunixApiConfig;
-import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
@@ -10,8 +8,6 @@ import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.utils.network.IPUtils;
-import fr.funixgaming.api.core.utils.string.PasswordGenerator;
-import fr.funixgaming.api.server.mail.services.FunixMailService;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
@@ -33,25 +29,16 @@ import java.util.Optional;
 @Service
 public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
 
-    private final FunixMailService mailService;
     private final UserTokenService tokenService;
-
-    private final FunixApiConfig apiConfig;
     private final IPUtils ipUtils;
 
     public UserService(UserRepository repository,
                        UserMapper mapper,
-                       FunixMailService funixMailService,
                        UserTokenService tokenService,
-                       FunixApiConfig apiConfig,
                        IPUtils ipUtils) {
         super(repository, mapper);
-        this.mailService = funixMailService;
-        this.apiConfig = apiConfig;
         this.tokenService = tokenService;
         this.ipUtils = ipUtils;
-
-        sendApiUserMail();
     }
 
     @Transactional
@@ -122,33 +109,5 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                 .orElseThrow(
                         () -> new UsernameNotFoundException(String.format("Utilisateur %s non trouvé", username))
                 );
-    }
-
-    private void sendApiUserMail() {
-        final Optional<User> search = this.getRepository().findByUsername("api");
-
-        if (search.isEmpty()) {
-            final PasswordGenerator passwordGenerator = new PasswordGenerator();
-            passwordGenerator.setAlphaDown(apiConfig.getPasswordMin());
-            passwordGenerator.setAlphaUpper(apiConfig.getPasswordCaps());
-            passwordGenerator.setNumbersAmount(apiConfig.getPasswordNumbers());
-            passwordGenerator.setSpecialCharsAmount(apiConfig.getPasswordSpecials());
-
-            User user = new User();
-            user.setUsername("api");
-            user.setPassword(passwordGenerator.generateRandomPassword());
-            user.setRole(UserRole.ADMIN);
-            user.setEmail(apiConfig.getEmail());
-            user = super.getRepository().save(user);
-
-            final FunixMailDTO mailDTO = new FunixMailDTO();
-            mailDTO.setFrom("admin@funixgaming.fr");
-            mailDTO.setTo(apiConfig.getEmail());
-            mailDTO.setSubject("[FunixAPI] Identifiants pour le login api.");
-            mailDTO.setText(String.format("username: %s password: %s", user.getUsername(), user.getPassword()));
-
-            mailService.addMail(mailDTO);
-            log.info("Envoi de la requête pour récupérer les infos api par mail.");
-        }
     }
 }

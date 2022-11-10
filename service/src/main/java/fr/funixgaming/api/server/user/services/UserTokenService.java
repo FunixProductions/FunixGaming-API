@@ -1,6 +1,7 @@
 package fr.funixgaming.api.server.user.services;
 
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
+import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.utils.time.TimeUtils;
@@ -41,6 +42,9 @@ public class UserTokenService {
     private final UserTokenRepository tokenRepository;
     private final UserTokenMapper tokenMapper;
     private final UserRepository userRepository;
+
+    private final UsernamePasswordAuthenticationToken apiUserAuth;
+
     private final Key jwtSecretKey;
 
     public UserTokenService(UserTokenRepository tokenRepository,
@@ -50,6 +54,17 @@ public class UserTokenService {
         this.tokenMapper = tokenMapper;
         this.userRepository = userRepository;
         this.jwtSecretKey = getJwtCryptKey();
+
+        final User user = new User();
+        user.setUsername("api");
+        user.setRole(UserRole.ADMIN);
+        user.setEmail("contact@funixgaming.fr");
+        user.setBanned(false);
+        this.apiUserAuth = new UsernamePasswordAuthenticationToken(
+                user,
+                null,
+                user.getAuthorities()
+        );
     }
 
     private static Key getJwtCryptKey() {
@@ -169,6 +184,10 @@ public class UserTokenService {
                 null,
                 user == null ? List.of() : user.getAuthorities()
         );
+    }
+
+    public UsernamePasswordAuthenticationToken authenticateApiWhitelist() {
+        return apiUserAuth;
     }
 
     @Nullable
