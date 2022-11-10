@@ -12,7 +12,8 @@ import java.net.UnknownHostException;
 @Component
 public class IPUtils {
 
-    private static final String IP_PROXY_CLIENT_IP = "X-FORWARDED-FOR";
+    public static final String HEADER_X_FORWARDED = "X-FORWARDED-FOR";
+
     private final InetAddress[] whitelist;
     private final ApiConfig apiConfig;
 
@@ -33,7 +34,6 @@ public class IPUtils {
                 throw new ApiException(String.format("L'adresse ip entrée %s est invalide.", listIp[i]), e);
             }
         }
-
     }
 
     /**
@@ -44,13 +44,17 @@ public class IPUtils {
      */
     public boolean canAccess(final String ip) throws ApiException {
         if (apiConfig.isDisableWhitelist()) {
-            return true;
+            return false;
         }
 
         try {
             final InetAddress inetAddress = InetAddress.getByName(ip);
 
-            return isIpLocalAddress(inetAddress) || isWhitelisted(inetAddress);
+            if (isIpLocalAddress(inetAddress)) {
+                return true;
+            } else {
+                return isWhitelisted(inetAddress);
+            }
         } catch (UnknownHostException e) {
             throw new ApiException(String.format("L'adresse ip entrée %s est invalide.", ip), e);
         }
@@ -62,7 +66,7 @@ public class IPUtils {
      * @return IP in string
      */
     public String getClientIp(final HttpServletRequest request) {
-        final String addressHeader = request.getHeader(IP_PROXY_CLIENT_IP);
+        final String addressHeader = request.getHeader(HEADER_X_FORWARDED);
         final String remoteAddress;
 
         if (!this.apiConfig.isProxied()) {
@@ -80,7 +84,7 @@ public class IPUtils {
     }
 
     private boolean isIpLocalAddress(final InetAddress ip) throws ApiException {
-        return ip.isAnyLocalAddress() || ip.isLoopbackAddress();
+        return ip.isLoopbackAddress() || ip.isSiteLocalAddress();
     }
 
     private boolean isWhitelisted(final InetAddress ip) throws ApiException {
