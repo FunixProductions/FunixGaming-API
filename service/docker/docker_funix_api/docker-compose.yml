@@ -32,7 +32,7 @@ services:
         condition: service_started
     container_name: funix-api
     volumes:
-      - funix_api_db:/container/java
+      - funix_api_app:/container/java
     hostname: funixapi
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -47,3 +47,4 @@ networks:
 
 volumes:
   funix_api_db:
+  funix_api_app:
