@@ -1,7 +1,6 @@
-package fr.funixgaming.api.server.converters;
+package fr.funixgaming.api.server.configs;
 
 import fr.funixgaming.api.core.utils.encryption.ApiConverter;
-import fr.funixgaming.api.core.utils.encryption.Encryption;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +11,7 @@ import javax.persistence.Converter;
 @RequiredArgsConstructor
 public class EncryptionString implements ApiConverter<String> {
 
-    private final Encryption encryption;
+    private final FunixApiEncryption encryption;
 
     @Override
     public synchronized String convertToDatabaseColumn(String attribute) {
