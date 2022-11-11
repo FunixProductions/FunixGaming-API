@@ -1,7 +1,6 @@
 package fr.funixgaming.api.core.utils.encryption;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
@@ -13,8 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.security.*;
 import java.util.Base64;
 
-@Component
-public class Encryption {
+public abstract class Encryption {
     private static final String ALGORITHM_KEY = "AES";
     private static final String CRYPT_ALGORITHM = "AES/GCM/NoPadding";
     private static final int KEY_SIZE = 256;
