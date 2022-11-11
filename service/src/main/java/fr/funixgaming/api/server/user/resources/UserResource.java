@@ -44,7 +44,7 @@ public class UserResource implements UserCrudClient {
     private final IPUtils ipUtils;
 
     private final LoadingCache<String, Integer> triesCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.MINUTES).build(new CacheLoader<>() {
+            .expireAfterWrite(15, TimeUnit.MINUTES).build(new CacheLoader<>() {
                 @Override
                 @NonNull
                 public Integer load(@NonNull String s) {
@@ -54,26 +54,16 @@ public class UserResource implements UserCrudClient {
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
-        final String clientIp = ipUtils.getClientIp(servletRequest);
-        userService.checkWhitelist(clientIp, request.getUsername());
-
-        if (!request.getUsername().equalsIgnoreCase("api")) {
-            captchaService.checkCode(servletRequest);
-        }
-
+        captchaService.checkCode(servletRequest);
         return this.userService.register(request);
     }
 
     @PostMapping("login")
     public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
-        userService.checkWhitelist(ipUtils.getClientIp(servletRequest), request.getUsername());
-
-        if (!request.getUsername().equalsIgnoreCase("api")) {
-            captchaService.checkCode(servletRequest);
-        }
+        captchaService.checkCode(servletRequest);
 
         if (isBlocked(servletRequest)) {
-            throw new ApiForbiddenException("Vous avez fait plus de 5 essais pour vous connecter. Veuillez patienter 10 minutes.");
+            throw new ApiForbiddenException("Vous avez fait plus de 5 essais pour vous connecter. Veuillez patienter 15 minutes.");
         }
 
         try {
