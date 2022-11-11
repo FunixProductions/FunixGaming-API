@@ -13,7 +13,6 @@
 
     <groupId>fr.funixgaming.api.client</groupId>
     <artifactId>funix-api-client</artifactId>
-    <version>1.2.0</version>
 
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -25,7 +24,7 @@
         <dependency>
             <groupId>fr.funixgaming.api.core</groupId>
             <artifactId>funix-api-core</artifactId>
-            <version>${funixgaming.core.version}</version>
+            <version>${funixgaming.api.version}</version>
             <scope>compile</scope>
         </dependency>
 

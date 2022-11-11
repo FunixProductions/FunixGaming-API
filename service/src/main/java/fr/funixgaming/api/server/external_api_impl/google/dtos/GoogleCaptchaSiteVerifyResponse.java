@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.google.dtos;
+package fr.funixgaming.api.server.external_api_impl.google.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

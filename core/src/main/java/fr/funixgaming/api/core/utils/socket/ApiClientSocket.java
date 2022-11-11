@@ -1,8 +1,8 @@
 package fr.funixgaming.api.core.utils.socket;
 
+import com.google.common.base.Strings;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.lang.Nullable;
 
 import java.io.BufferedReader;
@@ -12,62 +12,85 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-@Slf4j
+/**
+ * Class used to manage client sockets
+ */
+@Slf4j(topic = "ApiClientSocket")
 public abstract class ApiClientSocket {
+
+    private final Queue<String> messageQueue = new LinkedList<>();
+    private final AtomicBoolean running = new AtomicBoolean(true);
+
+    private final String socketAddress;
+    private final int port;
+    private final boolean isServerSocket;
 
     private Socket socket;
     private PrintWriter writer;
     private BufferedReader reader;
-    private boolean running = true;
+
     private int cooldownMessages = 0;
-    private final Queue<String> messageQueue = new LinkedList<>();
 
-    public ApiClientSocket(final String socketAddress, final int port, final SocketInfosSSL secure) throws ApiException {
-        new Thread(() -> this.worker(socketAddress, port, secure)).start();
-    }
-
+    /**
+     * Used to connect to a server
+     * @param socketAddress server address
+     * @param port server port
+     * @throws ApiException when auth exception
+     */
     public ApiClientSocket(final String socketAddress, final int port) throws ApiException {
-        new Thread(() -> this.worker(socketAddress, port, null)).start();
-    }
+        this.socketAddress = socketAddress;
+        this.port = port;
+        this.isServerSocket = false;
 
-    public ApiClientSocket(final Socket socket) throws ApiException {
         try {
-            this.socket = socket;
-            this.writer = new PrintWriter(this.socket.getOutputStream(), true);
-            this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-
-            new Thread(this::runSocket).start();
+            this.socket = new Socket(socketAddress, port);
+            new Thread(this::worker).start();
         } catch (IOException e) {
-            throw new ApiException("La création du socket à échoué.", e);
+            throw new ApiException("Erreur lors de l'initialisation du socket client.", e);
         }
     }
 
-    public void sendMessage(final String message) {
-        if (!Strings.isEmpty(message)) {
+    /**
+     * Used on a server socket when a new connection appears
+     * @param socket socket given from server socket
+     * @throws ApiException when error occurs with socket
+     */
+    public ApiClientSocket(final Socket socket) throws ApiException {
+        this.socketAddress = "";
+        this.port = 0;
+        this.isServerSocket = true;
+
+        this.socket = socket;
+        new Thread(this::worker).start();
+    }
+
+    /**
+     * Send a message to the server where the socket is connected to (queue)
+     * @param message message, the program adds BREAK_LINE automatically
+     */
+    public final void sendMessage(final String message) {
+        if (!Strings.isNullOrEmpty(message)) {
             this.messageQueue.add(message);
         }
     }
 
-    @Nullable
-    public Socket getSocket() {
-        return socket;
-    }
-
-    public void setCooldownMessages(final int cooldown) {
-        this.cooldownMessages = cooldown;
-    }
-
-    public void close() {
+    /**
+     * Close the connection with the server
+     */
+    public final void close() {
         try {
-            this.running = false;
+            this.running.set(false);
 
             if (this.writer != null) {
                 this.writer.close();
+                this.writer = null;
             }
 
             if (this.reader != null) {
                 this.reader.close();
+                this.reader = null;
             }
 
             if (this.socket != null && !this.socket.isClosed()) {
@@ -77,62 +100,79 @@ public abstract class ApiClientSocket {
         }
     }
 
-    private void worker(final String socketAddress, final int port, @Nullable final SocketInfosSSL secure) {
-        while (this.running) {
+    /**
+     * Worker method where the socket do its actions
+     */
+    private void worker() {
+        new Thread(this::runMessagePool).start();
+
+        while (this.running.get()) {
 
             try {
-                if (secure != null) {
-                    this.socket = secure.getClientSocket(socketAddress, port);
-                } else {
-                    this.socket = new Socket(socketAddress, port);
-                }
-
                 this.writer = new PrintWriter(this.socket.getOutputStream(), true);
                 this.reader = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
                 runSocket();
+
+                log.info("Socket client: connexion lost host: {} port: {}.", this.socket.getInetAddress(), this.socket.getPort());
+                close();
+                if (!isServerSocket) {
+                    running.set(true);
+                    log.info("Initiating a new connection...");
+                    socket = new Socket(this.socketAddress, this.port);
+                    log.info("Socket connected to {}:{} !", socketAddress, port);
+                }
             } catch (IOException e) {
-                log.error("Une erreur est survenue lors de la connexion au socket. Erreur: {} Host: {} Port: {} Secure: {}", e.getMessage(), this.socket.getInetAddress(), this.socket.getPort(), secure != null);
+                log.error("Une erreur est survenue lors de la connexion au socket. Erreur: {} Host: {} Port: {}", e.getMessage(), this.socket.getInetAddress(), this.socket.getPort());
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ignored) {
+                }
+            } finally {
+                try {
+                    if (this.writer != null) {
+                        this.writer.close();
+                        this.writer = null;
+                    }
+
+                    if (this.reader != null) {
+                        this.reader.close();
+                        this.reader = null;
+                    }
+                } catch (IOException ignored) {
+                }
             }
 
         }
     }
 
+    /**
+     * Run read system socket
+     */
     private void runSocket() {
-        new Thread(this::runMessagePool).start();
-
         while (!this.socket.isClosed()) {
             final String data;
 
             try {
                 data = reader.readLine();
 
-                if (data != null) {
+                if (!Strings.isNullOrEmpty(data)) {
                     this.receiveData(data);
                 }
             } catch (IOException e) {
                 log.error("SocketClient: lecture erreur {}", e.getMessage());
             }
-        }
 
-        try {
-            if (this.writer != null) {
-                this.writer.close();
-            }
-
-            if (this.reader != null) {
-                this.reader.close();
-            }
-        } catch (IOException ignored) {
         }
     }
 
     private void runMessagePool() {
-        while (!this.socket.isClosed()) {
+        while (this.socket != null && !this.socket.isClosed()) {
 
             if (this.socket.isConnected()) {
                 final String message = this.messageQueue.poll();
 
-                if (!Strings.isEmpty(message)) {
+                if (!Strings.isNullOrEmpty(message)) {
                     this.writer.println(message);
 
                     try {
@@ -143,6 +183,15 @@ public abstract class ApiClientSocket {
                 }
             }
         }
+    }
+
+    @Nullable
+    public final Socket getSocket() {
+        return socket;
+    }
+
+    public final void setCooldownMessages(final int cooldown) {
+        this.cooldownMessages = cooldown;
     }
 
     public abstract void receiveData(final String data);

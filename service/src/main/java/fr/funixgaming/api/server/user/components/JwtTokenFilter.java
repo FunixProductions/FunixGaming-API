@@ -1,6 +1,7 @@
 package fr.funixgaming.api.server.user.components;
 
 import fr.funixgaming.api.core.utils.network.IPUtils;
+import fr.funixgaming.api.server.configs.FunixApiConfig;
 import fr.funixgaming.api.server.user.services.UserTokenService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final UserTokenService tokenService;
+    private final FunixApiConfig apiConfig;
     private final IPUtils ipUtils;
 
     @Override
@@ -39,7 +41,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         final String clientIp = ipUtils.getClientIp(request);
         final UsernamePasswordAuthenticationToken authentication;
 
-        if (ipUtils.canAccess(clientIp)) {
+        if (!apiConfig.isIgnoreApiAccessAdmin() && ipUtils.isLocalClient(clientIp)) {
             authentication = tokenService.authenticateApiWhitelist();
         } else {
             final String token = header.split(" ")[1].trim();

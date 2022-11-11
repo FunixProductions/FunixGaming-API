@@ -13,7 +13,6 @@
 
     <groupId>fr.funixgaming.api.server</groupId>
     <artifactId>funix-api-server</artifactId>
-    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -26,7 +25,7 @@
         <dependency>
             <groupId>fr.funixgaming.api.core</groupId>
             <artifactId>funix-api-core</artifactId>
-            <version>${funixgaming.core.version}</version>
+            <version>${funixgaming.api.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -119,6 +118,12 @@
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
                             <version>${mapstruct.version}</version>
+                        </path>
+
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${spring.boot.configuration.processor.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

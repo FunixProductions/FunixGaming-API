@@ -9,12 +9,6 @@ public class TestClientSocket extends ApiClientSocket {
     private final AtomicBoolean passed;
     private final String toCheck;
 
-    public TestClientSocket(String socketAddress, int port, SocketInfosSSL ssl, final AtomicBoolean atomicBoolean, final String toCheck) throws ApiException {
-        super(socketAddress, port, ssl);
-        this.passed = atomicBoolean;
-        this.toCheck = toCheck;
-    }
-
     public TestClientSocket(String socketAddress, int port, final AtomicBoolean atomicBoolean, final String toCheck) throws ApiException {
         super(socketAddress, port);
         this.passed = atomicBoolean;

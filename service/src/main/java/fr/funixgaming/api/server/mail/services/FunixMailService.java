@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
+@Slf4j(topic = "FunixMailService")
 @Getter
 @Service
 public class FunixMailService extends ApiMailService {
@@ -44,6 +44,7 @@ public class FunixMailService extends ApiMailService {
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.SECONDS)
     public void processMails() {
         final List<FunixMailDTO> mails = new ArrayList<>();
+
         FunixMailDTO mailDTO = mailQueue.poll();
         int mailsSend = 0;
 
@@ -52,10 +53,10 @@ public class FunixMailService extends ApiMailService {
                 try {
                     super.sendMail(mailDTO);
                     mailDTO.setSend(true);
-                    mailsSend++;
+                    ++mailsSend;
                 } catch (ApiException e) {
                     mailQueue.add(mailDTO);
-                    log.error("Erreur lors de l'envoi d'un mail. Erreur : {}", e.getMessage(), e);
+                    log.error("Erreur lors de l'envoi d'un mail.", e);
                     return;
                 }
 
