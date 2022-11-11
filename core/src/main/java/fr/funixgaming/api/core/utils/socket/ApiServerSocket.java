@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
-@Slf4j
+@Slf4j(topic = "ApiServerSocket")
 public abstract class ApiServerSocket {
 
     private final ServerSocket serverSocket;
@@ -52,7 +52,7 @@ public abstract class ApiServerSocket {
                 clients.removeIf(Socket::isClosed);
             } catch (IOException e) {
                 if (!this.serverSocket.isClosed()) {
-                    e.printStackTrace();
+                    log.error("Une erreur est survenue lors de l'ajout d'un nouveau client.", e);
                 }
             }
         }
