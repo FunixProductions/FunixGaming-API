@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.google.config;
+package fr.funixgaming.api.server.external_api_impl.google.config;
 
 import lombok.Getter;
 import lombok.Setter;

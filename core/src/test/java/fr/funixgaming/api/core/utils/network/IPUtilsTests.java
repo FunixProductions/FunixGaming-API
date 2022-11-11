@@ -1,42 +1,71 @@
 package fr.funixgaming.api.core.utils.network;
 
-import fr.funixgaming.api.core.TestApp;
-import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = TestApp.class)
-@AutoConfigureMockMvc
 public class IPUtilsTests {
 
-    private final IPUtils ipUtils;
+    @Test
+    public void testGetClientIpNotProxied() throws Exception {
+        final String ipClient = "182.10.6.2";
+        final IPUtils ipUtils = new IPUtils(false);
+        final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
 
-    @Autowired
-    public IPUtilsTests(IPUtils ipUtils) {
-        this.ipUtils = ipUtils;
+        httpServletRequest.setRemoteAddr(ipClient);
+        assertEquals(ipClient, ipUtils.getClientIp(httpServletRequest));
     }
 
     @Test
-    public void testLocalhostIpValid() throws ApiException {
-        assertTrue(ipUtils.canAccess("127.0.0.1"));
+    public void testGetClientIpBehindOneProxy() throws Exception {
+        final String proxyIp = "127.0.0.1";
+        final String clientIp = "182.10.6.2";
+        final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        final IPUtils ipUtilsProxied = new IPUtils(true);
+        final IPUtils ipUtilsNotProxied = new IPUtils(false);
+
+        httpServletRequest.setRemoteAddr(proxyIp);
+        httpServletRequest.addHeader(IPUtils.HEADER_X_FORWARDED, clientIp);
+        assertEquals(clientIp, ipUtilsProxied.getClientIp(httpServletRequest));
+        assertEquals(proxyIp, ipUtilsNotProxied.getClientIp(httpServletRequest));
     }
 
     @Test
-    public void testWhitelistIp() throws ApiException {
-        assertTrue(ipUtils.canAccess("8.8.8.8"));
-        assertTrue(ipUtils.canAccess("120.10.5.3"));
-        assertFalse(ipUtils.canAccess("9.9.9.9"));
+    public void testGetClientIpBehindMultipleProxy() throws Exception {
+        final String firstProxy = "127.0.0.1";
+        final String secondProxy = "127.0.0.2";
+        final String clientIp = "182.10.6.2";
+        final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+        final IPUtils ipUtilsProxied = new IPUtils(true);
+        final IPUtils ipUtilsNotProxied = new IPUtils(false);
+
+        httpServletRequest.setRemoteAddr(secondProxy);
+        httpServletRequest.addHeader(IPUtils.HEADER_X_FORWARDED, String.format("%s, %s", clientIp, firstProxy));
+        assertEquals(clientIp, ipUtilsProxied.getClientIp(httpServletRequest));
+        assertEquals(secondProxy, ipUtilsNotProxied.getClientIp(httpServletRequest));
+    }
+
+    @Test
+    public void testLocalhostIp() throws Exception {
+        final IPUtils ipUtils = new IPUtils(false);
+
+        assertTrue(ipUtils.isLocalClient("127.10.5.3"));
+        assertFalse(ipUtils.isLocalClient("120.10.5.3"));
+        assertTrue(ipUtils.isLocalClient("10.0.1.2"));
+        assertTrue(ipUtils.isLocalClient("172.18.0.1"));
+        assertTrue(ipUtils.isLocalClient("172.18.0.10"));
+        assertFalse(ipUtils.isLocalClient("8.8.8.8"));
+        assertFalse(ipUtils.isLocalClient("9.9.9.9"));
     }
 
     @Test
     public void testInvalidIp() {
+        final IPUtils ipUtils = new IPUtils(false);
+
         try {
-            assertTrue(ipUtils.canAccess("8.8.8.8.1.1.1.1.1."));
+            assertTrue(ipUtils.isLocalClient("8.8.8.8.1.1.1.1.1."));
             fail("The ip should not wwork.");
         } catch (ApiException ignored) {
         }

@@ -1,40 +1,19 @@
 package fr.funixgaming.api.core.utils.network;
 
-import fr.funixgaming.api.core.config.ApiConfig;
 import fr.funixgaming.api.core.exceptions.ApiException;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-@Component
+@RequiredArgsConstructor
 public class IPUtils {
 
     public static final String HEADER_X_FORWARDED = "X-FORWARDED-FOR";
 
-    private final InetAddress[] whitelist;
-    private final ApiConfig apiConfig;
-
-    /**
-     * Init the IPUtils with the whitelist
-     * @param apiConfig config to set up ip tools
-     * @throws ApiException if the whitelist is not valid
-     */
-    public IPUtils(ApiConfig apiConfig) throws ApiException {
-        final String[] listIp = apiConfig.getIpWhitelist();
-        this.whitelist = new InetAddress[listIp.length];
-        this.apiConfig = apiConfig;
-
-        for (int i = 0; i < listIp.length; ++i) {
-            try {
-                this.whitelist[i] = InetAddress.getByName(listIp[i]);
-            } catch (UnknownHostException e) {
-                throw new ApiException(String.format("L'adresse ip entrée %s est invalide.", listIp[i]), e);
-            }
-        }
-    }
+    private final boolean appProxied;
 
     /**
      * Can access to the API. If is present in whitelist
@@ -42,19 +21,10 @@ public class IPUtils {
      * @return bool access or not
      * @throws ApiException if ip is not valid
      */
-    public boolean canAccess(final String ip) throws ApiException {
-        if (apiConfig.isDisableWhitelist()) {
-            return false;
-        }
-
+    public boolean isLocalClient(final String ip) throws ApiException {
         try {
             final InetAddress inetAddress = InetAddress.getByName(ip);
-
-            if (isIpLocalAddress(inetAddress)) {
-                return true;
-            } else {
-                return isWhitelisted(inetAddress);
-            }
+            return isIpLocalAddress(inetAddress);
         } catch (UnknownHostException e) {
             throw new ApiException(String.format("L'adresse ip entrée %s est invalide.", ip), e);
         }
@@ -69,7 +39,7 @@ public class IPUtils {
         final String addressHeader = request.getHeader(HEADER_X_FORWARDED);
         final String remoteAddress;
 
-        if (!this.apiConfig.isProxied()) {
+        if (!appProxied) {
             remoteAddress = request.getRemoteAddr();
         } else {
             if (Strings.isEmpty(addressHeader)) {
@@ -85,15 +55,6 @@ public class IPUtils {
 
     private boolean isIpLocalAddress(final InetAddress ip) throws ApiException {
         return ip.isLoopbackAddress() || ip.isSiteLocalAddress();
-    }
-
-    private boolean isWhitelisted(final InetAddress ip) throws ApiException {
-        for (final InetAddress inetAddress : whitelist) {
-            if (inetAddress.equals(ip)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

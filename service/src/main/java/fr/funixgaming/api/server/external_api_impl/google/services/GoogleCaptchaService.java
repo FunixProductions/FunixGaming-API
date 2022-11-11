@@ -1,14 +1,14 @@
-package fr.funixgaming.api.core.google.services;
+package fr.funixgaming.api.server.external_api_impl.google.services;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
-import fr.funixgaming.api.core.google.clients.GoogleCaptchaClient;
-import fr.funixgaming.api.core.google.config.GoogleCaptchaConfig;
-import fr.funixgaming.api.core.google.dtos.GoogleCaptchaSiteVerifyResponse;
 import fr.funixgaming.api.core.utils.network.IPUtils;
+import fr.funixgaming.api.server.external_api_impl.google.clients.GoogleCaptchaClient;
+import fr.funixgaming.api.server.external_api_impl.google.config.GoogleCaptchaConfig;
+import fr.funixgaming.api.server.external_api_impl.google.dtos.GoogleCaptchaSiteVerifyResponse;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;

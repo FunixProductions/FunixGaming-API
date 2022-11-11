@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 /**
- * Add this annotations to
+ * Add these annotations to
  * Configuration
  * ConfigurationProperties("spring.mail")
  */

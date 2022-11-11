@@ -1,6 +1,6 @@
-package fr.funixgaming.api.core.google.clients;
+package fr.funixgaming.api.server.external_api_impl.google.clients;
 
-import fr.funixgaming.api.core.google.dtos.GoogleCaptchaSiteVerifyResponse;
+import fr.funixgaming.api.server.external_api_impl.google.dtos.GoogleCaptchaSiteVerifyResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -20,12 +20,6 @@ public class TestServerSocket extends ApiServerSocket {
         this.toCheck = toCheck;
     }
 
-    public TestServerSocket(int port, SocketInfosSSL ssl, final AtomicBoolean atomicBoolean, final String toCheck) throws ApiException {
-        super(port, ssl);
-        this.passed = atomicBoolean;
-        this.toCheck = toCheck;
-    }
-
     @Override
     public void newClient(Socket socket) {
         final TestClientSocket client = new TestClientSocket(socket, passed, toCheck);

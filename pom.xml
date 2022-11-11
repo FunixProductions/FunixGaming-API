@@ -75,9 +75,7 @@
     <properties>
         <java.version>17</java.version>
 
-        <funixgaming.api.version>1.2.0</funixgaming.api.version>
-        <funixgaming.core.version>1.2.0</funixgaming.core.version>
-        <funixgaming.server.version>1.2.0</funixgaming.server.version>
+        <funixgaming.api.version>${project.version}</funixgaming.api.version>
 
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
         <mapstruct.version>1.5.3.Final</mapstruct.version>
@@ -113,6 +111,8 @@
         <nexus.staging.plugin.version>1.6.13</nexus.staging.plugin.version>
         <!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
         <wiremock.version>2.27.2</wiremock.version>
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
+        <spring.boot.configuration.processor.version>2.7.5</spring.boot.configuration.processor.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -169,6 +169,12 @@
             <artifactId>greenmail</artifactId>
             <version>${greenmail.test.mail.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${spring.boot.configuration.processor.version}</version>
         </dependency>
 
         <!-- Used to mock some clients https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->

@@ -1,13 +1,12 @@
-package fr.funixgaming.api.core.google.services;
+package fr.funixgaming.api.server.external_api_impl.google.services;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import fr.funixgaming.api.core.TestApp;
-import fr.funixgaming.api.core.beans.JsonHelper;
-import fr.funixgaming.api.core.beans.WiremockTestServer;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
-import fr.funixgaming.api.core.google.config.GoogleCaptchaConfig;
-import fr.funixgaming.api.core.google.dtos.GoogleCaptchaSiteVerifyResponse;
+import fr.funixgaming.api.server.beans.JsonHelper;
+import fr.funixgaming.api.server.beans.WiremockTestServer;
+import fr.funixgaming.api.server.external_api_impl.google.config.GoogleCaptchaConfig;
+import fr.funixgaming.api.server.external_api_impl.google.dtos.GoogleCaptchaSiteVerifyResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.assertj.core.api.Fail.fail;
 
+@SpringBootTest
 @AutoConfigureMockMvc
-@SpringBootTest(classes = TestApp.class)
 @ImportAutoConfiguration(WiremockTestServer.class)
 public class GoogleCaptchaServiceTest {
 

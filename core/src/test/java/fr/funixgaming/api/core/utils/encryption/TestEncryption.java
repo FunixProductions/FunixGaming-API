@@ -1,21 +1,14 @@
 package fr.funixgaming.api.core.utils.encryption;
 
-import fr.funixgaming.api.core.TestApp;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@SpringBootTest(classes = TestApp.class)
-@AutoConfigureMockMvc
 public class TestEncryption {
 
     private final Encryption encryption;
 
-    @Autowired
     public TestEncryption() {
         this.encryption = new Encryption() {};
     }

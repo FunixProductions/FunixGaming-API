@@ -24,12 +24,7 @@ public abstract class ApiServerSocket {
         }
     }
 
-    public ApiServerSocket(final int port, final SocketInfosSSL ssl) throws ApiException {
-        this.serverSocket = ssl.getServerSocket(port);
-        new Thread(this::worker).start();
-    }
-
-    public void closeServer() throws ApiException {
+    public final void closeServer() throws ApiException {
         try {
             for (final Socket socket : clients) {
                 if (!socket.isClosed()) {
@@ -57,7 +52,7 @@ public abstract class ApiServerSocket {
                 clients.removeIf(Socket::isClosed);
             } catch (IOException e) {
                 if (!this.serverSocket.isClosed()) {
-                    log.error("SocketServeur: Une erreur est survenue lors de l'execution du socket client.", e);
+                    e.printStackTrace();
                 }
             }
         }
