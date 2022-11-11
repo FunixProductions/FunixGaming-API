@@ -16,8 +16,8 @@ public class TestEncryption {
     private final Encryption encryption;
 
     @Autowired
-    public TestEncryption(Encryption encryption) {
-        this.encryption = encryption;
+    public TestEncryption() {
+        this.encryption = new Encryption() {};
     }
 
     @Test
