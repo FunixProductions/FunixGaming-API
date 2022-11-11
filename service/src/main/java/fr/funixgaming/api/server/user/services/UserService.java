@@ -6,8 +6,6 @@ import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
-import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
-import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
@@ -30,15 +28,12 @@ import java.util.Optional;
 public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
 
     private final UserTokenService tokenService;
-    private final IPUtils ipUtils;
 
     public UserService(UserRepository repository,
                        UserMapper mapper,
-                       UserTokenService tokenService,
-                       IPUtils ipUtils) {
+                       UserTokenService tokenService) {
         super(repository, mapper);
         this.tokenService = tokenService;
-        this.ipUtils = ipUtils;
     }
 
     @Transactional
@@ -77,12 +72,6 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
                 entity.setPassword(secretsDTO.getPassword());
                 tokenService.invalidTokens(request.getId());
             }
-        }
-    }
-
-    public void checkWhitelist(final String ip, final String username) {
-        if (username.equalsIgnoreCase("api") && !ipUtils.canAccess(ip)) {
-            throw new ApiForbiddenException("Vous n'êtes pas whitelisté.");
         }
     }
 

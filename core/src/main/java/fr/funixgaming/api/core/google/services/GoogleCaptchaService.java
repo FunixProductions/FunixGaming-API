@@ -40,7 +40,7 @@ public class GoogleCaptchaService {
         this.ipUtils = ipUtils;
 
         this.triesCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(4, TimeUnit.HOURS).build(new CacheLoader<>() {
+                .expireAfterWrite(15, TimeUnit.MINUTES).build(new CacheLoader<>() {
                     @Override
                     @NonNull
                     public Integer load(@NonNull String s) {
@@ -58,7 +58,7 @@ public class GoogleCaptchaService {
         final String clientIp = ipUtils.getClientIp(request);
 
         if (isBlocked(clientIp)) {
-            throw new ApiForbiddenException(String.format("Vous avez fait plus de %d essais. Vous êtes donc bloqué pendant quelques heures. Veuillez réessayer plus tard.", MAX_ATTEMPT));
+            throw new ApiForbiddenException(String.format("Vous avez fait plus de %d essais. Vous êtes donc bloqué 15 minutes. Veuillez réessayer plus tard.", MAX_ATTEMPT));
         }
 
         if (StringUtils.hasLength(captchaCode) && RESPONSE_PATTERN.matcher(captchaCode).matches()) {
