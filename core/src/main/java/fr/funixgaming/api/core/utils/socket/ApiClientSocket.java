@@ -126,7 +126,8 @@ public abstract class ApiClientSocket {
 
                 try {
                     Thread.sleep(3000);
-                } catch (InterruptedException ignored) {
+                } catch (InterruptedException interruptedException) {
+                    log.error("Cancel wait new client connect", interruptedException);
                 }
             } finally {
                 try {
