@@ -1,22 +1,22 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.services;
+package fr.funixgaming.api.server.external_api_impl.twitch.auth.services;
 
 import com.google.common.base.Strings;
 import feign.FeignException;
-import fr.funixgaming.api.client.external_api_impl.twitch.dtos.TwitchClientTokenDTO;
-import fr.funixgaming.api.client.external_api_impl.twitch.enums.TwitchClientTokenType;
+import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
-import fr.funixgaming.api.server.external_api_impl.twitch.clients.TwitchTokenAuthClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
-import fr.funixgaming.api.server.external_api_impl.twitch.dtos.TwitchTokenResponseDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.dtos.TwitchValidationTokenResponseDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.entities.TwitchClientToken;
-import fr.funixgaming.api.server.external_api_impl.twitch.mappers.TwitchClientTokenMapper;
-import fr.funixgaming.api.server.external_api_impl.twitch.repositories.TwitchClientTokenRepository;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.configs.TwitchApiConfig;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.entities.TwitchClientToken;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.mappers.TwitchClientTokenMapper;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.TwitchClientTokenRepository;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
 import lombok.Getter;
@@ -92,9 +92,8 @@ public class TwitchClientTokenService {
      * Called when we receive callback from twitch login
      * @param oAuthCode given by twitch
      * @param csrfToken echo back of the csrf we sended
-     * @return token ids
      */
-    public TwitchClientTokenDTO registerNewAuthorizationAuthToken(final String oAuthCode, final String csrfToken) {
+    public void registerNewAuthorizationAuthToken(final String oAuthCode, final String csrfToken) {
         if (Strings.isNullOrEmpty(oAuthCode)) {
             throw new ApiBadRequestException("Il manque le oAuth code.");
         } else if (Strings.isNullOrEmpty(csrfToken)) {
@@ -115,7 +114,7 @@ public class TwitchClientTokenService {
                 final Optional<TwitchClientToken> searchToken = this.twitchClientTokenRepository.findTwitchClientTokenByUserAndTokenType(user, csrfUser.getTokenType());
                 searchToken.ifPresent(this.twitchClientTokenRepository::delete);
 
-                return generateNewAccessToken(csrfUser, user, oAuthCode);
+                generateNewAccessToken(csrfUser, user, oAuthCode);
             } else {
                 throw new ApiNotFoundException(String.format("L'utilisateur %s n'existe pas.", userDTO.getUsername()));
             }
@@ -221,7 +220,7 @@ public class TwitchClientTokenService {
         return state;
     }
 
-    private TwitchClientTokenDTO generateNewAccessToken(final CsrfUser csrfUser, final User user, final String oAuthToken) {
+    private void generateNewAccessToken(final CsrfUser csrfUser, final User user, final String oAuthToken) {
         final Map<String, String> formData = new HashMap<>();
         formData.put("client_id", this.twitchApiConfig.getAppClientId());
         formData.put("client_secret", this.twitchApiConfig.getAppClientSecret());
@@ -232,7 +231,7 @@ public class TwitchClientTokenService {
         try {
             final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = this.twitchTokenAuthClient.validateToken("OAuth " + oAuthToken);
             final TwitchTokenResponseDTO tokenResponseDTO = twitchTokenAuthClient.getToken(formData);
-            TwitchClientToken twitchClientToken = new TwitchClientToken();
+            final TwitchClientToken twitchClientToken = new TwitchClientToken();
 
             twitchClientToken.setUser(user);
             twitchClientToken.setTokenType(csrfUser.getTokenType());
@@ -242,8 +241,7 @@ public class TwitchClientTokenService {
             twitchClientToken.setAccessToken(tokenResponseDTO.getAccessToken());
             twitchClientToken.setRefreshToken(tokenResponseDTO.getRefreshToken());
             twitchClientToken.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60)));
-            twitchClientToken = this.twitchClientTokenRepository.save(twitchClientToken);
-            return twitchClientTokenMapper.toDto(twitchClientToken);
+            this.twitchClientTokenRepository.save(twitchClientToken);
         } catch (FeignException e) {
             if (e.status() == HttpStatus.UNAUTHORIZED.value()) {
                 this.twitchClientTokenRepository.deleteTwitchClientTokenByoAuthCode(oAuthToken);
