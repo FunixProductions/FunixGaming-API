@@ -3,7 +3,7 @@ package fr.funixgaming.api.server.external_api_impl.twitch.services;
 import feign.FeignException;
 import fr.funixgaming.api.server.external_api_impl.twitch.clients.TwitchTokenAuthClient;
 import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
-import fr.funixgaming.api.server.external_api_impl.twitch.dtos.TwitchServerTokenDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.dtos.TwitchTokenResponseDTO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Service
 @Slf4j(topic = "TwitchAppServerTokenService")
-public class TwitchAppServerTokenService {
+public class TwitchServerTokenService {
 
     private final TwitchTokenAuthClient twitchTokenAuthClient;
     private final Map<String, String> bodyRequest = new HashMap<>();
@@ -25,8 +25,8 @@ public class TwitchAppServerTokenService {
     private String accessToken;
     private Instant expiresAt;
 
-    public TwitchAppServerTokenService(TwitchApiConfig twitchApiConfig,
-                                       TwitchTokenAuthClient twitchTokenAuthClient) {
+    public TwitchServerTokenService(TwitchApiConfig twitchApiConfig,
+                                    TwitchTokenAuthClient twitchTokenAuthClient) {
         this.twitchTokenAuthClient = twitchTokenAuthClient;
 
         this.bodyRequest.put("client_id", twitchApiConfig.getAppClientId());
@@ -40,7 +40,7 @@ public class TwitchAppServerTokenService {
     public void refreshToken() {
         try {
             if (!tokenValid()) {
-                final TwitchServerTokenDTO tokenDTO = twitchTokenAuthClient.getToken(bodyRequest);
+                final TwitchTokenResponseDTO tokenDTO = twitchTokenAuthClient.getToken(bodyRequest);
 
                 this.accessToken = tokenDTO.getAccessToken();
                 this.expiresAt = Instant.now().plusSeconds(tokenDTO.getExpiresIn());

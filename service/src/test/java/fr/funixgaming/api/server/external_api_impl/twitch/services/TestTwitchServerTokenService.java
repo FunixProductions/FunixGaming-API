@@ -9,14 +9,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TestTwitchAppServerTokenService {
+public class TestTwitchServerTokenService {
 
     @Autowired
-    private TwitchAppServerTokenService twitchAppServerTokenService;
+    private TwitchServerTokenService twitchServerTokenService;
 
     @Test
     public void testFetchingToken() {
-        assertNotNull(twitchAppServerTokenService.getAccessToken());
-        assertNotNull(twitchAppServerTokenService.getExpiresAt());
+        assertNotNull(twitchServerTokenService.getAccessToken());
+        assertNotNull(twitchServerTokenService.getExpiresAt());
     }
 }

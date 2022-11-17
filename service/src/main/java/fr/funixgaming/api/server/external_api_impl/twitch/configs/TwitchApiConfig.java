@@ -24,7 +24,7 @@ public class TwitchApiConfig {
     /**
      * Domain callback where the users are redirected
      */
-    private String appDomainCallback;
+    private String appCallback;
 
     /**
      * Domain twitch api url auth
