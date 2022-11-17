@@ -42,6 +42,8 @@ jobs:
   
       - name: Build and analyze
         env:
+          TWITCH_APP_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_APP_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

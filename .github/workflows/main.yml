@@ -34,6 +34,8 @@ jobs:
 
       - name: Build with Maven
         env:
+          TWITCH_APP_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_APP_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
           PAYPAL_CLIENT_SECRET: ${{ secrets.PAYPAL_CLIENT_SECRET }}
         run: mvn -B package --file pom.xml
