@@ -1,6 +1,6 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.entities;
+package fr.funixgaming.api.server.external_api_impl.twitch.auth.entities;
 
-import fr.funixgaming.api.client.external_api_impl.twitch.enums.TwitchClientTokenType;
+import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.server.configs.EncryptionString;
 import fr.funixgaming.api.server.user.entities.User;

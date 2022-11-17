@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.dtos;
+package fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

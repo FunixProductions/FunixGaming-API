@@ -1,6 +1,6 @@
-package fr.funixgaming.api.client.external_api_impl.twitch.dtos;
+package fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos;
 
-import fr.funixgaming.api.client.external_api_impl.twitch.enums.TwitchClientTokenType;
+import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;

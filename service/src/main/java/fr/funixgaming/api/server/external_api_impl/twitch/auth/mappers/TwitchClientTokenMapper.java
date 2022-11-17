@@ -1,8 +1,8 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.mappers;
+package fr.funixgaming.api.server.external_api_impl.twitch.auth.mappers;
 
-import fr.funixgaming.api.client.external_api_impl.twitch.dtos.TwitchClientTokenDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
-import fr.funixgaming.api.server.external_api_impl.twitch.entities.TwitchClientToken;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.entities.TwitchClientToken;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import org.mapstruct.*;
 

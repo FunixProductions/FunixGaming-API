@@ -1,4 +1,4 @@
-package fr.funixgaming.api.client.external_api_impl.twitch.enums;
+package fr.funixgaming.api.client.external_api_impl.twitch.auth.enums;
 
 public enum TwitchClientTokenType {
     STREAMER,

@@ -1,8 +1,8 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.clients;
+package fr.funixgaming.api.server.external_api_impl.twitch.auth.clients;
 
 import feign.Headers;
-import fr.funixgaming.api.server.external_api_impl.twitch.dtos.TwitchTokenResponseDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.dtos.TwitchValidationTokenResponseDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.handler.annotation.Header;

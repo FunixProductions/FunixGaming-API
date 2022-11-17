@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.services;
+package fr.funixgaming.api.server.external_api_impl.twitch.auth.services;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
