@@ -44,6 +44,7 @@ public class TwitchAppServerTokenService {
 
                 this.accessToken = tokenDTO.getAccessToken();
                 this.expiresAt = Instant.now().plusSeconds(tokenDTO.getExpiresIn());
+                log.info("Un nouveau token est généré.");
             }
         } catch (FeignException e) {
             log.error("Une erreur est survenue lors du refresh token du twitch server token.", e);
