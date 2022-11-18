@@ -55,6 +55,7 @@ public class WebSecurity {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
                 .antMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
+
                 .antMatchers("/mail/**").hasAuthority(UserRole.MODERATOR.getRole())
 
                 .antMatchers(HttpMethod.POST, "/user/register").permitAll()
@@ -62,6 +63,8 @@ public class WebSecurity {
                 .antMatchers(HttpMethod.GET, "/user/valid").authenticated()
                 .antMatchers(HttpMethod.GET, "/user/current").authenticated()
                 .antMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
+
+                .antMatchers(HttpMethod.GET, "/twitch/auth/cb").permitAll()
 
                 .anyRequest().authenticated();
 

@@ -213,7 +213,7 @@ public class TwitchClientTokenService {
             throw new ApiBadRequestException("Vous n'êtes pas connecté à la FunixAPI.");
         }
 
-        final CsrfUser csrfUser = new CsrfUser(userService.getCurrentUser(), tokenType, Instant.now());
+        final CsrfUser csrfUser = new CsrfUser(userDTO, tokenType, Instant.now());
         final String state = passwordGenerator.generateRandomPassword();
 
         this.csrfTokens.put(state, csrfUser);
@@ -255,6 +255,12 @@ public class TwitchClientTokenService {
     private TwitchClientTokenDTO refreshToken(final TwitchClientToken token) {
         try {
             final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = this.twitchTokenAuthClient.validateToken("OAuth " + token.getOAuthCode());
+            if (token.isUsable()) {
+                token.setTwitchUserId(twitchValidationTokenResponseDTO.getTwitchUserId());
+                token.setTwitchUsername(twitchValidationTokenResponseDTO.getTwitchUsername());
+
+                return twitchClientTokenMapper.toDto(twitchClientTokenRepository.save(token));
+            }
 
             final Map<String, String> formRequest = new HashMap<>();
             formRequest.put("client_id", this.twitchApiConfig.getAppClientId());
