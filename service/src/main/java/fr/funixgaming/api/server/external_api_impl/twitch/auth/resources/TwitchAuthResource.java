@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/twitch/auth")
 @RequiredArgsConstructor
-public class TwitchAuthClientResource implements TwitchAuthClient {
+public class TwitchAuthResource implements TwitchAuthClient {
 
     private final TwitchClientTokenService twitchClientTokenService;
     private final UserService userService;
@@ -39,10 +39,10 @@ public class TwitchAuthClientResource implements TwitchAuthClient {
     }
 
     @GetMapping("cb")
-    public String authClientCallback(@RequestParam String code,
-                                     @RequestParam String state,
-                                     @RequestParam String error,
-                                     @RequestParam(name = "error_description") String errorMessage) {
+    public String authClientCallback(@RequestParam(required = false) String code,
+                                     @RequestParam(required = false) String state,
+                                     @RequestParam(required = false) String error,
+                                     @RequestParam(required = false, name = "error_description") String errorMessage) {
         if (!Strings.isNullOrEmpty(error) || !Strings.isNullOrEmpty(errorMessage)) {
             return "Une erreur Twitch est survenue. Veuillez vérifier que vous avez autorisé l'application FunixAPI sur Twitch.";
         } else {

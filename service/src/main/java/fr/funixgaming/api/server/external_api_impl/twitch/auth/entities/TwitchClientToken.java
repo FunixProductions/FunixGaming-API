@@ -21,16 +21,15 @@ public class TwitchClientToken extends ApiEntity {
     private User user;
 
     @Enumerated(value = EnumType.STRING)
-    @Convert(converter = EncryptionString.class)
     @Column(name = "token_type", nullable = false)
     private TwitchClientTokenType tokenType;
 
     @Convert(converter = EncryptionString.class)
-    @Column(name = "twitch_user_id", nullable = false, unique = true)
+    @Column(name = "twitch_user_id", nullable = false)
     private String twitchUserId;
 
     @Convert(converter = EncryptionString.class)
-    @Column(name = "twitch_username", nullable = false, unique = true)
+    @Column(name = "twitch_username", nullable = false)
     private String twitchUsername;
 
     @Convert(converter = EncryptionString.class)
