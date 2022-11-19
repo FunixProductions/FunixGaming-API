@@ -11,6 +11,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenR
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -42,6 +43,11 @@ public class TwitchAuthResourceTest {
 
     @Autowired
     private JsonHelper jsonHelper;
+
+    @BeforeEach
+    public void beforeEach() {
+        this.wireMockServer.resetAll();
+    }
 
     @Test
     public void testGetAuthUrlSuccess() throws Exception {
@@ -128,18 +134,24 @@ public class TwitchAuthResourceTest {
         mockMvc.perform(get("/twitch/auth/accessToken")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken())
         ).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetAccessTokenStreamerSuccess() throws Exception {
+        final User user = userTestComponent.createBasicUser();
+        final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
         setupTwitchMockServerValidResponses();
 
         mockMvc.perform(get("/twitch/auth/accessToken?tokenType=" + TwitchClientTokenType.STREAMER.name())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken())
         ).andExpect(status().isNotFound());
-        result = mockMvc.perform(get("/twitch/auth/clientAuthUrl?tokenType=" + TwitchClientTokenType.STREAMER.name())
+        MvcResult result = mockMvc.perform(get("/twitch/auth/clientAuthUrl?tokenType=" + TwitchClientTokenType.STREAMER.name())
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken())
                 ).andExpect(status().isOk())
                 .andReturn();
-        url = result.getResponse().getContentAsString();
-        csrfCode = getCsrfCodeFromUrl(url);
+        String url = result.getResponse().getContentAsString();
+        String csrfCode = getCsrfCodeFromUrl(url);
         mockMvc.perform(get("/twitch/auth/cb" +
                 String.format("?code=piiuuiezuoioueizryuierzaovvjkdshhfjqdshgjkfdiu&state=%s", csrfCode))
         ).andExpect(status().isOk());
