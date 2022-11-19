@@ -6,6 +6,7 @@ import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -88,7 +89,7 @@ public abstract class Encryption {
             final String keyString = Files.readString(keyFile.toPath(), StandardCharsets.UTF_8);
             final byte[] decodedKey = base64Decoder.decode(keyString);
             return new SecretKeySpec(decodedKey, 0, decodedKey.length, ALGORITHM_KEY);
-        } catch (Exception e)  {
+        } catch (IOException | NoSuchAlgorithmException e)  {
             throw new ApiException("Une erreur est survenue lors de la création du fichier d'encryption.", e);
         }
     }
@@ -115,15 +116,15 @@ public abstract class Encryption {
 
             final String ivString = Files.readString(ivFile.toPath(), StandardCharsets.UTF_8);
             return base64Decoder.decode(ivString);
-        } catch (Exception e)  {
+        } catch (IOException e)  {
             throw new ApiException("Une erreur est survenue lors de la création du fichier d'encryption.", e);
         }
     }
 
-    private static void writeInFile(final String data, final File file) throws Exception {
+    private static void writeInFile(final String data, final File file) throws IOException {
         try {
             Files.writeString(file.toPath(), data, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (Exception e) {
+        } catch (IOException e) {
             Files.delete(file.toPath());
             throw e;
         }
