@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TestUserResourceCrud {
+class TestUserResourceCrud {
 
     private final MockMvc mockMvc;
     private final JsonHelper jsonHelper;
@@ -42,7 +42,7 @@ public class TestUserResourceCrud {
     private final String bearerToken;
 
     @Autowired
-    public TestUserResourceCrud(MockMvc mockMvc,
+    TestUserResourceCrud(MockMvc mockMvc,
                                 JsonHelper jsonHelper,
                                 UserTestComponent userTestComponent,
                                 UserRepository userRepository,
@@ -59,7 +59,7 @@ public class TestUserResourceCrud {
     }
 
     @Test
-    public void testAccessUser() throws Exception {
+    void testAccessUser() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO token = userTestComponent.loginUser(user);
 
@@ -69,7 +69,7 @@ public class TestUserResourceCrud {
     }
 
     @Test
-    public void testAccessModo() throws Exception {
+    void testAccessModo() throws Exception {
         final User user = userTestComponent.createModoAccount();
         final UserTokenDTO token = userTestComponent.loginUser(user);
 
@@ -79,14 +79,14 @@ public class TestUserResourceCrud {
     }
 
     @Test
-    public void testGetAll() throws Exception {
+    void testGetAll() throws Exception {
         mockMvc.perform(get(route)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void testCreate() throws Exception {
+    void testCreate() throws Exception {
         final UserSecretsDTO userDTO = createUser();
 
         mockMvc.perform(post(route)
@@ -97,7 +97,7 @@ public class TestUserResourceCrud {
     }
 
     @Test
-    public void testPatch() throws Exception {
+    void testPatch() throws Exception {
         final UserSecretsDTO userDTO = createUser();
 
         MvcResult result = mockMvc.perform(post(route)
@@ -131,7 +131,7 @@ public class TestUserResourceCrud {
     }
 
     @Test
-    public void testFindById() throws Exception {
+    void testFindById() throws Exception {
         final UserSecretsDTO userDTO = createUser();
 
         MvcResult result = mockMvc.perform(post(route)
@@ -148,7 +148,7 @@ public class TestUserResourceCrud {
     }
 
     @Test
-    public void testRemoveId() throws Exception {
+    void testRemoveId() throws Exception {
         final UserSecretsDTO userDTO = createUser();
 
         MvcResult result = mockMvc.perform(post(route)

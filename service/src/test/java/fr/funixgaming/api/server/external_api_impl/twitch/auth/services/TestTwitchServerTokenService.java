@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(classes = WiremockTestServer.class)
-public class TestTwitchServerTokenService {
+class TestTwitchServerTokenService {
 
     @Autowired
     private TwitchServerTokenService twitchServerTokenService;
@@ -31,7 +31,7 @@ public class TestTwitchServerTokenService {
     private JsonHelper jsonHelper;
 
     @Test
-    public void testFetchingToken() throws Exception {
+    protected void testFetchingToken() throws Exception {
         final TwitchTokenResponseDTO mockToken = new TwitchTokenResponseDTO();
         mockToken.setAccessToken("access");
         mockToken.setRefreshToken("refersh");

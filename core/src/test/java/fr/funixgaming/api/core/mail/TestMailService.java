@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @SpringBootTest(classes = TestApp.class)
 @ImportAutoConfiguration(GreenMailTestServer.class)
 @AutoConfigureMockMvc
-public class TestMailService {
+class TestMailService {
 
     @Autowired
     private GreenMail greenMail;
@@ -26,7 +26,7 @@ public class TestMailService {
     private MailService mailService;
 
     @Test
-    public void testSendMail() {
+    void testSendMail() {
         try {
             final MailDTO mailTest = new MailDTO();
             mailTest.setFrom("test@localhost.fr");
@@ -42,7 +42,7 @@ public class TestMailService {
     }
 
     @Test
-    public void testSendMailWithAttachment() {
+    void testSendMailWithAttachment() {
         try {
             final MailDTO mailTest = new MailDTO();
             mailTest.setFrom("test@localhost.fr");

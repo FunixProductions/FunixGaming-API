@@ -23,7 +23,7 @@ import static org.assertj.core.api.Fail.fail;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(WiremockTestServer.class)
-public class GoogleCaptchaServiceTest {
+class GoogleCaptchaServiceTest {
 
     @Autowired
     private GoogleCaptchaService googleCaptchaService;
@@ -38,7 +38,7 @@ public class GoogleCaptchaServiceTest {
     private JsonHelper jsonHelper;
 
     @BeforeEach
-    public void setup() {
+    protected void setup() {
         googleCaptchaConfig.setDisabled(false);
         googleCaptchaConfig.setThreshold(0.5f);
         googleCaptchaConfig.setSite("key_site");
@@ -47,12 +47,12 @@ public class GoogleCaptchaServiceTest {
     }
 
     @AfterEach
-    public void end() {
+    protected void end() {
         googleCaptchaConfig.setDisabled(true);
     }
 
     @Test
-    public void testCheckCodeValid() throws Exception {
+    protected void testCheckCodeValid() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -74,7 +74,7 @@ public class GoogleCaptchaServiceTest {
     }
 
     @Test
-    public void testCheckCodeValid2() throws Exception {
+    protected void testCheckCodeValid2() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -96,7 +96,7 @@ public class GoogleCaptchaServiceTest {
     }
 
     @Test
-    public void testCheckCodeInvalid() throws Exception {
+    protected void testCheckCodeInvalid() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -122,7 +122,7 @@ public class GoogleCaptchaServiceTest {
     }
 
     @Test
-    public void testCheckCodeInvalidScore() throws Exception {
+    protected void testCheckCodeInvalidScore() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -148,7 +148,7 @@ public class GoogleCaptchaServiceTest {
     }
 
     @Test
-    public void testCheckCodeNoCaptcha() {
+    protected void testCheckCodeNoCaptcha() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.2");
         request.setLocalAddr("127.0.0.1");

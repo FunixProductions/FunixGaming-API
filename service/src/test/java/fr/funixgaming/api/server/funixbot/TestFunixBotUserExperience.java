@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TestFunixBotUserExperience {
+class TestFunixBotUserExperience {
 
     private final MockMvc mockMvc;
     private final JsonHelper jsonHelper;
@@ -31,7 +31,7 @@ public class TestFunixBotUserExperience {
     private final FunixBotUserExperience fourth;
 
     @Autowired
-    public TestFunixBotUserExperience(MockMvc mockMvc,
+    TestFunixBotUserExperience(MockMvc mockMvc,
                                       JsonHelper jsonHelper,
                                       FunixBotUserExperienceRepository repository) throws Exception {
         this.mockMvc = mockMvc;
@@ -75,7 +75,7 @@ public class TestFunixBotUserExperience {
     }
 
     @Test
-    public void testGetFirstRank() throws Exception {
+    void testGetFirstRank() throws Exception {
         final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=1"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -85,7 +85,7 @@ public class TestFunixBotUserExperience {
     }
 
     @Test
-    public void testGetSecondRank() throws Exception {
+    void testGetSecondRank() throws Exception {
         final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=2"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -95,7 +95,7 @@ public class TestFunixBotUserExperience {
     }
 
     @Test
-    public void testGetThirdRank() throws Exception {
+    void testGetThirdRank() throws Exception {
         final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=3"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -105,7 +105,7 @@ public class TestFunixBotUserExperience {
     }
 
     @Test
-    public void testGetFourthRank() throws Exception {
+    void testGetFourthRank() throws Exception {
         final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=4"))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -115,7 +115,7 @@ public class TestFunixBotUserExperience {
     }
 
     @Test
-    public void testGetUnranked() throws Exception {
+    void testGetUnranked() throws Exception {
         final MvcResult result = mockMvc.perform(get(route + "rank?twitchUserId=ouiouiuiu"))
                 .andExpect(status().isOk())
                 .andReturn();

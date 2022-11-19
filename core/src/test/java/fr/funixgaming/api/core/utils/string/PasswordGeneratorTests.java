@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @AutoConfigureMockMvc
 @SpringBootTest(classes = TestApp.class)
-public class PasswordGeneratorTests {
+class PasswordGeneratorTests {
 
     @Test
-    public void testPassword2Digit2Specials2Upper2Down() {
+    void testPassword2Digit2Specials2Upper2Down() {
         final PasswordGenerator passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(2);
         passwordGenerator.setNumbersAmount(2);
@@ -24,7 +24,7 @@ public class PasswordGeneratorTests {
     }
 
     @Test
-    public void testPassword4Digit4Specials4Upper4Down() {
+    void testPassword4Digit4Specials4Upper4Down() {
         final PasswordGenerator passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(4);
         passwordGenerator.setNumbersAmount(4);
@@ -36,7 +36,7 @@ public class PasswordGeneratorTests {
     }
 
     @Test
-    public void testPassword4Digit5Specials6Upper7Down() {
+    void testPassword4Digit5Specials6Upper7Down() {
         final PasswordGenerator passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(4);
         passwordGenerator.setNumbersAmount(5);

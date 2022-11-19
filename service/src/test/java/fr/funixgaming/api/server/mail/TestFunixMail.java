@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(GreenMailTestServer.class)
-public class TestFunixMail {
+class TestFunixMail {
 
     @Autowired
     private GreenMail greenMail;
@@ -37,7 +37,7 @@ public class TestFunixMail {
     private final MockMvc mockMvc;
 
     @Autowired
-    public TestFunixMail(UserTestComponent userTestComponent,
+    TestFunixMail(UserTestComponent userTestComponent,
                          MockMvc mockMvc,
                          JsonHelper jsonHelper) throws Exception {
         this.tokenDTO = userTestComponent.loginUser(userTestComponent.createModoAccount());
@@ -46,7 +46,7 @@ public class TestFunixMail {
     }
 
     @Test
-    public void testSendMail() throws Exception {
+    void testSendMail() throws Exception {
         final FunixMailDTO funixMailDTO = new FunixMailDTO();
         funixMailDTO.setText("test");
         funixMailDTO.setSubject("test subject");

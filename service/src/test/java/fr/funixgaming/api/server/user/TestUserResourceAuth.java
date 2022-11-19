@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TestUserResourceAuth {
+class TestUserResourceAuth {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,13 +49,13 @@ public class TestUserResourceAuth {
     private UserMapper userMapper;
 
     @BeforeEach
-    public void cleanDb() {
+    void cleanDb() {
         userTokenRepository.deleteAll();
         userRepository.deleteAll();
     }
 
     @Test
-    public void testRegisterSuccess() throws Exception {
+    void testRegisterSuccess() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail("test@gmail.com");
         creationDTO.setUsername("test");
@@ -75,7 +75,7 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testRegisterFailPasswordsMismatch() throws Exception {
+    void testRegisterFailPasswordsMismatch() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail("test@gmail.com");
         creationDTO.setUsername("test");
@@ -89,7 +89,7 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testRegisterUsernameTaken() throws Exception {
+    void testRegisterUsernameTaken() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail("test@gmail.com");
         creationDTO.setUsername("test");
@@ -108,7 +108,7 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testLoginSuccess() throws Exception {
+    void testLoginSuccess() throws Exception {
         final User account = userTestComponent.createBasicUser();
 
         final UserLoginDTO loginDTO = new UserLoginDTO();
@@ -128,7 +128,7 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testLoginWrongPassword() throws Exception {
+    void testLoginWrongPassword() throws Exception {
         final UserLoginDTO loginDTO = new UserLoginDTO();
 
         loginDTO.setUsername("JENEXISTEPAS");
@@ -141,7 +141,7 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testGetCurrentUser() throws Exception {
+    void testGetCurrentUser() throws Exception {
         final User account = userTestComponent.createBasicUser();
 
         final UserLoginDTO loginDTO = new UserLoginDTO();
@@ -168,12 +168,12 @@ public class TestUserResourceAuth {
     }
 
     @Test
-    public void testFailGetCurrentUserNoAuth() throws Exception {
+    void testFailGetCurrentUserNoAuth() throws Exception {
         this.mockMvc.perform(get("/user/current")).andExpect(status().isUnauthorized());
     }
 
     @Test
-    public void testFailGetCurrentUserBadAuth() throws Exception {
+    void testFailGetCurrentUserBadAuth() throws Exception {
         this.mockMvc.perform(get("/user/current")
                 .header("Authorization", "Bearer " + "BADTOKEN"))
                 .andExpect(status().isUnauthorized());
