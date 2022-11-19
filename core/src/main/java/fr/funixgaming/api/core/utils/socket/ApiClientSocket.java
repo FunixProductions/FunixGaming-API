@@ -39,7 +39,7 @@ public abstract class ApiClientSocket {
      * @param port server port
      * @throws ApiException when auth exception
      */
-    public ApiClientSocket(final String socketAddress, final int port) throws ApiException {
+    protected ApiClientSocket(final String socketAddress, final int port) throws ApiException {
         this.socketAddress = socketAddress;
         this.port = port;
         this.isServerSocket = false;
@@ -57,7 +57,7 @@ public abstract class ApiClientSocket {
      * @param socket socket given from server socket
      * @throws ApiException when error occurs with socket
      */
-    public ApiClientSocket(final Socket socket) throws ApiException {
+    protected ApiClientSocket(final Socket socket) throws ApiException {
         this.socketAddress = "";
         this.port = 0;
         this.isServerSocket = true;
@@ -96,7 +96,8 @@ public abstract class ApiClientSocket {
             if (this.socket != null && !this.socket.isClosed()) {
                 this.socket.close();
             }
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            log.error("Error occurred while clearing socket.", e);
         }
     }
 
@@ -140,7 +141,8 @@ public abstract class ApiClientSocket {
                         this.reader.close();
                         this.reader = null;
                     }
-                } catch (IOException ignored) {
+                } catch (IOException e) {
+                    log.error("Error while clean reader and writer.", e);
                 }
             }
 

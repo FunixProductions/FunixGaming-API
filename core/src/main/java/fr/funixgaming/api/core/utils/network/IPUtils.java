@@ -46,7 +46,7 @@ public class IPUtils {
                 remoteAddress = request.getRemoteAddr();
             } else {
                 final String[] addresses = addressHeader.split(",");
-                remoteAddress = addresses[0].replaceAll(" ", "");
+                remoteAddress = addresses[0].replace(" ", "");
             }
         }
 

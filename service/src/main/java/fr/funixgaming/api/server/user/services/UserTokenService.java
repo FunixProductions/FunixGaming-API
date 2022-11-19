@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class UserTokenService {
-    private final static String ISSUER = "FunixApi - api.funixgaming.fr";
+    private static final String ISSUER = "FunixApi - api.funixgaming.fr";
 
     private final UserTokenRepository tokenRepository;
     private final UserTokenMapper tokenMapper;

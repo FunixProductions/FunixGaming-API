@@ -1,5 +1,8 @@
 package fr.funixgaming.api.core.utils.time;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -8,10 +11,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TimeUtils {
 
-    private final static ZoneId PARIS_ZONE_ID = ZoneId.of("Europe/Paris");
-    private final static Locale PARIS_LOCALE = Locale.FRANCE;
+    private static final ZoneId PARIS_ZONE_ID = ZoneId.of("Europe/Paris");
+    private static final Locale PARIS_LOCALE = Locale.FRANCE;
 
     public static Duration diffBetweenInstants(final Instant start, final Instant end) {
         return Duration.between(start, end);

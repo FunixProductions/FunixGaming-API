@@ -71,7 +71,7 @@ class TestUserResourceAuth {
         final UserDTO userDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
         assertEquals(creationDTO.getUsername(), userDTO.getUsername());
         assertEquals(creationDTO.getEmail(), userDTO.getEmail());
-        assertEquals(userDTO.getRole(), UserRole.USER);
+        assertEquals(UserRole.USER, userDTO.getRole());
     }
 
     @Test

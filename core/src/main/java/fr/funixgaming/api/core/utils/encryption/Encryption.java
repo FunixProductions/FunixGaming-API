@@ -81,14 +81,7 @@ public abstract class Encryption {
                 final Key key = keyGenerator.generateKey();
 
                 final String keyString = base64Encoder.encodeToString(key.getEncoded());
-                try {
-                    Files.writeString(keyFile.toPath(), keyString, StandardOpenOption.TRUNCATE_EXISTING);
-                } catch (Exception e) {
-                    if (!keyFile.delete()) {
-                        throw new ApiException("Impossible de supprimer le fichier d'encryption. Lors d'une erreur.", e);
-                    }
-                    throw e;
-                }
+                writeInFile(keyString, keyFile);
                 return key;
             }
 
@@ -116,14 +109,7 @@ public abstract class Encryption {
                 secureRandom.nextBytes(iv);
 
                 final String ivString = base64Encoder.encodeToString(iv);
-                try {
-                    Files.writeString(ivFile.toPath(), ivString, StandardOpenOption.TRUNCATE_EXISTING);
-                } catch (Exception e) {
-                    if (!ivFile.delete()) {
-                        throw new ApiException("Impossible de supprimer le fichier d'encryption. Lors d'une erreur.", e);
-                    }
-                    throw e;
-                }
+                writeInFile(ivString, ivFile);
                 return iv;
             }
 
@@ -131,6 +117,15 @@ public abstract class Encryption {
             return base64Decoder.decode(ivString);
         } catch (Exception e)  {
             throw new ApiException("Une erreur est survenue lors de la création du fichier d'encryption.", e);
+        }
+    }
+
+    private static void writeInFile(final String data, final File file) throws Exception {
+        try {
+            Files.writeString(file.toPath(), data, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (Exception e) {
+            Files.delete(file.toPath());
+            throw e;
         }
     }
 

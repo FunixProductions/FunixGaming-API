@@ -26,9 +26,6 @@ public interface UserAuthClient {
     @PostMapping("login")
     UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, @RequestHeader("google_reCaptcha") @Nullable String captchaCode);
 
-    @GetMapping("valid")
-    void valid(@RequestHeader("Authorization") String token);
-
     @GetMapping("current")
     UserDTO current(@RequestHeader("Authorization") String token);
 

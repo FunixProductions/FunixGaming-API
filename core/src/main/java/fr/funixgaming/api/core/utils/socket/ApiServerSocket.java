@@ -15,7 +15,7 @@ public abstract class ApiServerSocket {
     private final ServerSocket serverSocket;
     private final Set<Socket> clients = new HashSet<>();
 
-    public ApiServerSocket(final int port) throws ApiException {
+    protected ApiServerSocket(final int port) throws ApiException {
         try {
             this.serverSocket = new ServerSocket(port);
             new Thread(this::worker).start();

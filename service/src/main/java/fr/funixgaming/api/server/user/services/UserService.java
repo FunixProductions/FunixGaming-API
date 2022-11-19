@@ -67,11 +67,9 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
             }
         }
 
-        if (request instanceof final UserSecretsDTO secretsDTO) {
-            if (Strings.isNotBlank(secretsDTO.getPassword())) {
-                entity.setPassword(secretsDTO.getPassword());
-                tokenService.invalidTokens(request.getId());
-            }
+        if (request instanceof final UserSecretsDTO secretsDTO && Strings.isNotBlank(secretsDTO.getPassword())) {
+            entity.setPassword(secretsDTO.getPassword());
+            tokenService.invalidTokens(request.getId());
         }
     }
 
@@ -85,8 +83,8 @@ public class UserService extends ApiService<UserDTO, User, UserMapper, UserRepos
         }
 
         final Object principal = authentication.getPrincipal();
-        if (principal instanceof User) {
-            return super.getMapper().toDto((User) principal);
+        if (principal instanceof final User user) {
+            return super.getMapper().toDto(user);
         }
         return null;
     }
