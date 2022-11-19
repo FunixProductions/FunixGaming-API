@@ -38,7 +38,7 @@ class GoogleCaptchaServiceTest {
     private JsonHelper jsonHelper;
 
     @BeforeEach
-    protected void setup() {
+    void setup() {
         googleCaptchaConfig.setDisabled(false);
         googleCaptchaConfig.setThreshold(0.5f);
         googleCaptchaConfig.setSite("key_site");
@@ -47,12 +47,12 @@ class GoogleCaptchaServiceTest {
     }
 
     @AfterEach
-    protected void end() {
+    void end() {
         googleCaptchaConfig.setDisabled(true);
     }
 
     @Test
-    protected void testCheckCodeValid() throws Exception {
+    void testCheckCodeValid() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -74,7 +74,7 @@ class GoogleCaptchaServiceTest {
     }
 
     @Test
-    protected void testCheckCodeValid2() throws Exception {
+    void testCheckCodeValid2() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -96,7 +96,7 @@ class GoogleCaptchaServiceTest {
     }
 
     @Test
-    protected void testCheckCodeInvalid() throws Exception {
+    void testCheckCodeInvalid() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -122,7 +122,7 @@ class GoogleCaptchaServiceTest {
     }
 
     @Test
-    protected void testCheckCodeInvalidScore() throws Exception {
+    void testCheckCodeInvalidScore() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("google_reCaptcha", "codevalid");
         request.setRemoteAddr("127.0.0.2");
@@ -148,7 +148,7 @@ class GoogleCaptchaServiceTest {
     }
 
     @Test
-    protected void testCheckCodeNoCaptcha() {
+    void testCheckCodeNoCaptcha() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr("127.0.0.2");
         request.setLocalAddr("127.0.0.1");

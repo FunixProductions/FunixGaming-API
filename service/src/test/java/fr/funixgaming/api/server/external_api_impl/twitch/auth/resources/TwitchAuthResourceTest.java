@@ -45,12 +45,12 @@ class TwitchAuthResourceTest {
     private JsonHelper jsonHelper;
 
     @BeforeEach
-    protected void beforeEach() {
+    void beforeEach() {
         this.wireMockServer.resetAll();
     }
 
     @Test
-    protected void testGetAuthUrlSuccess() throws Exception {
+    void testGetAuthUrlSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
@@ -78,7 +78,7 @@ class TwitchAuthResourceTest {
     }
 
     @Test
-    protected void testTwitchCallbackRoute() throws Exception {
+    void testTwitchCallbackRoute() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
@@ -109,7 +109,7 @@ class TwitchAuthResourceTest {
     }
 
     @Test
-    protected void testGetAccessTokenSuccess() throws Exception {
+    void testGetAccessTokenSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
@@ -137,7 +137,7 @@ class TwitchAuthResourceTest {
     }
 
     @Test
-    protected void testGetAccessTokenStreamerSuccess() throws Exception {
+    void testGetAccessTokenStreamerSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 

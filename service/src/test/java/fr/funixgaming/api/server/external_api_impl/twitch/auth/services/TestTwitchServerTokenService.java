@@ -31,7 +31,7 @@ class TestTwitchServerTokenService {
     private JsonHelper jsonHelper;
 
     @Test
-    protected void testFetchingToken() throws Exception {
+    void testFetchingToken() throws Exception {
         final TwitchTokenResponseDTO mockToken = new TwitchTokenResponseDTO();
         mockToken.setAccessToken("access");
         mockToken.setRefreshToken("refersh");
