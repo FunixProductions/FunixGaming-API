@@ -31,4 +31,9 @@ public class TwitchApiConfig {
      */
     private String appAuthDomainUrl;
 
+    /**
+     * Domain twitch for the api
+     */
+    private String appApiDomainUrl;
+
 }
