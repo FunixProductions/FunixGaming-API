@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.auth.configs;
+package fr.funixgaming.api.server.external_api_impl.twitch.configs;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -2,8 +2,8 @@ package fr.funixgaming.api.server.external_api_impl.twitch.auth.services;
 
 import feign.FeignException;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.auth.configs.TwitchApiConfig;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
