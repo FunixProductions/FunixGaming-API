@@ -7,6 +7,7 @@ import fr.funixgaming.api.server.beans.JsonHelper;
 import fr.funixgaming.api.server.beans.WiremockTestServer;
 import fr.funixgaming.api.server.external_api_impl.google.config.GoogleCaptchaConfig;
 import fr.funixgaming.api.server.external_api_impl.google.dtos.GoogleCaptchaSiteVerifyResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,11 @@ public class GoogleCaptchaServiceTest {
         wireMockServer.resetAll();
     }
 
+    @AfterEach
+    public void end() {
+        googleCaptchaConfig.setDisabled(true);
+    }
+
     @Test
     public void testCheckCodeValid() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -80,7 +86,7 @@ public class GoogleCaptchaServiceTest {
         responseMock.setScore(0.8f);
         responseMock.setAction("login");
 
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(String.format("/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s", googleCaptchaConfig.getSecret(), "codevalid", request.getRemoteAddr())))
+        wireMockServer.stubFor(WireMock.post(WireMock.urlPathEqualTo("/recaptcha/api/siteverify"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -102,7 +108,7 @@ public class GoogleCaptchaServiceTest {
         responseMock.setScore(0.1f);
         responseMock.setAction("register");
 
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(String.format("/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s", googleCaptchaConfig.getSecret(), "codevalid", request.getRemoteAddr())))
+        wireMockServer.stubFor(WireMock.post(WireMock.urlPathEqualTo("/recaptcha/api/siteverify"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
@@ -128,7 +134,7 @@ public class GoogleCaptchaServiceTest {
         responseMock.setScore(0.1f);
         responseMock.setAction("register");
 
-        wireMockServer.stubFor(WireMock.post(WireMock.urlEqualTo(String.format("/recaptcha/api/siteverify?secret=%s&response=%s&remoteip=%s", googleCaptchaConfig.getSecret(), "codevalid", request.getRemoteAddr())))
+        wireMockServer.stubFor(WireMock.post(WireMock.urlPathEqualTo("/recaptcha/api/siteverify"))
                 .willReturn(WireMock.aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
