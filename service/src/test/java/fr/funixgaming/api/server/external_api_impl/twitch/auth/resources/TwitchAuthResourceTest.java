@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ImportAutoConfiguration(classes = WiremockTestServer.class)
-public class TwitchAuthResourceTest {
+class TwitchAuthResourceTest {
 
     @Autowired
     private UserTestComponent userTestComponent;
@@ -45,12 +45,12 @@ public class TwitchAuthResourceTest {
     private JsonHelper jsonHelper;
 
     @BeforeEach
-    public void beforeEach() {
+    protected void beforeEach() {
         this.wireMockServer.resetAll();
     }
 
     @Test
-    public void testGetAuthUrlSuccess() throws Exception {
+    protected void testGetAuthUrlSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
@@ -78,7 +78,7 @@ public class TwitchAuthResourceTest {
     }
 
     @Test
-    public void testTwitchCallbackRoute() throws Exception {
+    protected void testTwitchCallbackRoute() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
@@ -109,7 +109,7 @@ public class TwitchAuthResourceTest {
     }
 
     @Test
-    public void testGetAccessTokenSuccess() throws Exception {
+    protected void testGetAccessTokenSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
@@ -137,7 +137,7 @@ public class TwitchAuthResourceTest {
     }
 
     @Test
-    public void testGetAccessTokenStreamerSuccess() throws Exception {
+    protected void testGetAccessTokenStreamerSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 

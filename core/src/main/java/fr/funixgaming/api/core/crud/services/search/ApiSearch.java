@@ -18,7 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY> {
 
-    private final Search search;
+    private transient final Search search;
 
     @Override
     public Predicate toPredicate(@NonNull final Root<ENTITY> root,

@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 TestApp.class
         }
 )
-public class CrudTests {
+class CrudTests {
     public static final String ROUTE = "/test";
 
     private final JsonHelper gson;
@@ -51,12 +51,12 @@ public class CrudTests {
     }
 
     @BeforeEach
-    public void cleanDB() {
+    void cleanDB() {
         repository.deleteAll();
     }
 
     @Test
-    public void testCreation() throws Exception {
+    void testCreation() throws Exception {
         final TestDTO testDTO = new TestDTO();
         testDTO.setData("oui");
 
@@ -74,7 +74,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    void testUpdate() throws Exception {
         final TestDTO testDTO = new TestDTO();
         testDTO.setData("oui");
 
@@ -102,7 +102,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testUpdateBatch() throws Exception {
+    void testUpdateBatch() throws Exception {
         final List<TestDTO> list = new ArrayList<>();
 
         TestDTO testDTO = new TestDTO();
@@ -160,7 +160,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testUpdateNoId() throws Exception {
+    void testUpdateNoId() throws Exception {
         mockMvc.perform(patch(ROUTE)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(gson.toJson(new TestDTO())))
@@ -168,7 +168,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testUpdateEntityNotCreated() throws Exception {
+    void testUpdateEntityNotCreated() throws Exception {
         final TestDTO testDTO = new TestDTO();
         testDTO.setId(UUID.randomUUID());
 
@@ -179,7 +179,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testGetAll() throws Exception {
+    void testGetAll() throws Exception {
         int size = 3;
 
         for (int i = 0; i < size; ++i) {
@@ -201,7 +201,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testGetAllPaginated() throws Exception {
+    void testGetAllPaginated() throws Exception {
         int size = 3;
 
         for (int i = 0; i < size; ++i) {
@@ -223,7 +223,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testGetAllPaginatedAndSorted() throws Exception {
+    void testGetAllPaginatedAndSorted() throws Exception {
         final int startInt = 1000;
         final int minimalInt = -4000;
 
@@ -266,7 +266,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testGetById() throws Exception {
+    void testGetById() throws Exception {
         final TestDTO testDTO = new TestDTO();
         testDTO.setData("oui");
 
@@ -282,13 +282,13 @@ public class CrudTests {
     }
 
     @Test
-    public void testGetByIdNotCreated() throws Exception {
+    void testGetByIdNotCreated() throws Exception {
         mockMvc.perform(get(ROUTE + "/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void testRemove() throws Exception {
+    void testRemove() throws Exception {
         TestEntity entity = new TestEntity();
 
         entity.setData("TEST");
@@ -304,7 +304,7 @@ public class CrudTests {
     }
 
     @Test
-    public void testRemoveNoId() throws Exception {
+    void testRemoveNoId() throws Exception {
         mockMvc.perform(delete(ROUTE))
                 .andExpect(status().isBadRequest());
     }

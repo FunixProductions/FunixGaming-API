@@ -6,10 +6,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class IPUtilsTests {
+class IPUtilsTests {
 
     @Test
-    public void testGetClientIpNotProxied() throws Exception {
+    void testGetClientIpNotProxied() throws Exception {
         final String ipClient = "182.10.6.2";
         final IPUtils ipUtils = new IPUtils(false);
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
@@ -19,7 +19,7 @@ public class IPUtilsTests {
     }
 
     @Test
-    public void testGetClientIpBehindOneProxy() throws Exception {
+    void testGetClientIpBehindOneProxy() throws Exception {
         final String proxyIp = "127.0.0.1";
         final String clientIp = "182.10.6.2";
         final MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
@@ -33,7 +33,7 @@ public class IPUtilsTests {
     }
 
     @Test
-    public void testGetClientIpBehindMultipleProxy() throws Exception {
+    void testGetClientIpBehindMultipleProxy() throws Exception {
         final String firstProxy = "127.0.0.1";
         final String secondProxy = "127.0.0.2";
         final String clientIp = "182.10.6.2";
@@ -48,7 +48,7 @@ public class IPUtilsTests {
     }
 
     @Test
-    public void testLocalhostIp() throws Exception {
+    void testLocalhostIp() throws Exception {
         final IPUtils ipUtils = new IPUtils(false);
 
         assertTrue(ipUtils.isLocalClient("127.10.5.3"));
@@ -61,7 +61,7 @@ public class IPUtilsTests {
     }
 
     @Test
-    public void testInvalidIp() {
+    void testInvalidIp() {
         final IPUtils ipUtils = new IPUtils(false);
 
         try {

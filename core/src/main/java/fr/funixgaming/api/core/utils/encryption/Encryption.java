@@ -24,7 +24,7 @@ public abstract class Encryption {
     private final Key key;
     private final byte[] iv;
 
-    public Encryption() {
+    protected Encryption() {
         this.key = getKeyFromFile();
         this.iv = getIvFromFile();
         this.base64Encoder = Base64.getEncoder();

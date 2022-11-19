@@ -28,9 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 TestApp.class
         }
 )
-public class SearchTests {
+class SearchTests {
 
-    public static final String ROUTE = "/test";
+    static final String ROUTE = "/test";
 
     private final String dateString = "06-09-2022_18.00.00";
 
@@ -50,12 +50,12 @@ public class SearchTests {
     private TestService testService;
 
     @BeforeEach
-    public void cleanDb() {
+    void cleanDb() {
         repository.deleteAll();
     }
 
     @Test
-    public void testSearchNoPagination() throws Exception {
+    void testSearchNoPagination() throws Exception {
         TestEntity testDTO = new TestEntity();
         testDTO.setData("ouiData");
         testDTO.setNumber(10);
@@ -77,7 +77,7 @@ public class SearchTests {
     }
 
     @Test
-    public void testSearchMultiple() throws Exception {
+    void testSearchMultiple() throws Exception {
         final List<TestEntity> testEntities = new ArrayList<>();
 
         testEntities.add(new TestEntity("ouiData", 10, Date.from(Instant.now()), null, null, null, null));
@@ -93,7 +93,7 @@ public class SearchTests {
     }
 
     @Test
-    public void testSpacialOperations() throws Exception {
+    void testSpacialOperations() throws Exception {
         final Instant now = TimeUtils.getTimeFromFrenchZone("dd-MM-yyyy_HH.mm.ss", dateString);
         final List<TestEntity> testEntities = new ArrayList<>();
 
@@ -157,7 +157,7 @@ public class SearchTests {
     }
 
     @Test
-    public void testBracketsSearch() {
+    void testBracketsSearch() {
         final Instant now = TimeUtils.getTimeFromFrenchZone("dd-MM-yyyy_HH.mm.ss", dateString);
         final List<TestEntity> testEntities = new ArrayList<>();
 
@@ -191,7 +191,7 @@ public class SearchTests {
     }
 
     @Test
-    public void testSearchErrorString() throws Exception {
+    void testSearchErrorString() throws Exception {
         checkSearchFail("data-ouiData");
         checkSearchFail("oui:");
         checkSearchFail(":data");

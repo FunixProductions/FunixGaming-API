@@ -66,12 +66,11 @@ public class TwitchClientTokenService {
         this.twitchTokenAuthClient = twitchTokenAuthClient;
         this.twitchClientTokenMapper = twitchClientTokenMapper;
 
-        final PasswordGenerator passwordGenerator = new PasswordGenerator();
+        this.passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(0);
         passwordGenerator.setAlphaDown(20);
         passwordGenerator.setAlphaUpper(20);
         passwordGenerator.setNumbersAmount(20);
-        this.passwordGenerator = passwordGenerator;
     }
 
     /**
