@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos;
+package fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -56,4 +56,12 @@ public class TwitchChannelDTO {
     @JsonProperty(value = "delay")
     private Integer delay;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof final TwitchChannelDTO ent) {
+            return ent.getBroadcasterId().equals(this.broadcasterId);
+        } else {
+            return false;
+        }
+    }
 }
