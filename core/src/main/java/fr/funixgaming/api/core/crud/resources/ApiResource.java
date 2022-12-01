@@ -4,10 +4,10 @@ import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Getter

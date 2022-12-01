@@ -1,10 +1,10 @@
 package fr.funixgaming.api.server.mail.entities;
 
 import fr.funixgaming.api.core.mail.entities.ApiMailEntity;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
 
 @Getter
 @Setter

@@ -9,6 +9,7 @@ import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
@@ -20,7 +21,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Slf4j

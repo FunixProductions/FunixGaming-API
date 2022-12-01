@@ -17,6 +17,8 @@ import fr.funixgaming.api.server.external_api_impl.google.services.GoogleCaptcha
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.services.UserService;
 import fr.funixgaming.api.server.user.services.UserTokenService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +28,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j

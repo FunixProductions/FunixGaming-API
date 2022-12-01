@@ -2,10 +2,10 @@ package fr.funixgaming.api.server.user.entities;
 
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.server.configs.EncryptionString;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
 

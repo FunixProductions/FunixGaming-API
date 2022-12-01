@@ -2,6 +2,8 @@ package fr.funixgaming.api.core.mail.services;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.mail.dtos.ApiMailDTO;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.MailException;
@@ -9,8 +11,6 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.File;
 
 @RequiredArgsConstructor
