@@ -16,6 +16,29 @@
         <version>3.0.0</version>
     </parent>
 
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2022.0.0-M4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
         <module>core</module>
         <module>api</module>
@@ -59,19 +82,6 @@
         </repository>
     </distributionManagement>
 
-    <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies -->
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2021.0.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <properties>
         <java.version>17</java.version>
 
@@ -84,7 +94,7 @@
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
         <flyway.version>9.7.0</flyway.version>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <postgres.version>42.5.0</postgres.version>
+        <postgres.version>42.5.1</postgres.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <jwt-api.version>0.11.5</jwt-api.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
@@ -102,9 +112,9 @@
         <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
         <org.jacoco.coverage.version>0.8.8</org.jacoco.coverage.version>
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
-        <greenmail.test.mail.version>1.6.11</greenmail.test.mail.version>
+        <greenmail.test.mail.version>2.0.0-alpha-2</greenmail.test.mail.version>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <mockito.version>4.8.1</mockito.version>
+        <mockito.version>4.9.0</mockito.version>
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
         <sonarqube.plugin.version>3.9.1.2184</sonarqube.plugin.version>
         <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
@@ -112,7 +122,7 @@
         <!-- https://mvnrepository.com/artifact/com.github.tomakehurst/wiremock -->
         <wiremock.version>2.27.2</wiremock.version>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
-        <spring.boot.configuration.processor.version>2.7.5</spring.boot.configuration.processor.version>
+        <spring.boot.configuration.processor.version>3.0.0</spring.boot.configuration.processor.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>

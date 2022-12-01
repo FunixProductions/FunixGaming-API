@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Fail.fail;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ImportAutoConfiguration(WiremockTestServer.class)
+@ImportAutoConfiguration({WiremockTestServer.class, FeignAutoConfiguration.class})
 class GoogleCaptchaServiceTest {
 
     @Autowired
