@@ -1,10 +1,10 @@
 package fr.funixgaming.api.core.utils.network;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 

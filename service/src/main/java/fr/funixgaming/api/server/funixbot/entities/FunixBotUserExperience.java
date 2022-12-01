@@ -1,10 +1,11 @@
 package fr.funixgaming.api.server.funixbot.entities;
 
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Getter

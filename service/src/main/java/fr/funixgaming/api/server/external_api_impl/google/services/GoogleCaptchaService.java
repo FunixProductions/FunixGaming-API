@@ -9,12 +9,12 @@ import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.external_api_impl.google.clients.GoogleCaptchaClient;
 import fr.funixgaming.api.server.external_api_impl.google.config.GoogleCaptchaConfig;
 import fr.funixgaming.api.server.external_api_impl.google.dtos.GoogleCaptchaSiteVerifyResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 

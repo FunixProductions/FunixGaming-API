@@ -2,6 +2,7 @@ package fr.funixgaming.api.server.user.components;
 
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.services.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,8 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity

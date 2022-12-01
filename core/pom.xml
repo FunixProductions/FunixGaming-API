@@ -53,6 +53,11 @@
             <version>${mapstruct.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
         <!-- webscoket -->
         <dependency>
             <groupId>org.springframework</groupId>

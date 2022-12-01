@@ -4,10 +4,10 @@ import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClien
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.server.configs.EncryptionString;
 import fr.funixgaming.api.server.user.entities.User;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.Instant;
 import java.util.Date;
 

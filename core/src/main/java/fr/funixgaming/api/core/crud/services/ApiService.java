@@ -9,6 +9,8 @@ import fr.funixgaming.api.core.crud.repositories.ApiRepository;
 import fr.funixgaming.api.core.crud.services.search.SearchBuilder;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.lang.Nullable;
 
-import javax.transaction.Transactional;
-import javax.validation.Valid;
 import java.time.Instant;
 import java.util.*;
 

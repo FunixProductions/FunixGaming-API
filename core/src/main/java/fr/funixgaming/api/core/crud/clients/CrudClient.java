@@ -2,9 +2,9 @@ package fr.funixgaming.api.core.crud.clients;
 
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
