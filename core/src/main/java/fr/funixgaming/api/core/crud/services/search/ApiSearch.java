@@ -14,6 +14,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.UUID;
 
+/**
+ * Search api engine
+ */
 @Getter
 @RequiredArgsConstructor
 public class ApiSearch<ENTITY extends ApiEntity> implements Specification<ENTITY> {
