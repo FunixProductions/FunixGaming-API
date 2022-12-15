@@ -51,7 +51,7 @@ class TestUserResourceCrud {
 
         this.mockMvc = mockMvc;
         this.jsonHelper = jsonHelper;
-        this.route = "/user/";
+        this.route = "/user";
         this.bearerToken = tokenDTO.getToken();
         this.userTestComponent = userTestComponent;
         this.userRepository = userRepository;

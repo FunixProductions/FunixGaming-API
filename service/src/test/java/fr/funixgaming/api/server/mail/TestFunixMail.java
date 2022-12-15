@@ -31,7 +31,7 @@ class TestFunixMail {
     @Autowired
     private GreenMail greenMail;
 
-    private final String route = "/mail/";
+    private final String route = "/mail";
     private final JsonHelper jsonHelper;
     private final UserTokenDTO tokenDTO;
     private final MockMvc mockMvc;
