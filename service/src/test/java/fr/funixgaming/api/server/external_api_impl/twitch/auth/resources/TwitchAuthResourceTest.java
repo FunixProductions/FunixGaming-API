@@ -1,25 +1,22 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.auth.resources;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
-import fr.funixgaming.api.server.beans.JsonHelper;
-import fr.funixgaming.api.server.beans.WiremockTestServer;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -29,25 +26,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ImportAutoConfiguration({WiremockTestServer.class})
+@RunWith(MockitoJUnitRunner.class)
 class TwitchAuthResourceTest {
+
+    @MockBean
+    private TwitchTokenAuthClient twitchTokenAuthClient;
 
     @Autowired
     private UserTestComponent userTestComponent;
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private WireMockServer wireMockServer;
-
-    @Autowired
-    private JsonHelper jsonHelper;
-
-    @BeforeEach
-    void beforeEach() {
-        this.wireMockServer.resetAll();
-    }
 
     @Test
     void testGetAuthUrlSuccess() throws Exception {
@@ -179,20 +168,7 @@ class TwitchAuthResourceTest {
         validResponseMock.setTwitchUserId("lqksjdsldgh");
         validResponseMock.setTwitchUsername("funix");
 
-        wireMockServer.stubFor(WireMock.any(WireMock.urlPathEqualTo("/oauth2/token"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(jsonHelper.toJson(mockToken))
-                )
-        );
-
-        wireMockServer.stubFor(WireMock.any(WireMock.urlPathEqualTo("/oauth2/validate"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(jsonHelper.toJson(validResponseMock))
-                )
-        );
+        Mockito.when(twitchTokenAuthClient.getToken(Mockito.any())).thenReturn(mockToken);
+        Mockito.when(twitchTokenAuthClient.validateToken(Mockito.any())).thenReturn(validResponseMock);
     }
 }
