@@ -51,22 +51,22 @@ public class WebSecurity {
                 )
                 .and();
 
-        http.authorizeHttpRequests((exchanges) -> {
-            exchanges.requestMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
-                    .requestMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
+        http.authorizeHttpRequests(exchanges ->
+                exchanges.requestMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
+                        .requestMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
 
-                    .requestMatchers("/mail/**").hasAuthority(UserRole.MODERATOR.getRole())
+                        .requestMatchers("/mail/**").hasAuthority(UserRole.MODERATOR.getRole())
 
-                    .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/user/valid").authenticated()
-                    .requestMatchers(HttpMethod.GET, "/user/current").authenticated()
-                    .requestMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
+                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/valid").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/user/current").authenticated()
+                        .requestMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
 
-                    .requestMatchers(HttpMethod.GET, "/twitch/auth/cb").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/twitch/auth/cb").permitAll()
 
-                    .anyRequest().authenticated();
-        }).httpBasic();
+                        .anyRequest().authenticated()
+        ).httpBasic();
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
