@@ -9,6 +9,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.respons
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.stream.TwitchStreamDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.video.TwitchChannelClipCreationDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.video.TwitchChannelClipDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.user.TwitchFollowDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.user.TwitchUserDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
@@ -245,7 +246,44 @@ public interface TwitchReferenceClient {
     TwitchDataResponseDTO<TwitchUserDTO> getUsersById(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
                                                       @RequestParam(name = "id") List<String> id);
 
+    /**
+     * Fetch the follow list of a user
+     * @param twitchAccessToken Requires an app access token or user access token: Bearer token
+     * @param userId user id to fetch
+     * @param maximumReturned The maximum number of items to return per page
+     * @param cursorAfter The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
+     * @return follow list
+     */
     @GetMapping("users/follows")
-    TwitchDataResponseDTO<>
+    TwitchDataResponseDTO<TwitchFollowDTO> getUserFollowingList(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
+                                                                @RequestParam(name = "from_id", required = false, defaultValue = "") String userId,
+                                                                @RequestParam(name = "first", required = false, defaultValue = "20") String maximumReturned,
+                                                                @RequestParam(name = "after", required = false, defaultValue = "") String cursorAfter);
+
+    /**
+     * Fetch the followers from a user
+     * @param twitchAccessToken Requires an app access token or user access token: Bearer token
+     * @param userId user id to fetch
+     * @param maximumReturned The maximum number of items to return per page
+     * @param cursorAfter The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
+     * @return followers list
+     */
+    @GetMapping("users/follows")
+    TwitchDataResponseDTO<TwitchFollowDTO> getUserFollowersList(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
+                                                                @RequestParam(name = "to_id", required = false, defaultValue = "") String userId,
+                                                                @RequestParam(name = "first", required = false, defaultValue = "20") String maximumReturned,
+                                                                @RequestParam(name = "after", required = false, defaultValue = "") String cursorAfter);
+
+    /**
+     * Check if a user is following a streamer
+     * @param twitchAccessToken Requires an app access token or user access token: Bearer token
+     * @param userId viewer id to check
+     * @param streamerId streamer id to check
+     * @return a single element list if the user is following otherwise not following
+     */
+    @GetMapping("users/follows")
+    TwitchDataResponseDTO<TwitchFollowDTO> isUserFollowingStreamer(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
+                                                                   @RequestParam(name = "from_id", required = false, defaultValue = "") String userId,
+                                                                   @RequestParam(name = "to_id", required = false, defaultValue = "") String streamerId;
 
 }
