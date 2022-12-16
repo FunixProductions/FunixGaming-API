@@ -32,8 +32,6 @@ public class TwitchServerTokenService {
         this.bodyRequest.put("client_id", twitchApiConfig.getAppClientId());
         this.bodyRequest.put("client_secret", twitchApiConfig.getAppClientSecret());
         this.bodyRequest.put("grant_type", "client_credentials");
-
-        this.refreshToken();
     }
 
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
