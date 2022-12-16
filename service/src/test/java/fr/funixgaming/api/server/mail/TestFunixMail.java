@@ -31,7 +31,7 @@ class TestFunixMail {
     @Autowired
     private GreenMail greenMail;
 
-    private final String route = "/mail/";
+    private final String route = "/mail";
     private final JsonHelper jsonHelper;
     private final UserTokenDTO tokenDTO;
     private final MockMvc mockMvc;
@@ -94,7 +94,7 @@ class TestFunixMail {
     }
 
     private FunixMailDTO getMailById(final String id) throws Exception {
-        final MvcResult result = mockMvc.perform(get(route + id)
+        final MvcResult result = mockMvc.perform(get(route + '/' + id)
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken()))
                 .andExpect(status().isOk())
                 .andReturn();

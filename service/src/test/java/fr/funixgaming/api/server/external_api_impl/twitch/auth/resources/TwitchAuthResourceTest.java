@@ -1,25 +1,23 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.auth.resources;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
-import fr.funixgaming.api.server.beans.JsonHelper;
-import fr.funixgaming.api.server.beans.WiremockTestServer;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -29,24 +27,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ImportAutoConfiguration(classes = WiremockTestServer.class)
+@RunWith(MockitoJUnitRunner.class)
 class TwitchAuthResourceTest {
 
     @Autowired
     private UserTestComponent userTestComponent;
 
+    @MockBean
+    private TwitchTokenAuthClient twitchTokenAuthClient;
+
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private WireMockServer wireMockServer;
-
-    @Autowired
-    private JsonHelper jsonHelper;
-
     @BeforeEach
-    void beforeEach() {
-        this.wireMockServer.resetAll();
+    void setupFeignClients() {
+        final PasswordGenerator passwordGenerator = new PasswordGenerator();
+        passwordGenerator.setSpecialCharsAmount(0);
+
+        final TwitchTokenResponseDTO mockToken = new TwitchTokenResponseDTO();
+        mockToken.setAccessToken("access" + passwordGenerator.generateRandomPassword());
+        mockToken.setRefreshToken("refersh" + passwordGenerator.generateRandomPassword());
+        mockToken.setTokenType("bearer");
+        mockToken.setExpiresIn(3000);
+
+        final TwitchValidationTokenResponseDTO validResponseMock = new TwitchValidationTokenResponseDTO();
+        validResponseMock.setTwitchUserId("lqksjdsldgh");
+        validResponseMock.setTwitchUsername("funix");
+
+        Mockito.when(twitchTokenAuthClient.getToken(Mockito.any())).thenReturn(mockToken);
+        Mockito.when(twitchTokenAuthClient.validateToken(Mockito.any())).thenReturn(validResponseMock);
     }
 
     @Test
@@ -89,8 +98,6 @@ class TwitchAuthResourceTest {
         final String url = result.getResponse().getContentAsString();
         final String csrfCode = getCsrfCodeFromUrl(url);
 
-        setupTwitchMockServerValidResponses();
-
         result = mockMvc.perform(get("/twitch/auth/cb" +
                         String.format("?code=sdfsdfsdfsdfsdqfthfyh&state=%s", csrfCode))
                 ).andExpect(status().isOk())
@@ -112,8 +119,6 @@ class TwitchAuthResourceTest {
     void testGetAccessTokenSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
-
-        setupTwitchMockServerValidResponses();
 
         mockMvc.perform(get("/twitch/auth/accessToken"))
                 .andExpect(status().isUnauthorized());
@@ -141,8 +146,6 @@ class TwitchAuthResourceTest {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
-        setupTwitchMockServerValidResponses();
-
         mockMvc.perform(get("/twitch/auth/accessToken?tokenType=" + TwitchClientTokenType.STREAMER.name())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken())
         ).andExpect(status().isNotFound());
@@ -163,36 +166,5 @@ class TwitchAuthResourceTest {
     private String getCsrfCodeFromUrl(final String url) {
         final String toScan = "&state=";
         return url.substring(url.lastIndexOf(toScan) + toScan.length());
-    }
-
-    private void setupTwitchMockServerValidResponses() throws Exception {
-        final PasswordGenerator passwordGenerator = new PasswordGenerator();
-        passwordGenerator.setSpecialCharsAmount(0);
-
-        final TwitchTokenResponseDTO mockToken = new TwitchTokenResponseDTO();
-        mockToken.setAccessToken("access" + passwordGenerator.generateRandomPassword());
-        mockToken.setRefreshToken("refersh" + passwordGenerator.generateRandomPassword());
-        mockToken.setTokenType("bearer");
-        mockToken.setExpiresIn(3000);
-
-        final TwitchValidationTokenResponseDTO validResponseMock = new TwitchValidationTokenResponseDTO();
-        validResponseMock.setTwitchUserId("lqksjdsldgh");
-        validResponseMock.setTwitchUsername("funix");
-
-        wireMockServer.stubFor(WireMock.any(WireMock.urlPathEqualTo("/oauth2/token"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(jsonHelper.toJson(mockToken))
-                )
-        );
-
-        wireMockServer.stubFor(WireMock.any(WireMock.urlPathEqualTo("/oauth2/validate"))
-                .willReturn(WireMock.aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                        .withBody(jsonHelper.toJson(validResponseMock))
-                )
-        );
     }
 }

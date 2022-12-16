@@ -7,7 +7,7 @@
     <parent>
         <artifactId>funix-api</artifactId>
         <groupId>fr.funixgaming.api</groupId>
-        <version>1.2.0</version>
+        <version>1.2.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -34,6 +34,16 @@
             <artifactId>funix-api-client</artifactId>
             <version>${funixgaming.api.version}</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
 
         <!-- Databse driver for postgres -->

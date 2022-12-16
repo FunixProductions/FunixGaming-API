@@ -1,10 +1,9 @@
 package fr.funixgaming.api.server.configs;
 
 import fr.funixgaming.api.core.utils.encryption.ApiConverter;
+import jakarta.persistence.Converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.Converter;
 
 @Component
 @Converter
