@@ -8,6 +8,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenR
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -29,14 +30,33 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(MockitoJUnitRunner.class)
 class TwitchAuthResourceTest {
 
+    @Autowired
+    private UserTestComponent userTestComponent;
+
     @MockBean
     private TwitchTokenAuthClient twitchTokenAuthClient;
 
     @Autowired
-    private UserTestComponent userTestComponent;
-
-    @Autowired
     private MockMvc mockMvc;
+
+    @BeforeEach
+    void setupFeignClients() {
+        final PasswordGenerator passwordGenerator = new PasswordGenerator();
+        passwordGenerator.setSpecialCharsAmount(0);
+
+        final TwitchTokenResponseDTO mockToken = new TwitchTokenResponseDTO();
+        mockToken.setAccessToken("access" + passwordGenerator.generateRandomPassword());
+        mockToken.setRefreshToken("refersh" + passwordGenerator.generateRandomPassword());
+        mockToken.setTokenType("bearer");
+        mockToken.setExpiresIn(3000);
+
+        final TwitchValidationTokenResponseDTO validResponseMock = new TwitchValidationTokenResponseDTO();
+        validResponseMock.setTwitchUserId("lqksjdsldgh");
+        validResponseMock.setTwitchUsername("funix");
+
+        Mockito.when(twitchTokenAuthClient.getToken(Mockito.any())).thenReturn(mockToken);
+        Mockito.when(twitchTokenAuthClient.validateToken(Mockito.any())).thenReturn(validResponseMock);
+    }
 
     @Test
     void testGetAuthUrlSuccess() throws Exception {
@@ -78,8 +98,6 @@ class TwitchAuthResourceTest {
         final String url = result.getResponse().getContentAsString();
         final String csrfCode = getCsrfCodeFromUrl(url);
 
-        setupTwitchMockServerValidResponses();
-
         result = mockMvc.perform(get("/twitch/auth/cb" +
                         String.format("?code=sdfsdfsdfsdfsdqfthfyh&state=%s", csrfCode))
                 ).andExpect(status().isOk())
@@ -101,8 +119,6 @@ class TwitchAuthResourceTest {
     void testGetAccessTokenSuccess() throws Exception {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
-
-        setupTwitchMockServerValidResponses();
 
         mockMvc.perform(get("/twitch/auth/accessToken"))
                 .andExpect(status().isUnauthorized());
@@ -130,8 +146,6 @@ class TwitchAuthResourceTest {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
-        setupTwitchMockServerValidResponses();
-
         mockMvc.perform(get("/twitch/auth/accessToken?tokenType=" + TwitchClientTokenType.STREAMER.name())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken())
         ).andExpect(status().isNotFound());
@@ -152,23 +166,5 @@ class TwitchAuthResourceTest {
     private String getCsrfCodeFromUrl(final String url) {
         final String toScan = "&state=";
         return url.substring(url.lastIndexOf(toScan) + toScan.length());
-    }
-
-    private void setupTwitchMockServerValidResponses() throws Exception {
-        final PasswordGenerator passwordGenerator = new PasswordGenerator();
-        passwordGenerator.setSpecialCharsAmount(0);
-
-        final TwitchTokenResponseDTO mockToken = new TwitchTokenResponseDTO();
-        mockToken.setAccessToken("access" + passwordGenerator.generateRandomPassword());
-        mockToken.setRefreshToken("refersh" + passwordGenerator.generateRandomPassword());
-        mockToken.setTokenType("bearer");
-        mockToken.setExpiresIn(3000);
-
-        final TwitchValidationTokenResponseDTO validResponseMock = new TwitchValidationTokenResponseDTO();
-        validResponseMock.setTwitchUserId("lqksjdsldgh");
-        validResponseMock.setTwitchUsername("funix");
-
-        Mockito.when(twitchTokenAuthClient.getToken(Mockito.any())).thenReturn(mockToken);
-        Mockito.when(twitchTokenAuthClient.validateToken(Mockito.any())).thenReturn(validResponseMock);
     }
 }

@@ -41,6 +41,9 @@ public class TwitchServerTokenService {
         try {
             if (!tokenValid()) {
                 final TwitchTokenResponseDTO tokenDTO = twitchTokenAuthClient.getToken(bodyRequest);
+                if (tokenDTO == null) {
+                    return;
+                }
 
                 this.accessToken = tokenDTO.getAccessToken();
                 this.expiresAt = Instant.now().plusSeconds(tokenDTO.getExpiresIn());
