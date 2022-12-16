@@ -8,10 +8,6 @@ import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.beans.JsonHelper;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.mappers.UserMapper;
-import fr.funixgaming.api.server.user.repositories.UserRepository;
-import fr.funixgaming.api.server.user.repositories.UserTokenRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,26 +37,11 @@ class TestUserResourceAuth {
     @Autowired
     private JsonHelper jsonHelper;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserTokenRepository userTokenRepository;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @BeforeEach
-    void cleanDb() {
-        userTokenRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @Test
     void testRegisterSuccess() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail("test@gmail.com");
-        creationDTO.setUsername("test");
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword("oui");
         creationDTO.setPasswordConfirmation("oui");
 
@@ -77,8 +60,8 @@ class TestUserResourceAuth {
     @Test
     void testRegisterFailPasswordsMismatch() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail("test@gmail.com");
-        creationDTO.setUsername("test");
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword("oui2");
         creationDTO.setPasswordConfirmation("oui");
 
@@ -91,8 +74,8 @@ class TestUserResourceAuth {
     @Test
     void testRegisterUsernameTaken() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail("test@gmail.com");
-        creationDTO.setUsername("test");
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword("oui");
         creationDTO.setPasswordConfirmation("oui");
 
