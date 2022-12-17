@@ -29,7 +29,7 @@ public interface TwitchReferenceModerationClient {
      *                        The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
      * @param after The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
      * @param userIds A list of user IDs used to filter the results. To specify more than one ID, include this parameter for each moderator you want to get.
-     *                For example, user_id=1234&user_id=5678. You may specify a maximum of 100 IDs.
+     *                For example, user_id=1234 user_id=5678. You may specify a maximum of 100 IDs.
      *                The returned list includes only the users from the list who are moderators in the broadcaster’s channel.
      *                The list is in the same order as you specified the IDs.
      * @return moderators list

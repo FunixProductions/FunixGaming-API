@@ -63,7 +63,7 @@ public interface TwitchReferenceClipsClient {
      * Requires an app access token or user access token.
      * @param twitchAccessToken Bearer {accessToken}
      * @param id An ID that identifies the clip to get. To specify more than one ID, include this parameter for each clip you want to get. For example,
-     *           id=foo&id=bar. You may specify a maximum of 100 IDs. The API ignores duplicate IDs and IDs that aren’t found.
+     *           id=foo id=bar. You may specify a maximum of 100 IDs. The API ignores duplicate IDs and IDs that aren’t found.
      * @param startedAt	The start date used to filter clips. The API returns only clips within the start and end date window.
      *                  Specify the date and time in RFC3339 format.
      * @param endedAt The end date used to filter clips. If not specified, the time window is the start date plus one week.
