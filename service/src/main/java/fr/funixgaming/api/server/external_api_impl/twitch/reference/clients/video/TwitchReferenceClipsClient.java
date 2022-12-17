@@ -1,9 +1,9 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.clients.video;
 
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.video.TwitchChannelClipCreationDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.video.TwitchChannelClipDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.clients.TwitchReferenceRequestInterceptor;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.video.TwitchChannelClipCreationDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.video.TwitchChannelClipDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;

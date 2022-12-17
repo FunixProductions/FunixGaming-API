@@ -1,7 +1,7 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.chat;
+package fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.chat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.common.TwitchImageDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.common.TwitchImageDTO;
 import lombok.Getter;
 import lombok.Setter;
 
