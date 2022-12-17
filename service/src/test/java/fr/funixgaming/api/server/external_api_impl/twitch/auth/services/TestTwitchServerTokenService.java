@@ -1,8 +1,8 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.auth.services;
 
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.auth.configs.TwitchApiConfig;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

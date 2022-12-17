@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(
-        name = "TwitchReferenceClient",
+        name = "TwitchReferenceModerationClient",
         url = "${twitch.api.app-api-domain-url}",
         configuration = TwitchReferenceRequestInterceptor.class,
         path = "helix/moderation"

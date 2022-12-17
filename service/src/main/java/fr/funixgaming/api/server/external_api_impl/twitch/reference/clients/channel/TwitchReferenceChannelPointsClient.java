@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * <a href="https://dev.twitch.tv/docs/api/reference#create-custom-rewards">Doc twitch</a>
  */
 @FeignClient(
-        name = "TwitchReferenceClient",
+        name = "TwitchReferenceChannelPointsClient",
         url = "${twitch.api.app-api-domain-url}",
         configuration = TwitchReferenceRequestInterceptor.class,
         path = "helix/channel_points/custom_rewards"

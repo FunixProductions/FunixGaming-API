@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @FeignClient(
-        name = "TwitchReferenceClient",
+        name = "TwitchReferenceClipsClient",
         url = "${twitch.api.app-api-domain-url}",
         configuration = TwitchReferenceRequestInterceptor.class,
         path = "helix/clips"
