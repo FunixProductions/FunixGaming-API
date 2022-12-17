@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
-        name = "TwitchReferenceClient",
+        name = "TwitchReferenceChatClient",
         url = "${twitch.api.app-api-domain-url}",
         configuration = TwitchReferenceRequestInterceptor.class,
         path = "helix/chat"

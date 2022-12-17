@@ -15,7 +15,7 @@ import java.util.List;
  * <a href="https://dev.twitch.tv/docs/api/reference#get-channel-information">Doc twitch</a>
  */
 @FeignClient(
-        name = "TwitchReferenceClient",
+        name = "TwitchReferenceChannelClient",
         url = "${twitch.api.app-api-domain-url}",
         configuration = TwitchReferenceRequestInterceptor.class,
         path = "helix/channels"

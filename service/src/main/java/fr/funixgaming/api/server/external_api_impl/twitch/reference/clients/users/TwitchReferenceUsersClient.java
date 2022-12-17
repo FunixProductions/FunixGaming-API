@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(
-        name = "TwitchReferenceClient",
+        name = "TwitchReferenceUsersClient",
         url = "${twitch.api.app-api-domain-url}",
         configuration = TwitchReferenceRequestInterceptor.class,
         path = "helix/users"
