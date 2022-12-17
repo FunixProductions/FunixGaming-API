@@ -53,7 +53,7 @@ public interface TwitchReferenceChannelClient {
      *                        The minimum page size is 1 item per page and the maximum is 100 items per page. The default is 20.
      * @param after The cursor used to get the next page of results. The Pagination object in the response contains the cursor’s value.
      * @param userIds Filters the list for specific VIPs. To specify more than one user, include the user_id parameter for each user to get.
-     *                For example, &user_id=1234&user_id=5678. The maximum number of IDs that you may specify is 100.
+     *                For example, user_id=1234 user_id=5678. The maximum number of IDs that you may specify is 100.
      *                Ignores the ID of those users in the list that aren’t VIPs.
      * @return vip list
      */

@@ -24,7 +24,7 @@ public interface TwitchReferenceStreamsClient {
      * @param twitchAccessToken Requires an app access token or user access token. Bearer {accessToken}
      * @param streamerName 	A user login name used to filter the list of streams. Returns only the streams of those users that are broadcasting.
      *                      You may specify a maximum of 100 login names. To specify multiple names, include the user_login parameter for each user.
-     *                      For example, &user_login=foo&user_login=bar.
+     *                      For example, user_login=foo user_login=bar.
      * @return list streams
      */
     @GetMapping
