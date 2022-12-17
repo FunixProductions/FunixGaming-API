@@ -1,9 +1,9 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.services.stream;
 
 import feign.FeignException;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.stream.TwitchStreamDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.clients.stream.TwitchReferenceStreamsClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.channel.stream.TwitchStreamDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.TwitchReferenceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

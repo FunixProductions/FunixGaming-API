@@ -2,11 +2,11 @@ package fr.funixgaming.api.server.external_api_impl.twitch.reference.services.us
 
 import com.google.common.base.Strings;
 import feign.FeignException;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.user.TwitchFollowDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.user.TwitchUserDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.clients.users.TwitchReferenceUsersClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.user.TwitchFollowDTO;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.user.TwitchUserDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.TwitchReferenceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

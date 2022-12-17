@@ -1,7 +1,7 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses;
+package fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.dtos.responses.common.TwitchPaginationDTO;
+import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.common.TwitchPaginationDTO;
 import lombok.Getter;
 import lombok.Setter;
 
