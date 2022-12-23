@@ -59,11 +59,12 @@ public class WebSecurity {
 
                         .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/valid").authenticated()
                         .requestMatchers(HttpMethod.GET, "/user/current").authenticated()
                         .requestMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
 
                         .requestMatchers(HttpMethod.GET, "/twitch/auth/cb").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/twitch/streams/funix").permitAll()
 
                         .anyRequest().authenticated()
         ).httpBasic();
