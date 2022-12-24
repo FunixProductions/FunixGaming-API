@@ -57,8 +57,13 @@ public class TwitchStreamResource extends TwitchReferenceResource implements Twi
 
     @Scheduled(fixedRate = 15, timeUnit = TimeUnit.SECONDS)
     public void fetchFunixStreamData() {
+        final String accessToken = serverTokenService.getAccessToken();
+        if (accessToken == null) {
+            return;
+        }
+
         final TwitchDataResponseDTO<TwitchStreamDTO> funixStreamStatus = streamService.getStreams(
-                serverTokenService.getAccessToken(),
+                accessToken,
                 twitchApiConfig.getStreamerUsername()
         );
 
