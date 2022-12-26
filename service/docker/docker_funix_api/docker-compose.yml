@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   mysql:
-    image: postgres:latest
+    image: postgres
     container_name: funix_api_db
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -38,12 +38,6 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     ports:
       - "8080:8080"
-
-#Don't forget to create network in docker : docker network create funixprod_net_local
-networks:
-  default:
-    name: funixprod_net_local
-    external: true
 
 volumes:
   funix_api_db:
