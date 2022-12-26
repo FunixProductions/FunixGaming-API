@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TwitchReferenceChannelServiceTest {
+class TwitchReferenceChannelServiceTest {
 
     @MockBean
     private TwitchReferenceChannelClient client;
