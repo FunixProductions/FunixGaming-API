@@ -139,7 +139,7 @@ public class TwitchChannelRewardDTO {
      * The settings used to determine whether to apply a maximum to the number of redemptions allowed per user per live stream.
      */
     @JsonProperty(value = "max_per_stream_setting")
-    private MaxPerStreamSetting maxPerStreamSetting;
+    private MaxPerStreamSetting maxUsagePerStream;
 
     /**
      * The settings used to determine whether to apply a cooldown period between redemptions and the length of the cooldown.
