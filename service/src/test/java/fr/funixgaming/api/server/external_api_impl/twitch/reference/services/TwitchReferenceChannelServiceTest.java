@@ -39,9 +39,9 @@ public class TwitchReferenceChannelServiceTest {
         when(client.getChannelVips(
                 anyString(),
                 anyString(),
-                anyString(),
-                anyString(),
-                anyList()
+                any(),
+                any(),
+                any()
         )).thenReturn(new TwitchDataResponseDTO<>());
         assertNotNull(service.getChannelVips("token", "id", null, null, null));
     }
