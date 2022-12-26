@@ -192,4 +192,9 @@ public class TwitchChannelRewardDTO {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
