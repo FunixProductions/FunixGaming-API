@@ -28,4 +28,9 @@ public class TwitchChannelClipCreationDTO {
             return false;
         }
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

@@ -239,7 +239,7 @@ public class TwitchClientTokenService {
             twitchClientToken.setOAuthCode(oAuthToken);
             twitchClientToken.setAccessToken(tokenResponseDTO.getAccessToken());
             twitchClientToken.setRefreshToken(tokenResponseDTO.getRefreshToken());
-            twitchClientToken.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60)));
+            twitchClientToken.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60L)));
             this.twitchClientTokenRepository.save(twitchClientToken);
         } catch (FeignException e) {
             if (e.status() == HttpStatus.UNAUTHORIZED.value()) {
@@ -272,7 +272,7 @@ public class TwitchClientTokenService {
             token.setTwitchUsername(twitchValidationTokenResponseDTO.getTwitchUsername());
             token.setAccessToken(tokenResponseDTO.getAccessToken());
             token.setRefreshToken(tokenResponseDTO.getRefreshToken());
-            token.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60)));
+            token.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60L)));
 
             return twitchClientTokenMapper.toDto(twitchClientTokenRepository.save(token));
         } catch (FeignException e) {
