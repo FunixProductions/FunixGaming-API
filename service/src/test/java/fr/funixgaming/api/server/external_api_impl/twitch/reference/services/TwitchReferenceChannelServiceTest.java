@@ -42,7 +42,7 @@ public class TwitchReferenceChannelServiceTest {
                 anyString(),
                 anyString(),
                 anyList()
-        ));
+        )).thenReturn(new TwitchDataResponseDTO<>());
         assertNotNull(service.getChannelVips("token", "id", null, null, null));
     }
 
