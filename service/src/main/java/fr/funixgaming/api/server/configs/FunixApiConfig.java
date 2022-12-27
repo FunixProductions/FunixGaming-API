@@ -18,11 +18,6 @@ public class FunixApiConfig {
      */
     private boolean appBehindProxy = true;
 
-    /**
-     * Ignore the api bearer auto generation when accessing from local client (127.0.0.1 for example)
-     */
-    private boolean ignoreApiAccessAdmin = false;
-
     @Bean
     public IPUtils ipUtils() {
         return new IPUtils(appBehindProxy);

@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.user.components;
 
 import fr.funixgaming.api.client.user.enums.UserRole;
-import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.UserCrudService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +20,12 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 public class WebSecurity {
-    private final UserService userService;
+    private final UserCrudService userCrudService;
     private final JwtTokenFilter jwtTokenFilter;
 
-    public WebSecurity(UserService userService,
+    public WebSecurity(UserCrudService userCrudService,
                        JwtTokenFilter jwtTokenFilter) {
-        this.userService = userService;
+        this.userCrudService = userCrudService;
         this.jwtTokenFilter = jwtTokenFilter;
 
         SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
@@ -57,13 +57,12 @@ public class WebSecurity {
 
                         .requestMatchers("/mail/**").hasAuthority(UserRole.MODERATOR.getRole())
 
-                        .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/current").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/user/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/user/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/user/auth/current").authenticated()
                         .requestMatchers("/user/**").hasAuthority(UserRole.ADMIN.getRole())
 
-                        .requestMatchers(HttpMethod.GET, "/twitch/auth/cb").permitAll()
-
+                        .requestMatchers("/twitch/auth/cb").permitAll()
                         .requestMatchers(HttpMethod.GET, "/twitch/streams/funix").permitAll()
 
                         .anyRequest().authenticated()
@@ -75,7 +74,7 @@ public class WebSecurity {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new FunixApiAuth(userService);
+        return new FunixApiAuth(userCrudService);
     }
 
     @Bean

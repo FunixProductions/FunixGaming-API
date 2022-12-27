@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(
         name = "UserAuth",
         url = "${funix.api.app-domain-url}",
-        path = "/user/"
+        path = "/user/auth/"
 )
 public interface UserAuthClient {
 
