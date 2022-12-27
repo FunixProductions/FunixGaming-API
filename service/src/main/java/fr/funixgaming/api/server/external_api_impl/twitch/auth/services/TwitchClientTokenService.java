@@ -18,7 +18,8 @@ import fr.funixgaming.api.server.external_api_impl.twitch.auth.mappers.TwitchCli
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.TwitchClientTokenRepository;
 import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.CurrentUser;
+import fr.funixgaming.api.server.user.services.UserCrudService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,8 @@ public class TwitchClientTokenService {
     private final TwitchTokenAuthClient twitchTokenAuthClient;
 
     private final PasswordGenerator passwordGenerator;
-    private final UserService userService;
+    private final UserCrudService userCrudService;
+    private final CurrentUser currentUser;
 
     private final Map<String, CsrfUser> csrfTokens = new HashMap<>();
 
@@ -56,15 +58,17 @@ public class TwitchClientTokenService {
     }
 
     public TwitchClientTokenService(TwitchApiConfig twitchApiConfig,
-                                    UserService userService,
+                                    UserCrudService userCrudService,
                                     TwitchClientTokenRepository twitchClientTokenRepository,
                                     TwitchClientTokenMapper twitchClientTokenMapper,
-                                    TwitchTokenAuthClient twitchTokenAuthClient) {
+                                    TwitchTokenAuthClient twitchTokenAuthClient,
+                                    CurrentUser currentUser) {
         this.twitchClientTokenRepository = twitchClientTokenRepository;
         this.twitchApiConfig = twitchApiConfig;
-        this.userService = userService;
+        this.userCrudService = userCrudService;
         this.twitchTokenAuthClient = twitchTokenAuthClient;
         this.twitchClientTokenMapper = twitchClientTokenMapper;
+        this.currentUser = currentUser;
 
         this.passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(0);
@@ -104,7 +108,7 @@ public class TwitchClientTokenService {
             throw new ApiBadRequestException("Le csrf token est invalide. Veuillez vous reconnecter avec twitch.");
         } else {
             final UserDTO userDTO = csrfUser.getUser();
-            final Optional<User> search = userService.getRepository().findByUuid(userDTO.getId().toString());
+            final Optional<User> search = userCrudService.getRepository().findByUuid(userDTO.getId().toString());
 
             this.csrfTokens.remove(csrfToken);
             if (search.isPresent()) {
@@ -127,7 +131,7 @@ public class TwitchClientTokenService {
             throw new ApiBadRequestException("Pas de type de token spécifié pour la récupération de tokens twitch.");
         }
 
-        final Optional<User> searchUser = this.userService.getRepository().findByUuid(userUuid.toString());
+        final Optional<User> searchUser = this.userCrudService.getRepository().findByUuid(userUuid.toString());
         if (searchUser.isPresent()) {
             final User user = searchUser.get();
             final Optional<TwitchClientToken> twitchClientToken = this.twitchClientTokenRepository.findTwitchClientTokenByUserAndTokenType(user, tokenType);
@@ -207,7 +211,7 @@ public class TwitchClientTokenService {
     }
 
     private String generateNewState(final TwitchClientTokenType tokenType) throws ApiBadRequestException {
-        final UserDTO userDTO = userService.getCurrentUser();
+        final UserDTO userDTO = currentUser.getCurrentUser();
         if (userDTO == null) {
             throw new ApiBadRequestException("Vous n'êtes pas connecté à la FunixAPI.");
         }

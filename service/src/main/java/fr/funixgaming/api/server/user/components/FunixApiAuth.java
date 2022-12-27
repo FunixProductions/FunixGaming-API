@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.user.components;
 
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.UserCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -12,14 +12,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @RequiredArgsConstructor
 public class FunixApiAuth implements AuthenticationManager {
-    private final UserService userService;
+    private final UserCrudService userCrudService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
             final String username = authentication.getPrincipal().toString();
             final String password = authentication.getCredentials().toString();
-            final User user = userService.loadUserByUsername(username);
+            final User user = userCrudService.loadUserByUsername(username);
 
             if (user.getPassword().equals(password)) {
                 return new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());

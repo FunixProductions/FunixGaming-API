@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TestUserResourceCrud {
+class TestUserAuthResourceCrud {
 
     private final MockMvc mockMvc;
     private final JsonHelper jsonHelper;
@@ -42,11 +42,11 @@ class TestUserResourceCrud {
     private final String bearerToken;
 
     @Autowired
-    TestUserResourceCrud(MockMvc mockMvc,
-                                JsonHelper jsonHelper,
-                                UserTestComponent userTestComponent,
-                                UserRepository userRepository,
-                                UserTokenRepository userTokenRepository) throws Exception {
+    TestUserAuthResourceCrud(MockMvc mockMvc,
+                             JsonHelper jsonHelper,
+                             UserTestComponent userTestComponent,
+                             UserRepository userRepository,
+                             UserTokenRepository userTokenRepository) throws Exception {
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(userTestComponent.createAdminAccount());
 
         this.mockMvc = mockMvc;

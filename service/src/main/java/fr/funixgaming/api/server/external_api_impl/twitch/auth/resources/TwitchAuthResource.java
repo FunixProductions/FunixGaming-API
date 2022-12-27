@@ -7,7 +7,7 @@ import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClien
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchClientTokenService;
-import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.CurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TwitchAuthResource implements TwitchAuthClient {
 
     private final TwitchClientTokenService twitchClientTokenService;
-    private final UserService userService;
+    private final CurrentUser currentUser;
 
     @Override
     public String getAuthClientUrl(String tokenType) {
@@ -29,7 +29,7 @@ public class TwitchAuthResource implements TwitchAuthClient {
 
     @Override
     public TwitchClientTokenDTO getAccessToken(String tokenType) {
-        final UserDTO actualUser = this.userService.getCurrentUser();
+        final UserDTO actualUser = currentUser.getCurrentUser();
 
         if (actualUser == null) {
             throw new ApiBadRequestException("Vous n'êtes pas connecté à l'api.");

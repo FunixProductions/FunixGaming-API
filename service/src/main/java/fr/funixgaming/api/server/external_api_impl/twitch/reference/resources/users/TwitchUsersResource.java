@@ -8,7 +8,7 @@ import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.respons
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchClientTokenService;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.TwitchReferenceResource;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.users.TwitchReferenceUsersService;
-import fr.funixgaming.api.server.user.services.UserService;
+import fr.funixgaming.api.server.user.services.UserCrudService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,10 +18,10 @@ public class TwitchUsersResource extends TwitchReferenceResource implements Twit
 
     private final TwitchReferenceUsersService service;
 
-    public TwitchUsersResource(UserService userService,
+    public TwitchUsersResource(UserCrudService userCrudService,
                                TwitchClientTokenService tokenService,
                                TwitchReferenceUsersService service) {
-        super(userService, tokenService);
+        super(userCrudService, tokenService);
         this.service = service;
     }
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
         path = "/user/"
 )
 public interface UserCrudClient {
+
     @GetMapping
     PageDTO<UserDTO> getAll(@RequestParam(value = "page", defaultValue = "0") String page,
                             @RequestParam(value = "elemsPerPage", defaultValue = "300") String elemsPerPage,
@@ -30,4 +31,5 @@ public interface UserCrudClient {
 
     @DeleteMapping
     void delete(@RequestParam String id);
+
 }

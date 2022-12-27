@@ -1,8 +1,6 @@
 package fr.funixgaming.api.server.user.services;
 
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
-import fr.funixgaming.api.client.user.enums.UserRole;
-import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.utils.time.TimeUtils;
 import fr.funixgaming.api.server.user.entities.User;
@@ -43,8 +41,6 @@ public class UserTokenService {
     private final UserTokenMapper tokenMapper;
     private final UserRepository userRepository;
 
-    private final UsernamePasswordAuthenticationToken apiUserAuth;
-
     private final Key jwtSecretKey;
 
     public UserTokenService(UserTokenRepository tokenRepository,
@@ -54,17 +50,92 @@ public class UserTokenService {
         this.tokenMapper = tokenMapper;
         this.userRepository = userRepository;
         this.jwtSecretKey = getJwtCryptKey();
+    }
 
-        final User user = new User();
-        user.setUsername("api");
-        user.setRole(UserRole.ADMIN);
-        user.setEmail("contact@funixgaming.fr");
-        user.setBanned(false);
-        this.apiUserAuth = new UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                user.getAuthorities()
-        );
+    /**
+     * Generate one week token usage expiration or lifetime token
+     * @param user user to generate token
+     * @return access token valid
+     */
+    @Transactional
+    public UserTokenDTO generateAccessToken(final User user, boolean stayConnected) {
+        final Date expirationDate = stayConnected ? null : Date.from(Instant.now().plusSeconds(604800));
+        final UserToken userToken = new UserToken();
+
+        userToken.setUser(user);
+        userToken.setUuid(UUID.randomUUID());
+        userToken.setExpirationDate(expirationDate);
+        userToken.setToken(Jwts.builder()
+                .setSubject(userToken.getUuid().toString())
+                .setIssuer(ISSUER)
+                .setIssuedAt(new Date())
+                .setExpiration(expirationDate)
+                .signWith(jwtSecretKey)
+                .compact());
+
+        return tokenMapper.toDto(tokenRepository.save(userToken));
+    }
+
+    /**
+     * Disconnect all user sessions
+     * @param userUUID user uuid to disconnect
+     */
+    @Transactional
+    public void invalidTokens(@Nullable final UUID userUUID) {
+        if (userUUID == null) return;
+
+        final Optional<User> search = userRepository.findByUuid(userUUID.toString());
+        if (search.isPresent()) {
+            final User user = search.get();
+            final Set<UserToken> tokens = user.getTokens();
+
+            this.tokenRepository.deleteAll(tokens);
+        }
+    }
+
+    /**
+     * Check if a jwt token is valid
+     * @param token jwt token
+     * @return user session if token valid, null if not
+     */
+    @Nullable
+    public UsernamePasswordAuthenticationToken isTokenValid(final String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(jwtSecretKey)
+                    .build()
+                    .parseClaimsJws(token);
+
+            final UserToken userToken = getToken(token);
+
+            if (userToken != null) {
+                final User user = userToken.getUser();
+
+                return new UsernamePasswordAuthenticationToken(
+                        user,
+                        null,
+                        user == null ? List.of() : user.getAuthorities()
+                );
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    private UserToken getToken(final String token) {
+        final Claims claims = Jwts.parserBuilder()
+                .setSigningKey(jwtSecretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        final String tokenUuid = claims.getSubject();
+        final Optional<UserToken> search = tokenRepository.findByUuid(tokenUuid);
+
+        return search.orElse(null);
     }
 
     private static Key getJwtCryptKey() {
@@ -117,98 +188,7 @@ public class UserTokenService {
         }
     }
 
-    @Transactional
-    public UserTokenDTO generateAccessToken(final User user) {
-        final Instant now = Instant.now();
-        final Instant expiresAt = now.plusSeconds(604800); //one week
-        final UserToken userToken = new UserToken();
-
-        userToken.setUser(user);
-        userToken.setUuid(UUID.randomUUID());
-        userToken.setExpirationDate(Date.from(expiresAt));
-        userToken.setToken(Jwts.builder()
-                .setSubject(userToken.getUuid().toString())
-                .setIssuer(ISSUER)
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(expiresAt))
-                .signWith(jwtSecretKey)
-                .compact());
-
-        return tokenMapper.toDto(tokenRepository.save(userToken));
-    }
-
-    @Transactional
-    public void invalidTokens(@Nullable final UUID userUUID) {
-        if (userUUID == null) return;
-
-        final Optional<User> search = userRepository.findByUuid(userUUID.toString());
-        if (search.isPresent()) {
-            final User user = search.get();
-            final Set<UserToken> tokens = user.getTokens();
-
-            this.tokenRepository.deleteAll(tokens);
-        }
-    }
-
-    public boolean isTokenValid(final String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(jwtSecretKey)
-                    .build()
-                    .parseClaimsJws(token);
-
-            final UserToken userToken = getToken(token);
-
-            if (userToken == null) {
-                throw new ApiBadRequestException("Votre token d'accès est invalide.");
-            } else {
-                return true;
-            }
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public UsernamePasswordAuthenticationToken authenticateToken(final String token) {
-        final UserToken userToken = getToken(token);
-        final User user;
-
-        if (userToken == null) {
-            user = null;
-        } else {
-            user = userToken.getUser();
-        }
-
-        return new UsernamePasswordAuthenticationToken(
-                user,
-                null,
-                user == null ? List.of() : user.getAuthorities()
-        );
-    }
-
-    public UsernamePasswordAuthenticationToken authenticateApiWhitelist() {
-        return apiUserAuth;
-    }
-
-    @Nullable
-    private UserToken getToken(final String token) {
-        final Claims claims = Jwts.parserBuilder()
-                .setSigningKey(jwtSecretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-
-        final String tokenUuid = claims.getSubject();
-        final Optional<UserToken> search = tokenRepository.findByUuid(tokenUuid);
-
-        if (search.isPresent()) {
-            return search.get();
-        } else {
-            return null;
-        }
-    }
-
-    @Scheduled(fixedRate = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedRate = 20, timeUnit = TimeUnit.MINUTES)
     public void removeInvalidTokens() {
         final Iterable<UserToken> tokens = this.tokenRepository.findAll();
         final Instant start = Instant.now();
