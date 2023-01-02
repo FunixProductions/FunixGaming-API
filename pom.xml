@@ -6,7 +6,7 @@
 
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funix-api</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.2</version>
     <packaging>pom</packaging>
 
     <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
