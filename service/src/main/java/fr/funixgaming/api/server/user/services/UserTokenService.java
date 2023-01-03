@@ -19,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -29,7 +28,10 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.Key;
 import java.time.Instant;
-import java.util.*;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -96,10 +98,10 @@ public class UserTokenService {
     /**
      * Check if a jwt token is valid
      * @param token jwt token
-     * @return user session if token valid, null if not
+     * @return user token valid, null if not
      */
     @Nullable
-    public UsernamePasswordAuthenticationToken isTokenValid(final String token) {
+    public User isTokenValid(final String token) {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(jwtSecretKey)
@@ -109,13 +111,7 @@ public class UserTokenService {
             final UserToken userToken = getToken(token);
 
             if (userToken != null) {
-                final User user = userToken.getUser();
-
-                return new UsernamePasswordAuthenticationToken(
-                        user,
-                        null,
-                        user == null ? List.of() : user.getAuthorities()
-                );
+                return userToken.getUser();
             } else {
                 return null;
             }
@@ -197,7 +193,7 @@ public class UserTokenService {
         for (final UserToken token : tokens) {
             final Instant expirationDate = token.getExpirationDate();
 
-            if (expirationDate.isBefore(start)) {
+            if (expirationDate != null && expirationDate.isBefore(start)) {
                 invalidedTokens++;
                 this.tokenRepository.delete(token);
             }

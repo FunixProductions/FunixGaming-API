@@ -51,22 +51,23 @@ public class WebSecurity {
                 )
                 .and();
 
-        http.authorizeHttpRequests(exchanges ->
-                exchanges.requestMatchers(HttpMethod.GET, "/funixbot**").permitAll()
-                        .requestMatchers("/funixbot**").hasAuthority(UserRole.MODERATOR.getRole())
+        http.authorizeHttpRequests(exchanges -> exchanges
 
-                        .requestMatchers("/mail/**").hasAuthority(UserRole.MODERATOR.getRole())
+                .requestMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
+                .requestMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
 
-                        .requestMatchers(HttpMethod.POST,
-                                "/user/auth/register**",
-                                "/user/auth/login**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/user/auth/current**").authenticated()
-                        .requestMatchers("/user**").hasAuthority(UserRole.ADMIN.getRole())
+                .requestMatchers("/mail**").hasAuthority(UserRole.ADMIN.getRole())
 
-                        .requestMatchers("/twitch/auth/cb**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/twitch/**/funix**").permitAll()
+                .requestMatchers(HttpMethod.POST,
+                        "/user/auth/register**",
+                        "/user/auth/login**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/user/auth/current**").authenticated()
+                .requestMatchers("/user**").hasAuthority(UserRole.ADMIN.getRole())
 
-                        .anyRequest().authenticated()
+                .requestMatchers("/twitch/auth/cb").permitAll()
+                .requestMatchers(HttpMethod.GET, "/twitch/*/funix").permitAll()
+
+                .anyRequest().authenticated()
         ).httpBasic();
 
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);

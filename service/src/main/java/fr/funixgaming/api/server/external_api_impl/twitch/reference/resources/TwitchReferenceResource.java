@@ -6,17 +6,17 @@ import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchClientTokenService;
-import fr.funixgaming.api.server.user.services.CurrentUser;
+import fr.funixgaming.api.server.user.services.CurrentSession;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public abstract class TwitchReferenceResource {
 
     private final TwitchClientTokenService twitchClientTokenService;
-    private final CurrentUser currentUser;
+    private final CurrentSession currentSession;
 
     protected TwitchClientTokenDTO getTwitchAuthByUserConnected(final TwitchClientTokenType tokenType) throws ApiException {
-        final UserDTO userDTO = currentUser.getCurrentUser();
+        final UserDTO userDTO = currentSession.getCurrentUser();
         if (userDTO == null) {
             throw new ApiBadRequestException("Vous n'êtes pas connecté.");
         }

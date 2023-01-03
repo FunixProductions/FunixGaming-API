@@ -8,7 +8,7 @@ import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.respons
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchClientTokenService;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.TwitchReferenceResource;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.channel.TwitchReferenceChannelPointsService;
-import fr.funixgaming.api.server.user.services.UserCrudService;
+import fr.funixgaming.api.server.user.services.CurrentSession;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,10 +18,10 @@ public class TwitchChannelPointsResource extends TwitchReferenceResource impleme
 
     private final TwitchReferenceChannelPointsService service;
 
-    public TwitchChannelPointsResource(UserCrudService userCrudService,
+    public TwitchChannelPointsResource(CurrentSession currentSession,
                                        TwitchClientTokenService tokenService,
                                        TwitchReferenceChannelPointsService service) {
-        super(userCrudService, tokenService);
+        super(tokenService, currentSession);
         this.service = service;
     }
 
