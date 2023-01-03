@@ -18,7 +18,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.auth.mappers.TwitchCli
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.TwitchClientTokenRepository;
 import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import fr.funixgaming.api.server.user.entities.User;
-import fr.funixgaming.api.server.user.services.CurrentUser;
+import fr.funixgaming.api.server.user.services.CurrentSession;
 import fr.funixgaming.api.server.user.services.UserCrudService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +45,7 @@ public class TwitchClientTokenService {
 
     private final PasswordGenerator passwordGenerator;
     private final UserCrudService userCrudService;
-    private final CurrentUser currentUser;
+    private final CurrentSession currentSession;
 
     private final Map<String, CsrfUser> csrfTokens = new HashMap<>();
 
@@ -62,13 +62,13 @@ public class TwitchClientTokenService {
                                     TwitchClientTokenRepository twitchClientTokenRepository,
                                     TwitchClientTokenMapper twitchClientTokenMapper,
                                     TwitchTokenAuthClient twitchTokenAuthClient,
-                                    CurrentUser currentUser) {
+                                    CurrentSession currentSession) {
         this.twitchClientTokenRepository = twitchClientTokenRepository;
         this.twitchApiConfig = twitchApiConfig;
         this.userCrudService = userCrudService;
         this.twitchTokenAuthClient = twitchTokenAuthClient;
         this.twitchClientTokenMapper = twitchClientTokenMapper;
-        this.currentUser = currentUser;
+        this.currentSession = currentSession;
 
         this.passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(0);
@@ -211,7 +211,7 @@ public class TwitchClientTokenService {
     }
 
     private String generateNewState(final TwitchClientTokenType tokenType) throws ApiBadRequestException {
-        final UserDTO userDTO = currentUser.getCurrentUser();
+        final UserDTO userDTO = currentSession.getCurrentUser();
         if (userDTO == null) {
             throw new ApiBadRequestException("Vous n'êtes pas connecté à la FunixAPI.");
         }

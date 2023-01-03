@@ -6,7 +6,7 @@ import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.server.external_api_impl.google.services.GoogleCaptchaService;
-import fr.funixgaming.api.server.user.services.CurrentUser;
+import fr.funixgaming.api.server.user.services.CurrentSession;
 import fr.funixgaming.api.server.user.services.UserAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserAuthResource {
 
     private final UserAuthService userAuthService;
-    private final CurrentUser currentUser;
+    private final CurrentSession currentSession;
 
     private final GoogleCaptchaService captchaService;
-
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
@@ -40,7 +39,7 @@ public class UserAuthResource {
 
     @GetMapping("current")
     public UserDTO currentUser() {
-        final UserDTO userDTO = currentUser.getCurrentUser();
+        final UserDTO userDTO = currentSession.getCurrentUser();
 
         if (userDTO == null) {
             throw new ApiForbiddenException("Vous n'êtes pas connecté.");

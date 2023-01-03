@@ -1,5 +1,8 @@
 package fr.funixgaming.api.server.user.components;
 
+import fr.funixgaming.api.core.utils.network.IPUtils;
+import fr.funixgaming.api.server.user.entities.User;
+import fr.funixgaming.api.server.user.entities.UserSession;
 import fr.funixgaming.api.server.user.services.UserTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,6 +24,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserTokenService tokenService;
+    private final IPUtils ipUtils;
 
     @Override
     protected void doFilterInternal(@NonNull final HttpServletRequest request,
@@ -34,11 +38,22 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         final String token = bearerTokenHeader.split(" ")[1].trim();
-        final UsernamePasswordAuthenticationToken authentication = tokenService.isTokenValid(token);
+        final User user = tokenService.isTokenValid(token);
 
-        if (authentication == null) {
+        if (user == null) {
             chain.doFilter(request, response);
         } else {
+            final UserSession userSession = new UserSession(
+                    user,
+                    ipUtils.getClientIp(request)
+            );
+
+            final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userSession,
+                    null,
+                    user.getAuthorities()
+            );
+
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);

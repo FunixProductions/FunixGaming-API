@@ -10,7 +10,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchSe
 import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.TwitchReferenceResource;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.stream.TwitchReferenceStreamService;
-import fr.funixgaming.api.server.user.services.UserCrudService;
+import fr.funixgaming.api.server.user.services.CurrentSession;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,12 +27,12 @@ public class TwitchStreamResource extends TwitchReferenceResource implements Twi
 
     private final TwitchDataResponseDTO<TwitchStreamDTO> funixStreamCache = new TwitchDataResponseDTO<>();
 
-    public TwitchStreamResource(UserCrudService userCrudService,
+    public TwitchStreamResource(CurrentSession currentSession,
                                 TwitchClientTokenService clientTokenService,
                                 TwitchReferenceStreamService streamService,
                                 TwitchServerTokenService serverTokenService,
                                 TwitchApiConfig twitchApiConfig) {
-        super(userCrudService, clientTokenService);
+        super(clientTokenService, currentSession);
         this.streamService = streamService;
         this.serverTokenService = serverTokenService;
         this.twitchApiConfig = twitchApiConfig;

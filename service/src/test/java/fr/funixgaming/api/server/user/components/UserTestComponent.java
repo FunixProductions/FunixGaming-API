@@ -61,8 +61,9 @@ public class UserTestComponent {
         final UserLoginDTO userLoginDTO = new UserLoginDTO();
         userLoginDTO.setUsername(user.getUsername());
         userLoginDTO.setPassword(user.getPassword());
+        userLoginDTO.setStayConnected(true);
 
-        MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(userLoginDTO)))
                 .andExpect(status().isOk())

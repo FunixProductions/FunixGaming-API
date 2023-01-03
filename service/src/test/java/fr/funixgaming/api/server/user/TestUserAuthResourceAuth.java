@@ -18,8 +18,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,7 +44,7 @@ class TestUserAuthResourceAuth {
         creationDTO.setPassword("oui");
         creationDTO.setPasswordConfirmation("oui");
 
-        MvcResult mvcResult = this.mockMvc.perform(post("/user/register")
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isOk())
@@ -65,7 +64,7 @@ class TestUserAuthResourceAuth {
         creationDTO.setPassword("oui2");
         creationDTO.setPasswordConfirmation("oui");
 
-        this.mockMvc.perform(post("/user/register")
+        this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isBadRequest());
@@ -79,12 +78,12 @@ class TestUserAuthResourceAuth {
         creationDTO.setPassword("oui");
         creationDTO.setPasswordConfirmation("oui");
 
-        this.mockMvc.perform(post("/user/register")
+        this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isOk());
 
-        this.mockMvc.perform(post("/user/register")
+        this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isBadRequest());
@@ -97,8 +96,9 @@ class TestUserAuthResourceAuth {
         final UserLoginDTO loginDTO = new UserLoginDTO();
         loginDTO.setUsername(account.getUsername());
         loginDTO.setPassword(account.getPassword());
+        loginDTO.setStayConnected(false);
 
-        MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(loginDTO)))
                 .andExpect(status().isOk())
@@ -111,13 +111,34 @@ class TestUserAuthResourceAuth {
     }
 
     @Test
+    void testLoginSuccessNoExpiration() throws Exception {
+        final User account = userTestComponent.createBasicUser();
+
+        final UserLoginDTO loginDTO = new UserLoginDTO();
+        loginDTO.setUsername(account.getUsername());
+        loginDTO.setPassword(account.getPassword());
+        loginDTO.setStayConnected(true);
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(loginDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final UserTokenDTO tokenDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
+        assertEquals(tokenDTO.getUser().getId(), account.getUuid());
+        assertNotNull(tokenDTO.getToken());
+        assertNull(tokenDTO.getExpirationDate());
+    }
+
+    @Test
     void testLoginWrongPassword() throws Exception {
         final UserLoginDTO loginDTO = new UserLoginDTO();
 
         loginDTO.setUsername("JENEXISTEPAS");
         loginDTO.setPassword("CEMOTDEPASSENONPLUS");
 
-        this.mockMvc.perform(post("/user/login")
+        this.mockMvc.perform(post("/user/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(loginDTO)))
                 .andExpect(status().isBadRequest());
@@ -130,8 +151,9 @@ class TestUserAuthResourceAuth {
         final UserLoginDTO loginDTO = new UserLoginDTO();
         loginDTO.setUsername(account.getUsername());
         loginDTO.setPassword(account.getPassword());
+        loginDTO.setStayConnected(true);
 
-        MvcResult mvcResult = this.mockMvc.perform(post("/user/login")
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(loginDTO)))
                 .andExpect(status().isOk())
@@ -139,7 +161,7 @@ class TestUserAuthResourceAuth {
 
         final UserTokenDTO tokenDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserTokenDTO.class);
 
-        mvcResult = this.mockMvc.perform(get("/user/current")
+        mvcResult = this.mockMvc.perform(get("/user/auth/current")
                 .header("Authorization", "Bearer " + tokenDTO.getToken())
         ).andExpect(status().isOk()).andReturn();
         final UserDTO userDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
@@ -152,12 +174,12 @@ class TestUserAuthResourceAuth {
 
     @Test
     void testFailGetCurrentUserNoAuth() throws Exception {
-        this.mockMvc.perform(get("/user/current")).andExpect(status().isUnauthorized());
+        this.mockMvc.perform(get("/user/auth/current")).andExpect(status().isUnauthorized());
     }
 
     @Test
     void testFailGetCurrentUserBadAuth() throws Exception {
-        this.mockMvc.perform(get("/user/current")
+        this.mockMvc.perform(get("/user/auth/current")
                 .header("Authorization", "Bearer " + "BADTOKEN"))
                 .andExpect(status().isUnauthorized());
     }

@@ -34,13 +34,15 @@ class TestFunixMail {
     private final String route = "/mail";
     private final JsonHelper jsonHelper;
     private final UserTokenDTO tokenDTO;
+    private final UserTestComponent userTestComponent;
     private final MockMvc mockMvc;
 
     @Autowired
     TestFunixMail(UserTestComponent userTestComponent,
-                         MockMvc mockMvc,
-                         JsonHelper jsonHelper) throws Exception {
-        this.tokenDTO = userTestComponent.loginUser(userTestComponent.createModoAccount());
+                  MockMvc mockMvc,
+                  JsonHelper jsonHelper) throws Exception {
+        this.userTestComponent = userTestComponent;
+        this.tokenDTO = userTestComponent.loginUser(userTestComponent.createAdminAccount());
         this.mockMvc = mockMvc;
         this.jsonHelper = jsonHelper;
     }
@@ -79,6 +81,22 @@ class TestFunixMail {
         assertEquals(funixMailDTO.getSubject(), data.getSubject());
         assertEquals(funixMailDTO.getTo(), data.getTo());
         assertEquals(funixMailDTO.getFrom(), data.getFrom());
+    }
+
+    @Test
+    void testSendMailWithSimpleUser() throws Exception {
+        mockMvc.perform(post(route)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userTestComponent.loginUser(userTestComponent.createBasicUser()).getToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testSendMailWithModoUser() throws Exception {
+        mockMvc.perform(post(route)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userTestComponent.loginUser(userTestComponent.createModoAccount()).getToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
     private FunixMailDTO sendMail(final FunixMailDTO request) throws Exception {

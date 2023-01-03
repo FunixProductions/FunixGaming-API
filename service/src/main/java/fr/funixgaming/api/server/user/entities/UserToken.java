@@ -25,6 +25,10 @@ public class UserToken extends ApiEntity {
     private Date expirationDate;
 
     public Instant getExpirationDate() {
-        return expirationDate.toInstant();
+        if (expirationDate != null) {
+            return expirationDate.toInstant();
+        } else {
+            return null;
+        }
     }
 }

@@ -10,6 +10,7 @@ import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
@@ -67,11 +68,13 @@ public class UserAuthService {
         try {
             final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
             final Authentication authenticate = authenticationManager.authenticate(auth);
-            final User user = (User) authenticate.getPrincipal();
 
-            triesCache.invalidate(ipUtils.getClientIp(servletRequest));
-
-            return tokenService.generateAccessToken(user, request.getStayConnected());
+            if (authenticate.getPrincipal() instanceof final User user) {
+                triesCache.invalidate(ipUtils.getClientIp(servletRequest));
+                return tokenService.generateAccessToken(user, request.getStayConnected());
+            } else {
+                throw new ApiException("Une erreur interne est survenue lors de la connexion.");
+            }
         } catch (BadCredentialsException ex) {
             failLogin(servletRequest);
             throw new ApiBadRequestException("Vos identifiants sont incorrects.", ex);
