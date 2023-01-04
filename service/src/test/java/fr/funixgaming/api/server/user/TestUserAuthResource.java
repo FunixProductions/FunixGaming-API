@@ -58,53 +58,30 @@ class TestUserAuthResource {
 
     @Test
     void testRegisterWithPasswordTooShort() throws Exception {
-        final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
-        creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("1");
-        creationDTO.setPasswordConfirmation("1");
-
-        this.mockMvc.perform(post("/user/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonHelper.toJson(creationDTO)))
-                .andExpect(status().isBadRequest());
+        testInvalidPasswordRegister("1");
     }
 
     @Test
     void testRegisterWithPasswordTooShort2() throws Exception {
-        final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
-        creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("12345678");
-        creationDTO.setPasswordConfirmation("12345678");
-
-        this.mockMvc.perform(post("/user/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonHelper.toJson(creationDTO)))
-                .andExpect(status().isBadRequest());
+        testInvalidPasswordRegister("12345678");
     }
 
     @Test
     void testRegisterWithPasswordNotEnoughNumbers() throws Exception {
-        final UserCreationDTO creationDTO = new UserCreationDTO();
-        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
-        creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("sdkfhlskdqhldskjqfh");
-        creationDTO.setPasswordConfirmation("sdkfhlskdqhldskjqfh");
-
-        this.mockMvc.perform(post("/user/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonHelper.toJson(creationDTO)))
-                .andExpect(status().isBadRequest());
+        testInvalidPasswordRegister("sdkfhlskdqhldskjqfh");
     }
 
     @Test
     void testRegisterWithPasswordNotEnoughCaps() throws Exception {
+        testInvalidPasswordRegister("sdkfhlskdqhldskjqfh11");
+    }
+
+    void testInvalidPasswordRegister(final String password) throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
         creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("sdkfhlskdqhldskjqfh11");
-        creationDTO.setPasswordConfirmation("sdkfhlskdqhldskjqfh11");
+        creationDTO.setPassword(password);
+        creationDTO.setPasswordConfirmation(password);
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserPasswordUtils {
 
-    private final int minimumLength = 8;
-    private final int minimumNumbers = 2;
-    private final int minimumUppers = 2;
+    private static final int MINIMUM_LENGTH = 8;
+    private static final int MINIMUM_NUMBERS = 2;
+    private static final int MINIMUM_UPPERS = 2;
 
     /**
      * Check if the password is strong enough for app usage
@@ -21,12 +21,12 @@ public class UserPasswordUtils {
             throw new ApiBadRequestException("Votre mot de passe est vide.");
         }
 
-        if (password.length() <= minimumLength) {
-            throw new ApiBadRequestException("Votre mot de passe doit au minimum avoir " + minimumLength + " caractères.");
+        if (password.length() <= MINIMUM_LENGTH) {
+            throw new ApiBadRequestException("Votre mot de passe doit au minimum avoir " + MINIMUM_LENGTH + " caractères.");
         } else if (!isPasswordContainsNumbers(password)) {
-            throw new ApiBadRequestException("Votre mot de passe doit contenir " + minimumNumbers + " chiffres");
+            throw new ApiBadRequestException("Votre mot de passe doit contenir " + MINIMUM_NUMBERS + " chiffres");
         } else if (!isPasswordContainsUpperCases(password)) {
-            throw new ApiBadRequestException("Votre mot de passe doit contenir " + minimumUppers + " caractères en majuscules.");
+            throw new ApiBadRequestException("Votre mot de passe doit contenir " + MINIMUM_UPPERS + " caractères en majuscules.");
         }
     }
 
@@ -38,7 +38,7 @@ public class UserPasswordUtils {
                 ++numbersCount;
             }
         }
-        return numbersCount >= minimumNumbers;
+        return numbersCount >= MINIMUM_NUMBERS;
     }
 
     private boolean isPasswordContainsUpperCases(final String password) {
@@ -49,7 +49,7 @@ public class UserPasswordUtils {
                 ++upperCaseCount;
             }
         }
-        return upperCaseCount >= minimumUppers;
+        return upperCaseCount >= MINIMUM_UPPERS;
     }
 
 }
