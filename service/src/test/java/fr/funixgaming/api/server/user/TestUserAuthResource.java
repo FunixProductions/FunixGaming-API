@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TestUserAuthResourceAuth {
+class TestUserAuthResource {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,6 +54,31 @@ class TestUserAuthResourceAuth {
         assertEquals(creationDTO.getUsername(), userDTO.getUsername());
         assertEquals(creationDTO.getEmail(), userDTO.getEmail());
         assertEquals(UserRole.USER, userDTO.getRole());
+    }
+
+    @Test
+    void testFunixAdminCreation() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername("funix");
+        creationDTO.setPassword("oui");
+        creationDTO.setPasswordConfirmation("oui");
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final UserDTO userDTO = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), UserDTO.class);
+        assertEquals(creationDTO.getUsername(), userDTO.getUsername());
+        assertEquals(creationDTO.getEmail(), userDTO.getEmail());
+        assertEquals(UserRole.ADMIN, userDTO.getRole());
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -180,7 +205,7 @@ class TestUserAuthResourceAuth {
     @Test
     void testFailGetCurrentUserBadAuth() throws Exception {
         this.mockMvc.perform(get("/user/auth/current")
-                .header("Authorization", "Bearer " + "BADTOKEN"))
+                        .header("Authorization", "Bearer " + "BADTOKEN"))
                 .andExpect(status().isUnauthorized());
     }
 

@@ -24,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -51,7 +52,12 @@ public class UserAuthService {
     public UserDTO register(final UserCreationDTO userCreationDTO) {
         if (userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
             final UserSecretsDTO userSecretsDTO = userCrudService.getMapper().toSecretsDto(userCreationDTO);
-            userSecretsDTO.setRole(UserRole.USER);
+
+            if (isAdminRegister(userCreationDTO.getUsername())) {
+                userSecretsDTO.setRole(UserRole.ADMIN);
+            } else {
+                userSecretsDTO.setRole(UserRole.USER);
+            }
 
             return userCrudService.create(userSecretsDTO);
         } else {
@@ -78,6 +84,15 @@ public class UserAuthService {
         } catch (BadCredentialsException ex) {
             failLogin(servletRequest);
             throw new ApiBadRequestException("Vos identifiants sont incorrects.", ex);
+        }
+    }
+
+    private boolean isAdminRegister(final String username) {
+        if (username.equals("funix")) {
+            final Optional<User> searchAdmin = this.userCrudService.getRepository().findByUsername(username);
+            return searchAdmin.isEmpty();
+        } else {
+            return false;
         }
     }
 

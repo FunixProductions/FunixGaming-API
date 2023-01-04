@@ -36,6 +36,8 @@ services:
     hostname: funixapi
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - TWITCH_APP_CLIENT_ID=${TWITCH_APP_CLIENT_ID}
+      - TWITCH_APP_CLIENT_SECRET=${TWITCH_APP_CLIENT_SECRET}
     ports:
       - "8080:8080"
 

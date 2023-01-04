@@ -36,7 +36,7 @@ public class TwitchServerTokenService {
         this.refreshToken();
     }
 
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 5, timeUnit = TimeUnit.MINUTES)
     public void refreshToken() {
         try {
             if (!tokenValid()) {
