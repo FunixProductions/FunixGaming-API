@@ -4,6 +4,7 @@ import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import fr.funixgaming.api.server.user.components.UserPasswordUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
 import fr.funixgaming.api.server.user.repositories.UserRepository;
@@ -21,12 +22,15 @@ import java.util.Optional;
 public class UserCrudService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
 
     private final UserTokenService tokenService;
+    private final UserPasswordUtils passwordUtils;
 
     public UserCrudService(UserRepository repository,
                            UserMapper mapper,
-                           UserTokenService tokenService) {
+                           UserTokenService tokenService,
+                           UserPasswordUtils passwordUtils) {
         super(repository, mapper);
         this.tokenService = tokenService;
+        this.passwordUtils = passwordUtils;
     }
 
     @Override
@@ -39,6 +43,7 @@ public class UserCrudService extends ApiService<UserDTO, User, UserMapper, UserR
         }
 
         if (request instanceof final UserSecretsDTO secretsDTO && Strings.isNotBlank(secretsDTO.getPassword())) {
+            passwordUtils.checkPassword(secretsDTO.getPassword());
             entity.setPassword(secretsDTO.getPassword());
             tokenService.invalidTokens(request.getId());
         }

@@ -29,7 +29,7 @@ public class UserTestComponent {
         final User user = new User();
 
         user.setUsername(UUID.randomUUID().toString());
-        user.setPassword(UUID.randomUUID().toString());
+        user.setPassword(UUID.randomUUID() + "ousddffdi22AA");
         user.setEmail(UUID.randomUUID() + "@gmail.com");
         user.setRole(UserRole.ADMIN);
 
@@ -40,7 +40,7 @@ public class UserTestComponent {
         final User user = new User();
 
         user.setUsername(UUID.randomUUID().toString());
-        user.setPassword(UUID.randomUUID().toString());
+        user.setPassword(UUID.randomUUID() + "ousddffdi22AA");
         user.setEmail(UUID.randomUUID() + "@gmail.com");
         user.setRole(UserRole.MODERATOR);
 
@@ -51,7 +51,7 @@ public class UserTestComponent {
         final User user = new User();
 
         user.setUsername(UUID.randomUUID().toString());
-        user.setPassword(UUID.randomUUID().toString());
+        user.setPassword(UUID.randomUUID() + "ousddffdi22AA");
         user.setEmail(UUID.randomUUID() + "@gmail.com");
 
         return userRepository.save(user);

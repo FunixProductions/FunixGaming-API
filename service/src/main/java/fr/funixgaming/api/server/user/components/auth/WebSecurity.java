@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.user.components;
+package fr.funixgaming.api.server.user.components.auth;
 
 import fr.funixgaming.api.client.user.enums.UserRole;
 import fr.funixgaming.api.server.user.services.UserCrudService;

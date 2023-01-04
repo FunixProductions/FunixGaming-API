@@ -41,8 +41,8 @@ class TestUserAuthResource {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
         creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("oui");
-        creationDTO.setPasswordConfirmation("oui");
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,12 +57,68 @@ class TestUserAuthResource {
     }
 
     @Test
+    void testRegisterWithPasswordTooShort() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("1");
+        creationDTO.setPasswordConfirmation("1");
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterWithPasswordTooShort2() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("12345678");
+        creationDTO.setPasswordConfirmation("12345678");
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterWithPasswordNotEnoughNumbers() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("sdkfhlskdqhldskjqfh");
+        creationDTO.setPasswordConfirmation("sdkfhlskdqhldskjqfh");
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterWithPasswordNotEnoughCaps() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("sdkfhlskdqhldskjqfh11");
+        creationDTO.setPasswordConfirmation("sdkfhlskdqhldskjqfh11");
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testFunixAdminCreation() throws Exception {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
         creationDTO.setUsername("funix");
-        creationDTO.setPassword("oui");
-        creationDTO.setPasswordConfirmation("oui");
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -86,8 +142,8 @@ class TestUserAuthResource {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
         creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("oui2");
-        creationDTO.setPasswordConfirmation("oui");
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AAsssdd");
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -100,8 +156,8 @@ class TestUserAuthResource {
         final UserCreationDTO creationDTO = new UserCreationDTO();
         creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
         creationDTO.setUsername(UUID.randomUUID().toString());
-        creationDTO.setPassword("oui");
-        creationDTO.setPasswordConfirmation("oui");
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

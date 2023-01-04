@@ -116,7 +116,7 @@ class TestUserCrudResource {
                 .andExpect(status().isOk());
 
         final UserSecretsDTO requestChangePassword = new UserSecretsDTO();
-        requestChangePassword.setPassword("newPassword");
+        requestChangePassword.setPassword("newPassword66GGS");
         requestChangePassword.setId(user.getId());
 
         mockMvc.perform(patch(route)
@@ -182,7 +182,7 @@ class TestUserCrudResource {
         userDTO.setUsername(UUID.randomUUID().toString());
         userDTO.setRole(UserRole.USER);
         userDTO.setEmail("oui@ggmail.com");
-        userDTO.setPassword("password");
+        userDTO.setPassword("passwsdfdsfdford11ZZ");
         return userDTO;
     }
 }
