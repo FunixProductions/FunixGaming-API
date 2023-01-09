@@ -7,13 +7,13 @@ WORKDIR /container/funix-api/
 COPY pom.xml .
 
 COPY api/pom.xml ./api/
-COPY api/src ./api/src
+COPY api/src/ ./api/src/
 
 COPY core/pom.xml ./core/
-COPY core/src ./core/src
+COPY core/src/ ./core/src/
 
 COPY service/pom.xml ./service/
-COPY service/src ./service/src
+COPY service/src/ ./service/src/
 
 RUN mvn clean package
 

@@ -46,8 +46,11 @@ public class TwitchValidTokenClient {
             } else {
                 throw new ApiException("Une erreur est survenue lors du refresh access token via Twitch.");
             }
-        } catch (IOException | InterruptedException e) {
-            throw new ApiException("Une erreur interne est survenue lors de la vérification du token twitch.", e);
+        } catch (IOException ioException) {
+            throw new ApiException("Une erreur interne est survenue lors de la vérification du token twitch.", ioException);
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+            throw new ApiException("L'application a rencontré une erreur.", interruptedException);
         }
     }
 
