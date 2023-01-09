@@ -2,6 +2,7 @@ package fr.funixgaming.api.client.user.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,4 +21,10 @@ public class UserCreationDTO {
 
     @NotBlank
     private String passwordConfirmation;
+
+    @NotNull
+    private Boolean acceptCGV;
+
+    @NotNull
+    private Boolean acceptCGU;
 }

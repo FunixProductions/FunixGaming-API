@@ -43,6 +43,8 @@ class TestUserAuthResource {
         creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword("ousddffdi22AA");
         creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(true);
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,6 +84,8 @@ class TestUserAuthResource {
         creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword(password);
         creationDTO.setPasswordConfirmation(password);
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(true);
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,6 +100,8 @@ class TestUserAuthResource {
         creationDTO.setUsername("funix");
         creationDTO.setPassword("ousddffdi22AA");
         creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(true);
 
         MvcResult mvcResult = this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -121,6 +127,8 @@ class TestUserAuthResource {
         creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword("ousddffdi22AA");
         creationDTO.setPasswordConfirmation("ousddffdi22AAsssdd");
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(true);
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,11 +143,83 @@ class TestUserAuthResource {
         creationDTO.setUsername(UUID.randomUUID().toString());
         creationDTO.setPassword("ousddffdi22AA");
         creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(true);
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(creationDTO)))
                 .andExpect(status().isOk());
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterUsernameTakenNoCase() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername("patrickbalkany");
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(true);
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isOk());
+
+        creationDTO.setUsername("patrickBalkany");
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterNoCGV() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(true);
+        creationDTO.setAcceptCGV(false);
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterNoCGU() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(false);
+        creationDTO.setAcceptCGV(true);
+
+        this.mockMvc.perform(post("/user/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(creationDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegisterNoCGUAndNoCGV() throws Exception {
+        final UserCreationDTO creationDTO = new UserCreationDTO();
+        creationDTO.setEmail(UUID.randomUUID() + "@gmail.com");
+        creationDTO.setUsername(UUID.randomUUID().toString());
+        creationDTO.setPassword("ousddffdi22AA");
+        creationDTO.setPasswordConfirmation("ousddffdi22AA");
+        creationDTO.setAcceptCGU(false);
+        creationDTO.setAcceptCGV(false);
 
         this.mockMvc.perform(post("/user/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)

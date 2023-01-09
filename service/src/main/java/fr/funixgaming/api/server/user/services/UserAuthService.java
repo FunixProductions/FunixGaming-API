@@ -50,6 +50,13 @@ public class UserAuthService {
 
     @Transactional
     public UserDTO register(final UserCreationDTO userCreationDTO) {
+        if (!userCreationDTO.getAcceptCGU()) {
+            throw new ApiBadRequestException("Vous devez accepter les conditions générales d'utilisation pour vous créer un compte.");
+        }
+        if (!userCreationDTO.getAcceptCGV()) {
+            throw new ApiBadRequestException("Vous devez accepter les conditions générales de vente pour vous créer un compte.");
+        }
+
         if (userCreationDTO.getPassword().equals(userCreationDTO.getPasswordConfirmation())) {
             final UserSecretsDTO userSecretsDTO = userCrudService.getMapper().toSecretsDto(userCreationDTO);
 
