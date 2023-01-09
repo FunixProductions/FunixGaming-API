@@ -1,5 +1,6 @@
 package fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.stream;
 
+import fr.funixgaming.api.client.config.FeignConfig;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.stream.TwitchStreamDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -9,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(
         name = "TwitchStreamsClient",
         url = "${funix.api.app-domain-url}",
-        path = "twitch/streams"
+        path = "twitch/streams",
+        configuration = FeignConfig.class
 )
 public interface TwitchStreamsClient {
 

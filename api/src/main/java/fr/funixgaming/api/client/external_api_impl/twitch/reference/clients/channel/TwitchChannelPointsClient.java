@@ -1,5 +1,6 @@
 package fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.channel;
 
+import fr.funixgaming.api.client.config.FeignConfig;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.chat.TwitchChannelRewardDTO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,7 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @FeignClient(
         name = "TwitchChannelPointsClient",
         url = "${funix.api.app-domain-url}",
-        path = "twitch/channel/custom_rewards"
+        path = "twitch/channel/custom_rewards",
+        configuration = FeignConfig.class
 )
 public interface TwitchChannelPointsClient {
 

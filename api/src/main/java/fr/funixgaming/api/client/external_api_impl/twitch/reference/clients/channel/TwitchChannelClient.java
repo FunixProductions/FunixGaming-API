@@ -1,5 +1,6 @@
 package fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.channel;
 
+import fr.funixgaming.api.client.config.FeignConfig;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.requests.TwitchChannelUpdateDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.TwitchChannelDTO;
@@ -15,7 +16,8 @@ import java.util.List;
 @FeignClient(
         name = "TwitchChannelClient",
         url = "${funix.api.app-domain-url}",
-        path = "twitch/channel"
+        path = "twitch/channel",
+        configuration = FeignConfig.class
 )
 public interface TwitchChannelClient {
 

@@ -1,5 +1,6 @@
 package fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.chat;
 
+import fr.funixgaming.api.client.config.FeignConfig;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.requests.TwitchChatAnnouncement;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.chat.TwitchChannelChattersDTO;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(
         name = "TwitchChatClient",
         url = "${funix.api.app-domain-url}",
-        path = "twitch/chat"
+        path = "twitch/chat",
+        configuration = FeignConfig.class
 )
 public interface TwitchChatClient {
 
