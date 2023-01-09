@@ -36,7 +36,7 @@ public class UserCrudService extends ApiService<UserDTO, User, UserMapper, UserR
     @Override
     public void beforeSavingEntity(@NonNull UserDTO request, @NonNull User entity) {
         if (request.getId() == null) {
-            final Optional<User> search = this.getRepository().findByUsername(request.getUsername());
+            final Optional<User> search = this.getRepository().findByUsernameIgnoreCase(request.getUsername());
             if (search.isPresent()) {
                 throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", request.getUsername()));
             }
