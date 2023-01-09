@@ -11,6 +11,7 @@ import fr.funixgaming.api.core.exceptions.ApiForbiddenException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchValidTokenClient;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.entities.TwitchClientToken;
@@ -42,6 +43,7 @@ public class TwitchClientTokenService {
     private final TwitchClientTokenRepository twitchClientTokenRepository;
     private final TwitchClientTokenMapper twitchClientTokenMapper;
     private final TwitchTokenAuthClient twitchTokenAuthClient;
+    private final TwitchValidTokenClient validTokenClient;
 
     private final PasswordGenerator passwordGenerator;
     private final UserCrudService userCrudService;
@@ -62,13 +64,15 @@ public class TwitchClientTokenService {
                                     TwitchClientTokenRepository twitchClientTokenRepository,
                                     TwitchClientTokenMapper twitchClientTokenMapper,
                                     TwitchTokenAuthClient twitchTokenAuthClient,
-                                    CurrentSession currentSession) {
+                                    CurrentSession currentSession,
+                                    TwitchValidTokenClient twitchValidTokenClient) {
         this.twitchClientTokenRepository = twitchClientTokenRepository;
         this.twitchApiConfig = twitchApiConfig;
         this.userCrudService = userCrudService;
         this.twitchTokenAuthClient = twitchTokenAuthClient;
         this.twitchClientTokenMapper = twitchClientTokenMapper;
         this.currentSession = currentSession;
+        this.validTokenClient = twitchValidTokenClient;
 
         this.passwordGenerator = new PasswordGenerator();
         passwordGenerator.setSpecialCharsAmount(0);
@@ -110,7 +114,6 @@ public class TwitchClientTokenService {
             final UserDTO userDTO = csrfUser.getUser();
             final Optional<User> search = userCrudService.getRepository().findByUuid(userDTO.getId().toString());
 
-            this.csrfTokens.remove(csrfToken);
             if (search.isPresent()) {
                 final User user = search.get();
 
@@ -118,6 +121,7 @@ public class TwitchClientTokenService {
                 searchToken.ifPresent(this.twitchClientTokenRepository::delete);
 
                 generateNewAccessToken(csrfUser, user, oAuthCode);
+                this.csrfTokens.remove(csrfToken);
             } else {
                 throw new ApiNotFoundException(String.format("L'utilisateur %s n'existe pas.", userDTO.getUsername()));
             }
@@ -232,9 +236,14 @@ public class TwitchClientTokenService {
         formData.put("redirect_uri", this.twitchApiConfig.getAppCallback());
 
         try {
-            final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = this.twitchTokenAuthClient.validateToken("OAuth " + oAuthToken);
             final TwitchTokenResponseDTO tokenResponseDTO = twitchTokenAuthClient.getToken(formData);
             final TwitchClientToken twitchClientToken = new TwitchClientToken();
+
+            final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = validTokenClient.makeHttpRequestValidation(tokenResponseDTO.getAccessToken());
+            if (twitchValidationTokenResponseDTO == null) {
+                this.twitchClientTokenRepository.deleteTwitchClientTokenByoAuthCode(oAuthToken);
+                throw new ApiForbiddenException(String.format("L'utilisateur %s à retiré l'accès à la FunixAPI sur twitch.", csrfUser.getUser().getUsername()));
+            }
 
             twitchClientToken.setUser(user);
             twitchClientToken.setTokenType(csrfUser.getTokenType());
@@ -257,7 +266,12 @@ public class TwitchClientTokenService {
 
     private TwitchClientTokenDTO refreshToken(final TwitchClientToken token) {
         try {
-            final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = this.twitchTokenAuthClient.validateToken("OAuth " + token.getOAuthCode());
+            final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = validTokenClient.makeHttpRequestValidation(token.getAccessToken());
+            if (twitchValidationTokenResponseDTO == null) {
+                this.twitchClientTokenRepository.delete(token);
+                throw new ApiForbiddenException(String.format("L'utilisateur %s à retiré l'accès à la FunixAPI sur twitch.", token.getUser().getUsername()));
+            }
+
             if (token.isUsable()) {
                 token.setTwitchUserId(twitchValidationTokenResponseDTO.getTwitchUserId());
                 token.setTwitchUsername(twitchValidationTokenResponseDTO.getTwitchUsername());
@@ -288,4 +302,6 @@ public class TwitchClientTokenService {
             }
         }
     }
+
+
 }

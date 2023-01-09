@@ -4,6 +4,7 @@ import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClien
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchTokenAuthClient;
+import fr.funixgaming.api.server.external_api_impl.twitch.auth.clients.TwitchValidTokenClient;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchTokenResponseDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.dtos.TwitchValidationTokenResponseDTO;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
@@ -36,6 +37,9 @@ class TwitchAuthResourceTest {
     @MockBean
     private TwitchTokenAuthClient twitchTokenAuthClient;
 
+    @MockBean
+    private TwitchValidTokenClient twitchValidTokenClient;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -55,7 +59,7 @@ class TwitchAuthResourceTest {
         validResponseMock.setTwitchUsername("funix");
 
         Mockito.when(twitchTokenAuthClient.getToken(Mockito.any())).thenReturn(mockToken);
-        Mockito.when(twitchTokenAuthClient.validateToken(Mockito.any())).thenReturn(validResponseMock);
+        Mockito.when(twitchValidTokenClient.makeHttpRequestValidation(Mockito.anyString())).thenReturn(validResponseMock);
     }
 
     @Test
