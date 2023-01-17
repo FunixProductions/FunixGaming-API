@@ -23,6 +23,6 @@ public interface TwitchReferenceGameClient {
 
     @GetMapping
     TwitchDataResponseDTO<TwitchGameDTO> getGameInfoById(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
-                                                           @RequestParam(name = "id") String id);
+                                                         @RequestParam(name = "id") String id);
 
 }
