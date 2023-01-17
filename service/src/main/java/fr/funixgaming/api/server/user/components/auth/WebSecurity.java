@@ -58,9 +58,7 @@ public class WebSecurity {
 
                 .requestMatchers("/mail**").hasAuthority(UserRole.ADMIN.getRole())
 
-                .requestMatchers(HttpMethod.POST,
-                        "/user/auth/register**",
-                        "/user/auth/login**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/user/auth/register**", "/user/auth/login**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/user/auth/current**").authenticated()
                 .requestMatchers("/user**").hasAuthority(UserRole.ADMIN.getRole())
 

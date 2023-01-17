@@ -39,6 +39,6 @@ public class TwitchApiConfig {
     /**
      * Streamer owner username, this is the creator of the API
      */
-    private String streamerUsername = "funixgaming";
+    private String streamerUsername;
 
 }
