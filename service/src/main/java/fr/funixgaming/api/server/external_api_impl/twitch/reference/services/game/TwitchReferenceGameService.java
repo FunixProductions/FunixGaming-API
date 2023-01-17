@@ -26,7 +26,7 @@ public class TwitchReferenceGameService extends TwitchReferenceService implement
     @Override
     public TwitchDataResponseDTO<TwitchGameDTO> getGameInfoById(String twitchAccessToken, String id) {
         try {
-            return client.getGameInfoByName(super.addBearerPrefix(twitchAccessToken), id);
+            return client.getGameInfoById(super.addBearerPrefix(twitchAccessToken), id);
         } catch (FeignException e) {
             throw super.handleFeignException(e);
         }

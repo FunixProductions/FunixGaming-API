@@ -36,6 +36,6 @@ public class TwitchGameResource extends TwitchReferenceResource implements Twitc
     public TwitchDataResponseDTO<TwitchGameDTO> getGameById(String id) {
         final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.VIEWER);
 
-        return gameService.getGameInfoByName(tokenDTO.getAccessToken(), id);
+        return gameService.getGameInfoById(tokenDTO.getAccessToken(), id);
     }
 }
