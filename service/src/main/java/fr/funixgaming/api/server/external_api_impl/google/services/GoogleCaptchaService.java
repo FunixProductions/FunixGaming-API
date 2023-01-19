@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 @Getter
 @Service
@@ -25,7 +24,6 @@ public class GoogleCaptchaService {
     private static final String HTTP_GOOGLE_CAPTCHA_PARAMETER = "google_reCaptcha";
     private static final String REGISTER_ACTION = "register";
     private static final String LOGIN_ACTION = "login";
-    private static final Pattern RESPONSE_PATTERN = Pattern.compile("[A-Za-z0-9_-]+");
 
     private final GoogleCaptchaConfig googleCaptchaConfig;
     private final GoogleCaptchaClient googleCaptchaClient;
@@ -61,7 +59,7 @@ public class GoogleCaptchaService {
             throw new ApiForbiddenException(String.format("Vous avez fait plus de %d essais. Vous êtes donc bloqué 15 minutes. Veuillez réessayer plus tard.", MAX_ATTEMPT));
         }
 
-        if (StringUtils.hasLength(captchaCode) && RESPONSE_PATTERN.matcher(captchaCode).matches()) {
+        if (StringUtils.hasLength(captchaCode)) {
             final GoogleCaptchaSiteVerifyResponse response = googleCaptchaClient.verify(
                     googleCaptchaConfig.getSecret(),
                     captchaCode,
@@ -69,9 +67,7 @@ public class GoogleCaptchaService {
                     " "
             );
 
-            if (response.isSuccess() &&
-                    (response.getAction().equals(REGISTER_ACTION) || response.getAction().equals(LOGIN_ACTION)) &&
-                    response.getScore() > googleCaptchaConfig.getThreshold()) {
+            if (response.isSuccess() && (response.getAction().equals(REGISTER_ACTION) || response.getAction().equals(LOGIN_ACTION)) && response.getScore() > googleCaptchaConfig.getThreshold()) {
                 reCaptchaSucceeded(clientIp);
             } else {
                 reCaptchaFailed(clientIp);
