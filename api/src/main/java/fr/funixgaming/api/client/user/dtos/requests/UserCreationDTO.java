@@ -27,4 +27,6 @@ public class UserCreationDTO {
 
     @NotNull
     private Boolean acceptCGU;
+
+    private String googleCaptcha;
 }

@@ -25,14 +25,14 @@ public class UserAuthResource {
 
     @PostMapping("register")
     public UserDTO register(@RequestBody @Valid UserCreationDTO request, final HttpServletRequest servletRequest) {
-        captchaService.checkCode(servletRequest);
+        captchaService.checkCode(servletRequest, request.getGoogleCaptcha());
 
         return userAuthService.register(request);
     }
 
     @PostMapping("login")
     public UserTokenDTO login(@RequestBody @Valid UserLoginDTO request, final HttpServletRequest servletRequest) {
-        captchaService.checkCode(servletRequest);
+        captchaService.checkCode(servletRequest, request.getGoogleCaptcha());
 
         return userAuthService.login(request, servletRequest);
     }

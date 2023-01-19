@@ -16,4 +16,6 @@ public class UserLoginDTO {
 
     @NotNull
     private Boolean stayConnected;
+
+    private String googleCaptcha;
 }

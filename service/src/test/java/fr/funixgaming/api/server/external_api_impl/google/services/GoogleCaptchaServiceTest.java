@@ -63,7 +63,7 @@ class GoogleCaptchaServiceTest {
         responseMock.setAction("register");
 
         Mockito.when(googleCaptchaClient.verify(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(responseMock);
-        googleCaptchaService.checkCode(request);
+        googleCaptchaService.checkCode(request, "dssdf");
     }
 
     @Test
@@ -80,7 +80,7 @@ class GoogleCaptchaServiceTest {
         responseMock.setAction("login");
 
         Mockito.when(googleCaptchaClient.verify(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(responseMock);
-        googleCaptchaService.checkCode(request);
+        googleCaptchaService.checkCode(request, "sdffd");
     }
 
     @Test
@@ -99,7 +99,7 @@ class GoogleCaptchaServiceTest {
         Mockito.when(googleCaptchaClient.verify(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(responseMock);
 
         try {
-            googleCaptchaService.checkCode(request);
+            googleCaptchaService.checkCode(request, "sdfsfd");
             fail("Should throw an exception");
         } catch (ApiBadRequestException ignored) {
         }
@@ -121,7 +121,7 @@ class GoogleCaptchaServiceTest {
         Mockito.when(googleCaptchaClient.verify(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(responseMock);
 
         try {
-            googleCaptchaService.checkCode(request);
+            googleCaptchaService.checkCode(request, "sdfjd");
             fail("Should throw an exception");
         } catch (ApiBadRequestException ignored) {
         }
@@ -134,7 +134,7 @@ class GoogleCaptchaServiceTest {
         request.setLocalAddr("127.0.0.1");
 
         try {
-            googleCaptchaService.checkCode(request);
+            googleCaptchaService.checkCode(request, "sdfh");
             fail("Should throw an exception");
         } catch (ApiBadRequestException ignored) {
         }
