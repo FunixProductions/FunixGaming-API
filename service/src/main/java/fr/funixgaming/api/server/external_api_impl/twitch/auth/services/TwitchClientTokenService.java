@@ -268,7 +268,6 @@ public class TwitchClientTokenService {
         try {
             final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = validTokenClient.makeHttpRequestValidation(token.getAccessToken());
             if (twitchValidationTokenResponseDTO == null) {
-                this.twitchClientTokenRepository.delete(token);
                 throw new ApiForbiddenException(String.format("L'utilisateur %s à retiré l'accès à la FunixAPI sur twitch.", token.getUser().getUsername()));
             }
 
@@ -295,7 +294,6 @@ public class TwitchClientTokenService {
             return twitchClientTokenMapper.toDto(twitchClientTokenRepository.save(token));
         } catch (FeignException e) {
             if (e.status() == HttpStatus.UNAUTHORIZED.value()) {
-                this.twitchClientTokenRepository.delete(token);
                 throw new ApiForbiddenException(String.format("L'utilisateur %s à retiré l'accès à la FunixAPI sur twitch.", token.getUser().getUsername()));
             } else {
                 throw new ApiException("Une erreur est survenue lors du refresh access token via Twitch.", e);
