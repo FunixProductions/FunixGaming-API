@@ -1,7 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.chat;
 
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.chat.TwitchChatClient;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.requests.TwitchChatAnnouncement;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
@@ -29,7 +28,7 @@ public class TwitchChatResource extends TwitchReferenceResource implements Twitc
     @Override
     public TwitchDataResponseDTO<TwitchChannelChattersDTO> getChannelChatters(Integer maxChattersReturned,
                                                                               String paginationCursor) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.STREAMER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         return service.getChannelChatters(
                 tokenDTO.getAccessToken(),
@@ -42,7 +41,7 @@ public class TwitchChatResource extends TwitchReferenceResource implements Twitc
 
     @Override
     public void sendChatAnnouncement(TwitchChatAnnouncement announcement) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.STREAMER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         service.sendChatAnnouncement(
                 tokenDTO.getAccessToken(),

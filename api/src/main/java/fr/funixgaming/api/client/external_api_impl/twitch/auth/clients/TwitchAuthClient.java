@@ -18,6 +18,6 @@ public interface TwitchAuthClient {
     String getAuthClientUrl(@RequestParam(defaultValue = "VIEWER") String tokenType);
 
     @GetMapping("accessToken")
-    TwitchClientTokenDTO getAccessToken(@RequestParam(defaultValue = "VIEWER") String tokenType);
+    TwitchClientTokenDTO getAccessToken();
 
 }

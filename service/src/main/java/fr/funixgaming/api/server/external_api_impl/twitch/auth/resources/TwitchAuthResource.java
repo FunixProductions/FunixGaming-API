@@ -28,13 +28,13 @@ public class TwitchAuthResource implements TwitchAuthClient {
     }
 
     @Override
-    public TwitchClientTokenDTO getAccessToken(String tokenType) {
+    public TwitchClientTokenDTO getAccessToken() {
         final UserDTO actualUser = currentSession.getCurrentUser();
 
         if (actualUser == null) {
             throw new ApiBadRequestException("Vous n'êtes pas connecté à l'api.");
         } else {
-            return this.twitchClientTokenService.fetchToken(actualUser.getId(), getTokenTypeByString(tokenType));
+            return this.twitchClientTokenService.fetchToken(actualUser.getId());
         }
     }
 

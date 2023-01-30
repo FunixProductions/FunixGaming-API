@@ -150,7 +150,7 @@ class TwitchAuthResourceTest {
         final User user = userTestComponent.createBasicUser();
         final UserTokenDTO tokenDTO = userTestComponent.loginUser(user);
 
-        mockMvc.perform(get("/twitch/auth/accessToken?tokenType=" + TwitchClientTokenType.STREAMER.name())
+        mockMvc.perform(get("/twitch/auth/accessToken")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenDTO.getToken())
         ).andExpect(status().isNotFound());
         MvcResult result = mockMvc.perform(get("/twitch/auth/clientAuthUrl?tokenType=" + TwitchClientTokenType.STREAMER.name())

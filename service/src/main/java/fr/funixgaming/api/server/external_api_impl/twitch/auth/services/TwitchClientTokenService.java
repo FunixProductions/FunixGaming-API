@@ -117,7 +117,7 @@ public class TwitchClientTokenService {
             if (search.isPresent()) {
                 final User user = search.get();
 
-                final Optional<TwitchClientToken> searchToken = this.twitchClientTokenRepository.findTwitchClientTokenByUserAndTokenType(user, csrfUser.getTokenType());
+                final Optional<TwitchClientToken> searchToken = this.twitchClientTokenRepository.findTwitchClientTokenByUser(user);
                 searchToken.ifPresent(this.twitchClientTokenRepository::delete);
 
                 generateNewAccessToken(csrfUser, user, oAuthCode);
@@ -128,22 +128,20 @@ public class TwitchClientTokenService {
         }
     }
 
-    public TwitchClientTokenDTO fetchToken(final UUID userUuid, final TwitchClientTokenType tokenType) {
+    public TwitchClientTokenDTO fetchToken(final UUID userUuid) {
         if (userUuid == null) {
             throw new ApiBadRequestException("Pas de user uuid spécifié pour la récupération de tokens twitch.");
-        } else if (tokenType == null) {
-            throw new ApiBadRequestException("Pas de type de token spécifié pour la récupération de tokens twitch.");
         }
 
         final Optional<User> searchUser = this.userCrudService.getRepository().findByUuid(userUuid.toString());
         if (searchUser.isPresent()) {
             final User user = searchUser.get();
-            final Optional<TwitchClientToken> twitchClientToken = this.twitchClientTokenRepository.findTwitchClientTokenByUserAndTokenType(user, tokenType);
+            final Optional<TwitchClientToken> twitchClientToken = this.twitchClientTokenRepository.findTwitchClientTokenByUser(user);
 
             if (twitchClientToken.isPresent()) {
                 return refreshToken(twitchClientToken.get());
             } else {
-                throw new ApiNotFoundException(String.format("L'utilisateur %s ne possède pas de tokens twitch avec le type %s.", user.getUsername(), tokenType));
+                throw new ApiNotFoundException(String.format("L'utilisateur %s ne possède pas de tokens twitch.", user.getUsername()));
             }
         } else {
             throw new ApiNotFoundException(String.format("L'utilisateur %s n'existe pas.", userUuid));
@@ -246,7 +244,6 @@ public class TwitchClientTokenService {
             }
 
             twitchClientToken.setUser(user);
-            twitchClientToken.setTokenType(csrfUser.getTokenType());
             twitchClientToken.setTwitchUserId(twitchValidationTokenResponseDTO.getTwitchUserId());
             twitchClientToken.setTwitchUsername(twitchValidationTokenResponseDTO.getTwitchUsername());
             twitchClientToken.setOAuthCode(oAuthToken);

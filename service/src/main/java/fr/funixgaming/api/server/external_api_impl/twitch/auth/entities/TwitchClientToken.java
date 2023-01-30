@@ -1,6 +1,5 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.auth.entities;
 
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import fr.funixgaming.api.server.configs.EncryptionString;
 import fr.funixgaming.api.server.user.entities.User;
@@ -19,10 +18,6 @@ public class TwitchClientToken extends ApiEntity {
     @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
-
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "token_type", nullable = false)
-    private TwitchClientTokenType tokenType;
 
     @Convert(converter = EncryptionString.class)
     @Column(name = "twitch_user_id", nullable = false)

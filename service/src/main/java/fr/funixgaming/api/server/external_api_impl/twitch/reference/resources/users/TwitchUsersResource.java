@@ -1,7 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.users;
 
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.users.TwitchUsersClient;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.user.TwitchFollowDTO;
@@ -27,7 +26,7 @@ public class TwitchUsersResource extends TwitchReferenceResource implements Twit
 
     @Override
     public TwitchDataResponseDTO<TwitchFollowDTO> isUserFollowingStreamer(String userId, String streamerId) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.VIEWER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         return service.isUserFollowingStreamer(
                 tokenDTO.getAccessToken(),

@@ -1,7 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.game;
 
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.game.TwitchGameClient;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.game.TwitchGameDTO;
@@ -27,14 +26,14 @@ public class TwitchGameResource extends TwitchReferenceResource implements Twitc
 
     @Override
     public TwitchDataResponseDTO<TwitchGameDTO> getGameByName(String name) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.VIEWER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         return gameService.getGameInfoByName(tokenDTO.getAccessToken(), name);
     }
 
     @Override
     public TwitchDataResponseDTO<TwitchGameDTO> getGameById(String id) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.VIEWER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         return gameService.getGameInfoById(tokenDTO.getAccessToken(), id);
     }

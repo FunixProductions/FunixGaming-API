@@ -1,7 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.channel;
 
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.channel.TwitchChannelClient;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.requests.TwitchChannelUpdateDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
@@ -32,14 +31,14 @@ public class TwitchChannelResource extends TwitchReferenceResource implements Tw
     @Override
     public TwitchDataResponseDTO<TwitchChannelDTO> getChannelInformation(List<String> broadcasterId) {
         return service.getChannelInformation(
-                super.getTwitchAuthByUserConnected(TwitchClientTokenType.VIEWER).getAccessToken(),
+                super.getTwitchAuthByUserConnected().getAccessToken(),
                 broadcasterId
         );
     }
 
     @Override
     public void updateChannelInformation(TwitchChannelUpdateDTO channelUpdateDTO) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.STREAMER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         service.updateChannelInformation(
                 tokenDTO.getAccessToken(),
@@ -50,7 +49,7 @@ public class TwitchChannelResource extends TwitchReferenceResource implements Tw
 
     @Override
     public TwitchDataResponseDTO<TwitchChannelUserDTO> getChannelVips(String maximumReturned, String after, List<String> userIds) {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.STREAMER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         return service.getChannelVips(
                 tokenDTO.getAccessToken(),
