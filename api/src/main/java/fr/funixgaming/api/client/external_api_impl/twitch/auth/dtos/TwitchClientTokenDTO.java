@@ -1,6 +1,5 @@
 package fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos;
 
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;
@@ -12,8 +11,6 @@ import java.util.Date;
 @Setter
 public class TwitchClientTokenDTO extends ApiDTO {
     private UserDTO user;
-
-    private TwitchClientTokenType tokenType;
 
     private String twitchUserId;
 

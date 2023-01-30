@@ -1,7 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.reference.resources.channel;
 
 import fr.funixgaming.api.client.external_api_impl.twitch.auth.dtos.TwitchClientTokenDTO;
-import fr.funixgaming.api.client.external_api_impl.twitch.auth.enums.TwitchClientTokenType;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.clients.channel.TwitchChannelPointsClient;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.channel.chat.TwitchChannelRewardDTO;
@@ -27,7 +26,7 @@ public class TwitchChannelPointsResource extends TwitchReferenceResource impleme
 
     @Override
     public TwitchDataResponseDTO<TwitchChannelRewardDTO> getChannelRewards() {
-        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected(TwitchClientTokenType.STREAMER);
+        final TwitchClientTokenDTO tokenDTO = super.getTwitchAuthByUserConnected();
 
         return service.getChannelRewards(
                 tokenDTO.getAccessToken(),
