@@ -3,7 +3,6 @@ package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
-import fr.funixgaming.api.core.utils.string.StringComparators;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class TwitchEventSubHmacService {
@@ -53,14 +55,26 @@ public class TwitchEventSubHmacService {
      * @param body request body
      * @throws ApiBadRequestException when the header signature is not from twitch
      */
-    public void validEventMessage(final HttpServletRequest request, final String body) throws ApiBadRequestException {
-        final String twitchHmac = getHmacFromTwitch(request, body);
-        final String hmac = HMAC_PREFIX + getHmac(twitchHmac);
+    public void validEventMessage(final HttpServletRequest request, final byte[] body) throws ApiBadRequestException {
+        final String messageTimestamp = request.getHeader(TWITCH_MESSAGE_TIMESTAMP);
+        if (messageTimestamp == null) {
+            throw new ApiBadRequestException("Il manque le message timestamp.");
+        }
 
-        if (!StringComparators.timingSafeEqual(
-                hmac.getBytes(StandardCharsets.UTF_8),
-                request.getHeader(TWITCH_MESSAGE_SIGNATURE).getBytes(StandardCharsets.UTF_8))
-        ) {
+        final String messageSignature = request.getHeader(TWITCH_MESSAGE_SIGNATURE);
+        if (messageSignature == null || !messageSignature.startsWith(HMAC_PREFIX)) {
+            throw new ApiBadRequestException("Il manque la signature twitch");
+        }
+
+        final Instant messageTs = Instant.parse(messageTimestamp);
+        if (messageTs.plus(10, ChronoUnit.MINUTES).isBefore(Instant.now())) {
+            throw new ApiBadRequestException("La notification twitch est trop vielle.");
+        }
+
+        final byte[] twitchHmac = bytesToHex(getHmacFromTwitch(request, body));
+        final byte[] expectedHmac = messageSignature.substring(HMAC_PREFIX.length()).getBytes(StandardCharsets.UTF_8);
+
+        if (!MessageDigest.isEqual(twitchHmac, expectedHmac)) {
             throw new ApiBadRequestException("La clé fournie en header ne correspond pas avec la clé de la funix api.");
         }
     }
@@ -73,13 +87,16 @@ public class TwitchEventSubHmacService {
         return key;
     }
 
-    private String getHmacFromTwitch(final HttpServletRequest request, final String body) {
-        return request.getHeader(TWITCH_MESSAGE_ID) + request.getHeader(TWITCH_MESSAGE_TIMESTAMP) + body;
-    }
+    private byte[] getHmacFromTwitch(final HttpServletRequest request, final byte[] body) {
+        final byte[] messageId = request.getHeader(TWITCH_MESSAGE_ID).getBytes(StandardCharsets.UTF_8);
+        final byte[] messageTs = request.getHeader(TWITCH_MESSAGE_TIMESTAMP).getBytes(StandardCharsets.UTF_8);
+        final byte[] message = new byte[messageId.length + messageTs.length + body.length];
 
-    private String getHmac(final String message) {
-        final byte[] hmac = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
-        return new String(hmac, StandardCharsets.UTF_8);
+        System.arraycopy(messageId, 0, message, 0, messageId.length);
+        System.arraycopy(messageTs, 0, message, messageId.length, messageTs.length);
+        System.arraycopy(body, 0, message, messageId.length + messageTs.length, body.length);
+
+        return mac.doFinal(message);
     }
 
     private static String getAppSecret() {
@@ -127,8 +144,16 @@ public class TwitchEventSubHmacService {
         passwordGenerator.setAlphaUpper(15);
         passwordGenerator.setAlphaDown(15);
         passwordGenerator.setNumbersAmount(10);
-        passwordGenerator.setSpecialCharsAmount(10);
+        passwordGenerator.setSpecialCharsAmount(0);
 
         return passwordGenerator.generateRandomPassword();
+    }
+
+    public static byte[] bytesToHex(byte[] bytes) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) {
+            result.append(String.format("%02x", b));
+        }
+        return result.toString().getBytes(StandardCharsets.UTF_8);
     }
 }
