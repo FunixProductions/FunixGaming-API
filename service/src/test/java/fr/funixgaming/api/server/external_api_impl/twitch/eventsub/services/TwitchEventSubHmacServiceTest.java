@@ -11,6 +11,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,23 +26,25 @@ class TwitchEventSubHmacServiceTest {
         final File file = new File(TwitchEventSubHmacService.FILE_SECRET_NAME);
         file.delete();
 
+        final String date = Instant.now().toString();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_ID, "10");
-        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_TIMESTAMP, "10");
-        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_SIGNATURE, "sha256=" + encode("1010body"));
+        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_TIMESTAMP, date);
+        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_SIGNATURE, "sha256=" + encode("10" + date + "body"));
 
-        hmacService.validEventMessage(request, "body");
+        hmacService.validEventMessage(request, "body".getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
     @Order(2)
     void testValidTwitchCallWithFile() throws Exception {
+        final String date = Instant.now().toString();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_ID, "10");
-        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_TIMESTAMP, "10");
-        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_SIGNATURE, "sha256=" + encode("1010body"));
+        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_TIMESTAMP, date);
+        request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_SIGNATURE, "sha256=" + encode("10" + date + "body"));
 
-        hmacService.validEventMessage(request, "body");
+        hmacService.validEventMessage(request, "body".getBytes(StandardCharsets.UTF_8));
     }
 
     private String encode(final String data) throws Exception {
@@ -49,7 +52,15 @@ class TwitchEventSubHmacServiceTest {
         final Mac mac = Mac.getInstance("HmacSHA256");
         mac.init(secretKeySpec);
 
-        return new String(mac.doFinal(data.getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
+        return bytesToHex(mac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) {
+            result.append(String.format("%02x", b));
+        }
+        return result.toString();
     }
 
 }
