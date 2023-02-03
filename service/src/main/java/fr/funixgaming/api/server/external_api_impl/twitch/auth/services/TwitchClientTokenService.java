@@ -261,30 +261,26 @@ public class TwitchClientTokenService {
 
     private TwitchClientTokenDTO refreshToken(final TwitchClientToken token) {
         try {
-            final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = validTokenClient.makeHttpRequestValidation(token.getAccessToken());
-            if (twitchValidationTokenResponseDTO == null) {
-                throw new ApiForbiddenException(String.format("L'utilisateur %s à retiré l'accès à la FunixAPI sur twitch.", token.getUser().getUsername()));
-            }
-
             if (token.isUsable()) {
+                final TwitchValidationTokenResponseDTO twitchValidationTokenResponseDTO = validTokenClient.makeHttpRequestValidation(token.getAccessToken());
+
+                if (twitchValidationTokenResponseDTO == null) {
+                    throw new ApiForbiddenException(String.format("L'utilisateur %s à retiré l'accès à la FunixAPI sur twitch.", token.getUser().getUsername()));
+                }
                 token.setTwitchUserId(twitchValidationTokenResponseDTO.getTwitchUserId());
                 token.setTwitchUsername(twitchValidationTokenResponseDTO.getTwitchUsername());
+            } else {
+                final Map<String, String> formRequest = new HashMap<>();
+                formRequest.put("client_id", this.twitchApiConfig.getAppClientId());
+                formRequest.put("client_secret", this.twitchApiConfig.getAppClientSecret());
+                formRequest.put("grant_type", "refresh_token");
+                formRequest.put("refresh_token", URLEncoder.encode(token.getRefreshToken(), StandardCharsets.UTF_8));
+                final TwitchTokenResponseDTO tokenResponseDTO = this.twitchTokenAuthClient.getToken(formRequest);
 
-                return twitchClientTokenMapper.toDto(twitchClientTokenRepository.save(token));
+                token.setAccessToken(tokenResponseDTO.getAccessToken());
+                token.setRefreshToken(tokenResponseDTO.getRefreshToken());
+                token.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60L)));
             }
-
-            final Map<String, String> formRequest = new HashMap<>();
-            formRequest.put("client_id", this.twitchApiConfig.getAppClientId());
-            formRequest.put("client_secret", this.twitchApiConfig.getAppClientSecret());
-            formRequest.put("grant_type", "refresh_token");
-            formRequest.put("refresh_token", URLEncoder.encode(token.getRefreshToken(), StandardCharsets.UTF_8));
-            final TwitchTokenResponseDTO tokenResponseDTO = this.twitchTokenAuthClient.getToken(formRequest);
-
-            token.setTwitchUserId(twitchValidationTokenResponseDTO.getTwitchUserId());
-            token.setTwitchUsername(twitchValidationTokenResponseDTO.getTwitchUsername());
-            token.setAccessToken(tokenResponseDTO.getAccessToken());
-            token.setRefreshToken(tokenResponseDTO.getRefreshToken());
-            token.setExpirationDateToken(Date.from(Instant.now().plusSeconds(tokenResponseDTO.getExpiresIn() - 60L)));
 
             return twitchClientTokenMapper.toDto(twitchClientTokenRepository.save(token));
         } catch (FeignException e) {
