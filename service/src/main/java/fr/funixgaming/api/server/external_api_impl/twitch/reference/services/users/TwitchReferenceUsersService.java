@@ -6,8 +6,8 @@ import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.respons
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.user.TwitchFollowDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.user.TwitchUserDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchReferenceService;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.clients.users.TwitchReferenceUsersClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.TwitchReferenceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;

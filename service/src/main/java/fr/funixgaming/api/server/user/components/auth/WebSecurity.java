@@ -64,6 +64,7 @@ public class WebSecurity {
 
                 .requestMatchers("/twitch/auth/cb").permitAll()
                 .requestMatchers("/twitch/eventsub/cb").permitAll()
+                .requestMatchers("/twitch/eventsub**").hasAuthority(UserRole.ADMIN.getRole())
                 .requestMatchers(HttpMethod.GET, "/twitch/*/funix").permitAll()
 
                 .anyRequest().authenticated()

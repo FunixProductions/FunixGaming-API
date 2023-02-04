@@ -17,9 +17,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Service used for handling the public callback route for twitch
+ */
 @Service
 @RequiredArgsConstructor
-public class TwitchEventSubService {
+public class TwitchEventSubCallbackService {
 
     public static final String TWITCH_MESSAGE_ID = "Twitch-Eventsub-Message-Id";
     public static final String TWITCH_MESSAGE_TYPE = "Twitch-Eventsub-Message-Type";
@@ -29,6 +32,7 @@ public class TwitchEventSubService {
     public static final String MESSAGE_TYPE_REVOCATION = "revocation";
 
     private final TwitchEventSubHmacService hmacService;
+    private final TwitchEventSubHandler twitchEventSubHandler;
     private final Map<String, Instant> messagesIdsReceived = new HashMap<>();
 
     /**
@@ -54,18 +58,31 @@ public class TwitchEventSubService {
             this.messagesIdsReceived.put(messageId, Instant.now());
 
             final String bodyParsed = new String(body, StandardCharsets.UTF_8);
-            if (messageType.equals(MESSAGE_TYPE_NOTIFICATION)) {
-                final JsonObject message = getTwitchMessage(bodyParsed);
-                final String notificationType = getNotificationType(message);
 
-                return "success";
-            } else if (messageType.equals(MESSAGE_TYPE_VERIFICATION)) {
-                final JsonObject message = getTwitchMessage(bodyParsed);
-                return getChallenge(message);
-            } else if (messageType.equals(MESSAGE_TYPE_REVOCATION)) {
-                return "success";
-            } else {
-                throw new ApiBadRequestException("Le message type n'existe pas.");
+            switch (messageType) {
+                case MESSAGE_TYPE_NOTIFICATION: {
+                    final JsonObject message = getTwitchMessage(bodyParsed);
+                    final JsonElement eventElement = message.get("event");
+
+                    if (eventElement.isJsonObject()) {
+                        final String notificationType = getNotificationType(message);
+                        final JsonObject event = eventElement.getAsJsonObject();
+
+                        twitchEventSubHandler.receiveNewNotification(notificationType, event);
+                    } else {
+                        throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
+                    }
+
+                    return "s";
+                }
+                case MESSAGE_TYPE_VERIFICATION: {
+                    final JsonObject message = getTwitchMessage(bodyParsed);
+                    return getChallenge(message);
+                }
+                case MESSAGE_TYPE_REVOCATION:
+                    return "s";
+                default:
+                    throw new ApiBadRequestException("Le message type n'existe pas.");
             }
         }
     }

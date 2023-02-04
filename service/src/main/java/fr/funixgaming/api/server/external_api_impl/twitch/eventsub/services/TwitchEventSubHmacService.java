@@ -20,6 +20,9 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Service used to handle the encryption with the hmac shared twitch key
+ */
 @Service
 public class TwitchEventSubHmacService {
 
