@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.reference.services;
+package fr.funixgaming.api.server.external_api_impl.twitch.configs;
 
 import feign.FeignException;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
@@ -14,7 +14,7 @@ public abstract class TwitchReferenceService {
         }
     }
 
-    protected ApiException handleFeignException(final FeignException e) {
+    protected ApiException handleFeignException(final FeignException e) throws ApiBadRequestException {
         final int code = e.status();
         final String errorMessage = e.getMessage();
 
@@ -23,6 +23,7 @@ public abstract class TwitchReferenceService {
             case 401 -> throw new ApiBadRequestException(String.format("Votre token d'accès Twitch est invalide. Erreur: %s", errorMessage), e);
             case 403 -> throw new ApiBadRequestException(String.format("Accès refusé à la ressource Twitch. Erreur: %s", errorMessage), e);
             case 404 -> throw new ApiBadRequestException(String.format("Ressouce Twitch introuvable. Erreur: %s", errorMessage), e);
+            case 409 -> throw new ApiBadRequestException(String.format("Dupplication d'entitées chez twitch. Erreur: %s", errorMessage), e);
             case 429 -> throw new ApiBadRequestException("Vous faites trop de requêtes à Twitch.", e);
             default -> throw new ApiBadRequestException(String.format("Erreur fatale twitch: %s", errorMessage), e);
         }

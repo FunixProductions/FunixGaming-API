@@ -1,8 +1,7 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.reference.clients;
+package fr.funixgaming.api.server.external_api_impl.twitch.configs;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

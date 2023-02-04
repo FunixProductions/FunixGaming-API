@@ -179,6 +179,7 @@ public class TwitchClientTokenService {
                     "channel:manage:vips",
                     "clips:edit",
                     "moderation:read",
+                    "moderator:read:followers",
                     "moderator:manage:announcements",
                     "moderator:manage:banned_users",
                     "moderator:read:blocked_terms",

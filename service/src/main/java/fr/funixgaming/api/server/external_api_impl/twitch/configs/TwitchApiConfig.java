@@ -22,9 +22,14 @@ public class TwitchApiConfig {
     private String appClientSecret;
 
     /**
-     * Domain callback where the users are redirected
+     * Url callback where the users are redirected
      */
     private String appCallback;
+
+    /**
+     * Url callback where twitch send notifications
+     */
+    private String appEventSubCallback;
 
     /**
      * Domain twitch api url auth

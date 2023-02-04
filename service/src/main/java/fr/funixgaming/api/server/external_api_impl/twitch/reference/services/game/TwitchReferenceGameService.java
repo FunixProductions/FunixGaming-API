@@ -3,8 +3,8 @@ package fr.funixgaming.api.server.external_api_impl.twitch.reference.services.ga
 import feign.FeignException;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.TwitchDataResponseDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.reference.dtos.responses.game.TwitchGameDTO;
+import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchReferenceService;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.clients.game.TwitchReferenceGameClient;
-import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.TwitchReferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
