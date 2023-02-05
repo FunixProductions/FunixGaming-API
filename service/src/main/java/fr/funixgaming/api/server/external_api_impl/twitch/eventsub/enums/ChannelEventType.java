@@ -1,5 +1,8 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.channel;
+package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums;
 
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.channel.ChannelFollowSubscription;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.channel.ChannelSubscription;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.channel.ChannelUpdateSubscription;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
