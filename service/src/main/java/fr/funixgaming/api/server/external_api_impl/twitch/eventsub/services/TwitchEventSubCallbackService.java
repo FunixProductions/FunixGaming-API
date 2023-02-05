@@ -32,7 +32,8 @@ public class TwitchEventSubCallbackService {
     public static final String MESSAGE_TYPE_REVOCATION = "revocation";
 
     private final TwitchEventSubHmacService hmacService;
-    private final TwitchEventSubHandler twitchEventSubHandler;
+    private final TwitchEventSubHandlerService twitchEventSubHandlerService;
+
     private final Map<String, Instant> messagesIdsReceived = new HashMap<>();
 
     /**
@@ -68,7 +69,7 @@ public class TwitchEventSubCallbackService {
                         final String notificationType = getNotificationType(message);
                         final JsonObject event = eventElement.getAsJsonObject();
 
-                        twitchEventSubHandler.receiveNewNotification(notificationType, event);
+                        twitchEventSubHandlerService.receiveNewNotification(notificationType, event);
                     } else {
                         throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
                     }
