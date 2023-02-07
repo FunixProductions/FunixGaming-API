@@ -12,7 +12,7 @@ public enum ChannelEventType {
     /**
      * <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelfollow">Doc</a>
      */
-    FOLLOW("channel.follow", "1", ChannelFollowSubscription.class),
+    FOLLOW("channel.follow", "beta", ChannelFollowSubscription.class),
 
     /**
      * <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelupdate">Doc</a>
