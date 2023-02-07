@@ -67,6 +67,12 @@ public class WebSecurity {
                 .requestMatchers("/twitch/eventsub**").hasAuthority(UserRole.ADMIN.getRole())
                 .requestMatchers(HttpMethod.GET, "/twitch/*/funix").permitAll()
 
+                .requestMatchers("/ws/admin/**").hasAuthority(UserRole.ADMIN.getRole())
+                .requestMatchers("/ws/mod/**").hasAuthority(UserRole.MODERATOR.getRole())
+                .requestMatchers("/ws/padmin/**").hasAuthority(UserRole.PACIFISTA_ADMIN.getRole())
+                .requestMatchers("/ws/pmod/**").hasAuthority(UserRole.PACIFISTA_MODERATOR.getRole())
+                .requestMatchers("/ws/public/**").permitAll()
+
                 .anyRequest().authenticated()
         ).httpBasic();
 

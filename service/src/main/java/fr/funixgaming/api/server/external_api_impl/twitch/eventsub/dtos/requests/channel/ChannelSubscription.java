@@ -13,10 +13,14 @@ public abstract class ChannelSubscription extends TwitchSubscription {
     }
 
     @Override
-    protected final JsonObject getCondition() {
+    protected JsonObject getCondition() {
         final JsonObject condition = new JsonObject();
 
         condition.addProperty("broadcaster_user_id", this.streamerId);
         return condition;
+    }
+
+    public final String getStreamerId() {
+        return streamerId;
     }
 }
