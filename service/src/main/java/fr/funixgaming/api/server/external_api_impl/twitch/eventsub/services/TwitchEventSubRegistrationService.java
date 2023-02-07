@@ -229,7 +229,7 @@ public class TwitchEventSubRegistrationService {
             final List<TwitchSubscription> subscriptions = new ArrayList<>();
 
             for (ChannelEventType eventType : ChannelEventType.values()) {
-                final Constructor<? extends ChannelSubscription> constructor = eventType.getClazz().getConstructor(eventType.getClazz());
+                final Constructor<? extends ChannelSubscription> constructor = eventType.getClazz().getConstructor(String.class);
                 final ChannelSubscription channelSubscription = constructor.newInstance(streamerId);
                 subscriptions.add(channelSubscription);
             }
