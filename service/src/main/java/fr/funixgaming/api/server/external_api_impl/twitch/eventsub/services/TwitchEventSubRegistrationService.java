@@ -9,12 +9,15 @@ import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchServerTokenService;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.TwitchSubscription;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.channel.ChannelSubscription;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.entities.TwitchEventSubStreamer;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums.ChannelEventType;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.repositories.TwitchEventSubStreamerRepository;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.users.TwitchReferenceUsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Constructor;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Service dedicated to the handling of register and removing streamer subscriptions events
@@ -34,6 +38,8 @@ import java.util.Set;
 public class TwitchEventSubRegistrationService {
 
     public static final String TWITCH_SUBSCRIPTION_ACTIVE_STATUS = "enabled";
+
+    private final TwitchEventSubStreamerRepository repository;
 
     private final TwitchReferenceUsersService twitchReferenceUsersService;
     private final TwitchEventSubReferenceService twitchEventSubReferenceService;
@@ -50,11 +56,15 @@ public class TwitchEventSubRegistrationService {
      */
     public void createSubscription(final String streamerUsername) throws ApiBadRequestException {
         final String streamerId = getUserIdFromUsername(streamerUsername);
-        final List<TwitchSubscription> subscriptions = new ArrayList<>();
+        if (repository.findTwitchEventSubStreamerByStreamerId(streamerId).isPresent()) {
+            throw new ApiBadRequestException(String.format("Le streamer %s possède déjà son lot de twitch subs.", streamerUsername));
+        }
 
-        subscriptions.addAll(generateChannelSubscriptions(streamerId));
+        updateSubscriptions(streamerUsername, streamerId);
 
-        createSubscriptions(subscriptions, streamerUsername, streamerId);
+        final TwitchEventSubStreamer eventSubStreamer = new TwitchEventSubStreamer();
+        eventSubStreamer.setStreamerId(streamerId);
+        repository.save(eventSubStreamer);
     }
 
     /**
@@ -67,6 +77,7 @@ public class TwitchEventSubRegistrationService {
         final String streamerId = getUserIdFromUsername(streamerUsername);
 
         removeStreamerSubscriptions(streamerUsername, streamerId);
+        repository.deleteTwitchEventSubStreamersByStreamerId(streamerId);
     }
 
     /**
@@ -101,12 +112,14 @@ public class TwitchEventSubRegistrationService {
      * Async method to run the whole subscriptions creation listed in the enums defined here: <br>
      * Enums: {@link fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums}<br>
      * It will check if the subscriptions you create are not aleready activated.
-     * @param subscriptions subscriptions you want to create
      * @param streamerUsername streamer twitch username used for logging
      * @param streamerId streamer twitch id
      */
     @Async
-    public void createSubscriptions(final List<TwitchSubscription> subscriptions, final String streamerUsername, final String streamerId) {
+    public void updateSubscriptions(final String streamerUsername, final String streamerId) {
+        final List<TwitchSubscription> subscriptions = new ArrayList<>();
+        subscriptions.addAll(generateChannelSubscriptions(streamerId));
+
         if (this.streamerIdsCreating.contains(streamerId)) {
             return;
         }
@@ -132,6 +145,13 @@ public class TwitchEventSubRegistrationService {
             throw new ApiException("Thread coupé lors de la récupération des events streamer twitch avant de lui subscribe.");
         }
         this.streamerIdsCreating.remove(streamerId);
+    }
+
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    public void checkStreamersSubscriptions() {
+        for (final TwitchEventSubStreamer subStreamer : repository.findAll()) {
+            updateSubscriptions("streamerId:" + subStreamer.getStreamerId(), subStreamer.getStreamerId());
+        }
     }
 
     @Nullable
