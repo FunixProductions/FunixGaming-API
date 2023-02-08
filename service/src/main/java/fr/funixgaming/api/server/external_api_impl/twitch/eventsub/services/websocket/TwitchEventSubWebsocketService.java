@@ -31,7 +31,7 @@ public class TwitchEventSubWebsocketService extends ApiWebsocketHandler {
 
     private final Map<String, String> sessionsMapsStreamersEvents = new HashMap<>();
 
-    public void newChannelNotification(final String notificationType, final String streamerId, final String data) {
+    public void newNotification(final String notificationType, final String streamerId, final String data) {
         final TwitchEventSubWebsocketMessage eventSubWebsocketMessage = new TwitchEventSubWebsocketMessage();
         eventSubWebsocketMessage.setStreamerId(streamerId);
         eventSubWebsocketMessage.setNotificationType(notificationType);
@@ -41,7 +41,7 @@ public class TwitchEventSubWebsocketService extends ApiWebsocketHandler {
         for (final Map.Entry<String, String> entry : this.sessionsMapsStreamersEvents.entrySet()) {
             final String streamerIdEntry = entry.getValue();
 
-            //if (streamerIdEntry.equals(streamerId)) {
+            if (streamerIdEntry.equals(streamerId)) {
                 final String sessionId = entry.getKey();
 
                 try {
@@ -49,7 +49,7 @@ public class TwitchEventSubWebsocketService extends ApiWebsocketHandler {
                 } catch (Exception e) {
                     log.error("Impossible d'envoyer un message websocket à la session id {}.", sessionId, e);
                 }
-            //}
+            }
         }
     }
 
