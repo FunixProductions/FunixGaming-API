@@ -1,12 +1,12 @@
 package fr.funixgaming.api.core.websocket.entities;
 
-import fr.funixgaming.api.core.websocket.services.ApiWebsocketHandler;
+import fr.funixgaming.api.core.websocket.services.ApiWebsocketServerHandler;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.web.socket.WebSocketSession;
 
 @Getter
-public class WebSocketTest extends ApiWebsocketHandler {
+public class WebSocketTest extends ApiWebsocketServerHandler {
 
     private String lastMessage;
 

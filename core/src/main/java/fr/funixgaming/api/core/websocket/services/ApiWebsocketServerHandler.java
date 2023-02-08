@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public abstract class ApiWebsocketHandler extends TextWebSocketHandler {
+public abstract class ApiWebsocketServerHandler extends TextWebSocketHandler {
 
     private final Map<String, WebSocketSession> webSocketSessions = new HashMap<>();
     private final Map<String, WebSocketPingMessageRequest> sessionsPings = new HashMap<>();
