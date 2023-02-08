@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.events.channel.TwitchEventChannelFollowDTO;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.handler.TwitchEventSubHandlerService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;

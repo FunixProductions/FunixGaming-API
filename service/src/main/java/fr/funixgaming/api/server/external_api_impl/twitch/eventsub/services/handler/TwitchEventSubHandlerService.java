@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services;
+package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -7,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.events.channel.TwitchEventChannelFollowDTO;
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.events.channel.TwitchEventChannelUpdateDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums.ChannelEventType;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.websocket.TwitchEventSubWebsocketService;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
