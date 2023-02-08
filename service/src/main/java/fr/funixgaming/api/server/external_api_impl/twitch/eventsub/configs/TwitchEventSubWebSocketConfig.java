@@ -1,6 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.configs;
 
-import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.TwitchEventSubWebsocketService;
+import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.websocket.TwitchEventSubWebsocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

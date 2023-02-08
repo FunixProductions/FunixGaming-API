@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface TwitchClientTokenRepository extends ApiRepository<TwitchClientToken> {
     Optional<TwitchClientToken> findTwitchClientTokenByUser(User user);
-    void deleteTwitchClientTokenByoAuthCode(String oAuthCode);
+    Optional<TwitchClientToken> findTwitchClientTokenByTwitchUsernameEqualsIgnoreCase(String username);
 }

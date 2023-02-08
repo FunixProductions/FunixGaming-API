@@ -2,6 +2,7 @@ package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services;
 
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.TwitchEventSubListDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.services.TwitchServerTokenService;
+import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchApiConfig;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.clients.TwitchEventSubReferenceClient;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.channel.ChannelFollowSubscription;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +36,9 @@ class TwitchEventSubReferenceServiceTest {
     @Mock
     private TwitchEventSubReferenceClient referenceClient;
 
+    @Mock
+    private TwitchApiConfig twitchApiConfig;
+
     @BeforeEach
     void setupMocks() {
         when(hmacService.getKey()).thenReturn("key");
@@ -42,6 +46,7 @@ class TwitchEventSubReferenceServiceTest {
         when(referenceClient.getSubscriptions(any(), any(), any(), any(), any())).thenReturn(new TwitchEventSubListDTO());
         doNothing().when(referenceClient).createSubscription(any(), any());
         doNothing().when(referenceClient).deleteSubscription(any(), any());
+        when(twitchApiConfig.getAppEventSubCallback()).thenReturn("domain");
     }
 
     @Test

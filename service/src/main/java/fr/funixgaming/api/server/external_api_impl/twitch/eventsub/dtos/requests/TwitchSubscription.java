@@ -72,7 +72,7 @@ public abstract class TwitchSubscription {
         body.addProperty("version", this.version);
         body.add("condition", getCondition());
         body.add("transport", getTransport());
-        return body.getAsString();
+        return body.toString();
     }
 
     public final void setSecretHmacKey(final String hmacKey) {

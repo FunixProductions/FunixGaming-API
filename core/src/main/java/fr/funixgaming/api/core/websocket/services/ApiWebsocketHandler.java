@@ -64,6 +64,7 @@ public abstract class ApiWebsocketHandler extends TextWebSocketHandler {
             session.close();
         }
         this.webSocketSessions.remove(session.getId());
+        this.onClientDisconnect(session.getId());
     }
 
     @Override
@@ -102,6 +103,7 @@ public abstract class ApiWebsocketHandler extends TextWebSocketHandler {
                     session.close();
                     this.sessionsPings.remove(sessionId);
                     this.webSocketSessions.remove(sessionId);
+                    onClientDisconnect(sessionId);
                 } catch (IOException e) {
                     throw new ApiException(String.format("Impossible de fermer la session ws lors du clean des zombies. Session id %s.", session.getId()), e);
                 }
@@ -133,7 +135,9 @@ public abstract class ApiWebsocketHandler extends TextWebSocketHandler {
         }
     }
 
-    public abstract void newWebsocketMessage(@NonNull WebSocketSession session, @NonNull String message) throws Exception;
+    protected abstract void newWebsocketMessage(@NonNull WebSocketSession session, @NonNull String message) throws Exception;
+
+    protected void onClientDisconnect(final String sessionId) {}
 
     @Override
     public final void handleMessage(@NonNull WebSocketSession session, @NonNull WebSocketMessage<?> message) throws Exception {
