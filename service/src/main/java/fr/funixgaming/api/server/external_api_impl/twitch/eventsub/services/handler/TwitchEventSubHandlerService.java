@@ -1,5 +1,6 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.handler;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,6 +9,7 @@ import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.events.c
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.events.channel.TwitchEventChannelUpdateDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums.ChannelEventType;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.websocket.TwitchEventSubWebsocketService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -15,26 +17,22 @@ import org.springframework.stereotype.Service;
  * Service used to handle new notifications from callback service like a new follower or sub
  */
 @Service
+@RequiredArgsConstructor
 public class TwitchEventSubHandlerService {
 
     private final TwitchEventSubWebsocketService websocketService;
-    private final Gson gson;
-
-    public TwitchEventSubHandlerService(TwitchEventSubWebsocketService websocketService) {
-        this.websocketService = websocketService;
-        this.gson = new Gson();
-    }
+    private final Gson gson = new Gson();
 
     public void receiveNewNotification(final String notificationType, final JsonObject event) {
-        if (notificationType.startsWith("channel")) {
-            handleChannelNotification(notificationType, event);
+        final String streamerId = getStreamerIdInNotification(event);
+        websocketService.newNotification(notificationType, streamerId, event.toString());
+
+        if (notificationType.startsWith("channel") && !Strings.isNullOrEmpty(streamerId)) {
+            handleChannelNotification(notificationType, streamerId, event);
         }
     }
 
-    private void handleChannelNotification(final String notificationType, final JsonObject event) {
-        final String streamerId = getStreamerIdInNotification(event);
-
-        websocketService.newChannelNotification(notificationType, streamerId, event.toString());
+    private void handleChannelNotification(final String notificationType, final String streamerId, final JsonObject event) {
         if (notificationType.equals(ChannelEventType.FOLLOW.getType())) {
             final TwitchEventChannelFollowDTO followDTO = gson.fromJson(event, TwitchEventChannelFollowDTO.class);
 
