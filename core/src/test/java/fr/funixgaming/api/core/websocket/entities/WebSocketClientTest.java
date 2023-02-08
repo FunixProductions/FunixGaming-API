@@ -87,7 +87,11 @@ public class WebSocketClientTest implements WebSocketSession {
 
     @Override
     public void sendMessage(@NonNull WebSocketMessage<?> message) throws IOException {
-        webSocketTest.sendMessageToSessionId(this.id, (String) message.getPayload());
+        try {
+            webSocketTest.newWebsocketMessage(this, (String) message.getPayload());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
