@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface TwitchClientTokenRepository extends ApiRepository<TwitchClientToken> {
     Optional<TwitchClientToken> findTwitchClientTokenByUser(User user);
-    Optional<TwitchClientToken> findTwitchClientTokenByTwitchUsernameEqualsIgnoreCase(String username);
+    Optional<TwitchClientToken> findTwitchClientTokenByTwitchUsername(String username);
 }

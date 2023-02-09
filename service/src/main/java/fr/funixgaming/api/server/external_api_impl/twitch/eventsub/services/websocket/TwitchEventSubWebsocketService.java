@@ -7,6 +7,7 @@ import fr.funixgaming.api.core.websocket.services.ApiWebsocketServerHandler;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.entities.TwitchClientToken;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.TwitchClientTokenRepository;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
@@ -20,18 +21,15 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TwitchEventSubWebsocketService extends ApiWebsocketServerHandler {
 
     public static final String LISTEN_CALL_CLIENT = "listen";
 
-    private final Gson gson = new Gson();
     private final TwitchClientTokenRepository clientTokenRepository;
 
-    public TwitchEventSubWebsocketService(TwitchClientTokenRepository repository) {
-        this.clientTokenRepository = repository;
-    }
-
     private final Map<String, String> sessionsMapsStreamersEvents = new HashMap<>();
+    private final Gson gson = new Gson();
 
     public void newNotification(final String notificationType, final String streamerId, final String data) {
         final TwitchEventSubWebsocketMessage eventSubWebsocketMessage = new TwitchEventSubWebsocketMessage();
@@ -61,10 +59,10 @@ public class TwitchEventSubWebsocketService extends ApiWebsocketServerHandler {
             final String[] data = message.split(":");
             if (data.length == 2) {
                 final String streamerUsername = data[1];
-                final Optional<TwitchClientToken> token = clientTokenRepository.findTwitchClientTokenByTwitchUsernameEqualsIgnoreCase(streamerUsername);
+                final Optional<TwitchClientToken> token = clientTokenRepository.findTwitchClientTokenByTwitchUsername(streamerUsername);
 
                 if (token.isPresent()) {
-                    this.sessionsMapsStreamersEvents.put(session.getId(), token.get().getTwitchUsername());
+                    this.sessionsMapsStreamersEvents.put(session.getId(), token.get().getTwitchUserId());
                 } else {
                     throw new ApiBadRequestException(String.format("Le streamer %s n'existe pas sur la funix api.", streamerUsername));
                 }
