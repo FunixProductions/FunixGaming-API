@@ -49,7 +49,7 @@ jobs:
 
       - name: Build and push funix api pterodactyl dockerfile
         run: |
-          docker build . --tag ghcr.io/funixproductions/funix-api:latest
+          docker build . --tag ghcr.io/funixproductions/funix-api:latest -f pterodactyl.Dockerfile
           docker push ghcr.io/funixproductions/funix-api:latest
 
       - name: Send start signal to restart funixapi with new version
