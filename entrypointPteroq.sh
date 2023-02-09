@@ -1,6 +1,10 @@
 #!/bin/bash
 cd /home/container
 
+echo "Get latest server.jar"
+rm server.jar
+cp /home/java/server.jar server.jar
+
 echo "Java version"
 java --version
 
