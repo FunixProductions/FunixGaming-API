@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@EnableAsync
+@EnableAsync(proxyTargetClass = true)
 @EnableScheduling
 @EnableFeignClients(basePackages = "fr.funixgaming.api")
 @SpringBootApplication(scanBasePackages = "fr.funixgaming.api")
