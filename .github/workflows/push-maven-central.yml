@@ -53,7 +53,9 @@ jobs:
           docker push ghcr.io/funixproductions/funix-pteroq-api:latest
 
       - name: Send start signal to restart funixapi with new version
-        run: curl "https://pterodactyl.funixgaming.fr/api/client/servers/4eeba516/power?signal=restart" -X POST \
-        -H 'Accept: application/json' \
-        -H 'Content-Type: application/json' \
-        -H 'Authorization: Bearer ${{ secrets.PTERODACTYL_API_KEY }}'
+        run: |
+          curl "https://pterodactyl.funixgaming.fr/api/client/servers/4eeba516/power?signal=restart"
+            -X POST \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'Authorization: Bearer ${{ secrets.PTERODACTYL_API_KEY }}'
