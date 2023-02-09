@@ -7,8 +7,8 @@ on:
     types: [created]
 
 jobs:
+  publish:
 
-  publish-ossrh:
     runs-on: ubuntu-latest
 
     permissions:
@@ -40,16 +40,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
-  publish-docker-pterodactyl:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
@@ -69,4 +59,3 @@ jobs:
             -H 'Accept: application/json' \
             -H 'Content-Type: application/json' \
             -H 'Authorization: Bearer ${{ secrets.PTERODACTYL_API_KEY }}'
-
