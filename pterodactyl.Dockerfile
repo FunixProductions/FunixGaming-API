@@ -15,7 +15,7 @@ COPY core/src ./core/src
 COPY service/pom.xml ./service/
 COPY service/src ./service/src
 
-RUN mvn clean package -Dmaven.test.skip=true
+RUN mvn clean package
 RUN rm service/target/funix-api-server-*-javadoc.jar
 RUN rm service/target/funix-api-server-*-sources.jar
 
