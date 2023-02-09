@@ -6,7 +6,7 @@ import lombok.NonNull;
 import org.springframework.web.socket.WebSocketSession;
 
 @Getter
-public class WebSocketTest extends ApiWebsocketServerHandler {
+public class WebSocketServerTest extends ApiWebsocketServerHandler {
 
     private String lastMessage;
 

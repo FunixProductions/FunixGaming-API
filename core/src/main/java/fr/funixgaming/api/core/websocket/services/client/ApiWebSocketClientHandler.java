@@ -66,7 +66,7 @@ public abstract class ApiWebSocketClientHandler extends Endpoint {
 
     public abstract void onMessage(final String message) throws ApiException;
 
-    public void stopWebsocket() throws ApiException {
+    public final void stopWebsocket() throws ApiException {
         this.running = false;
         disconnect();
     }
