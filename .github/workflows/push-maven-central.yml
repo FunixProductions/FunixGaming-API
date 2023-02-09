@@ -40,15 +40,20 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
 
-      - name: Send rebuild to pterodactyl to update funixapi
-        run: curl "https://pterodactyl.funixgaming.fr/api/client/servers/4eeba516/settings/reinstall" \
-         -X POST \
-        -H 'Accept: application/json' \
-        -H 'Content-Type: application/json' \
-        -H 'Authorization: Bearer ${{ secrets.PTERODACTYL_API_KEY }}'
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Send start signal to start funixapi
-        run: sleep 5m && curl "https://pterodactyl.funixgaming.fr/api/client/servers/4eeba516/power?signal=start" \
+      - name: Build and push funix api pterodactyl dockerfile
+        run: |
+          docker build . --tag ghcr.io/funixproductions/funix-api:latest
+          docker push ghcr.io/funixproductions/funix-api:latest
+
+      - name: Send start signal to restart funixapi with new version
+        run: curl "https://pterodactyl.funixgaming.fr/api/client/servers/4eeba516/power?signal=restart" \
           -X POST \
         -H 'Accept: application/json' \
         -H 'Content-Type: application/json' \
