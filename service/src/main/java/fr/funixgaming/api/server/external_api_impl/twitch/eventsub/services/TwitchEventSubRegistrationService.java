@@ -13,6 +13,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.entities.Twit
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums.ChannelEventType;
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.repositories.TwitchEventSubStreamerRepository;
 import fr.funixgaming.api.server.external_api_impl.twitch.reference.services.users.TwitchReferenceUsersService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
@@ -73,6 +74,7 @@ public class TwitchEventSubRegistrationService {
      * @param streamerUsername streamer name like funixgaming to remove his subscriptions
      * @throws ApiBadRequestException when error
      */
+    @Transactional
     public void removeSubscription(final String streamerUsername) throws ApiBadRequestException {
         final String streamerId = getUserIdFromUsername(streamerUsername);
 
@@ -175,7 +177,7 @@ public class TwitchEventSubRegistrationService {
             Thread.currentThread().interrupt();
             throw new ApiException(String.format("Thread tué lors de la création de subscription pour le streamer %s.", streamerUsername), interruptedException);
         } catch (ApiException apiException) {
-            log.error("Impossible de créer le hook avec l'event de type {} pour le streamer {}", subscription.getType(), streamerUsername);
+            log.error("Impossible de créer le hook avec l'event de type {} pour le streamer {}. Erreur: {}", subscription.getType(), streamerUsername, apiException.getMessage(), apiException);
         }
     }
 
@@ -188,7 +190,7 @@ public class TwitchEventSubRegistrationService {
             Thread.currentThread().interrupt();
             throw new ApiException(String.format("Thread tué lors de la suppression d'une subscription type %s pour le streamer %s.", sub.getType(), streamerUsername), interruptedException);
         } catch (ApiBadRequestException e) {
-            log.error("Une erreur est survenue lors de la suppression d'un event twitch pour le streamer {}. Event id {} Event type {}. Erreur: {}", streamerUsername, sub.getId(), sub.getType(), e.getMessage());
+            log.error("Une erreur est survenue lors de la suppression d'un event twitch pour le streamer {}. Event id {} Event type {}. Erreur: {}", streamerUsername, sub.getId(), sub.getType(), e.getMessage(), e);
         }
     }
 
