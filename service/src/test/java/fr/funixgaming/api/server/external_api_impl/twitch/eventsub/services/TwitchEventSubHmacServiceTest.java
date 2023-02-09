@@ -13,6 +13,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class TwitchEventSubHmacServiceTest {
@@ -32,7 +34,9 @@ class TwitchEventSubHmacServiceTest {
         request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_TIMESTAMP, date);
         request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_SIGNATURE, "sha256=" + encode("10" + date + "body"));
 
-        hmacService.validEventMessage(request, "body".getBytes(StandardCharsets.UTF_8));
+        assertDoesNotThrow(() ->
+                hmacService.validEventMessage(request, "body".getBytes(StandardCharsets.UTF_8))
+        );
     }
 
     @Test
@@ -44,7 +48,9 @@ class TwitchEventSubHmacServiceTest {
         request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_TIMESTAMP, date);
         request.addHeader(TwitchEventSubHmacService.TWITCH_MESSAGE_SIGNATURE, "sha256=" + encode("10" + date + "body"));
 
-        hmacService.validEventMessage(request, "body".getBytes(StandardCharsets.UTF_8));
+        assertDoesNotThrow(() ->
+                hmacService.validEventMessage(request, "body".getBytes(StandardCharsets.UTF_8))
+        );
     }
 
     private String encode(final String data) throws Exception {

@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class MockedServerWebSocketSession implements WebSocketSession {
 
-    private final WebSocketServerTest webSocketTest;
+    private final WebSocketServer webSocketTest;
     private final String id = UUID.randomUUID().toString();
 
     @Override

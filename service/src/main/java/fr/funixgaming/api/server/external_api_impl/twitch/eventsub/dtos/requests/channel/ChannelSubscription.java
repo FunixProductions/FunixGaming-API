@@ -7,7 +7,7 @@ public abstract class ChannelSubscription extends TwitchSubscription {
 
     private final String streamerId;
 
-    public ChannelSubscription(String streamerId, String type, String version) {
+    protected ChannelSubscription(String streamerId, String type, String version) {
         super(type, version);
         this.streamerId = streamerId;
     }

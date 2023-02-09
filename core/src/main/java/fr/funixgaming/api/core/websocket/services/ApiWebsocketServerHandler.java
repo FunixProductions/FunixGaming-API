@@ -115,11 +115,12 @@ public abstract class ApiWebsocketServerHandler extends TextWebSocketHandler {
         for (final WebSocketSession session : this.webSocketSessions.values()) {
             final String sessionId = session.getId();
 
-            if (!this.sessionsPings.containsKey(sessionId)) {
+            this.sessionsPings.computeIfAbsent(sessionId, id -> {
                 final WebSocketPingMessageRequest pingMessageRequest = new WebSocketPingMessageRequest();
-                this.sendMessageToSessionId(sessionId, String.format("ping:%s", pingMessageRequest.getVerification()));
-                this.sessionsPings.put(sessionId, pingMessageRequest);
-            }
+
+                this.sendMessageToSessionId(id, String.format("ping:%s", pingMessageRequest.getVerification()));
+                return pingMessageRequest;
+            });
         }
     }
 

@@ -50,10 +50,10 @@ public class UserAuthService {
 
     @Transactional
     public UserDTO register(final UserCreationDTO userCreationDTO) {
-        if (!userCreationDTO.getAcceptCGU()) {
+        if (Boolean.FALSE.equals(userCreationDTO.getAcceptCGU())) {
             throw new ApiBadRequestException("Vous devez accepter les conditions générales d'utilisation pour vous créer un compte.");
         }
-        if (!userCreationDTO.getAcceptCGV()) {
+        if (Boolean.FALSE.equals(userCreationDTO.getAcceptCGV())) {
             throw new ApiBadRequestException("Vous devez accepter les conditions générales de vente pour vous créer un compte.");
         }
 

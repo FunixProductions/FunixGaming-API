@@ -34,7 +34,7 @@ public abstract class TwitchSubscription {
      * @param type type see <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types#subscription-types">Subscription Types</a>.
      * @param version The version number that identifies this definition of the subscription’s data.
      */
-    public TwitchSubscription(final String type,
+    protected TwitchSubscription(final String type,
                               final String version) {
         this.type = type;
         this.version = version;
@@ -46,7 +46,7 @@ public abstract class TwitchSubscription {
      * For the object’s required and optional fields, see the subscription type’s documentation.
      * @return JsonObject used in append at final method getPayload
      */
-    abstract protected JsonObject getCondition();
+    protected abstract JsonObject getCondition();
 
     /**
      * Static method used to build transport object

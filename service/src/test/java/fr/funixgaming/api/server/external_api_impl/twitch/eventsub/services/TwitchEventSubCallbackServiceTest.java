@@ -86,7 +86,8 @@ class TwitchEventSubCallbackServiceTest {
         httpServletRequest.addHeader(TwitchEventSubCallbackService.TWITCH_MESSAGE_ID, "12");
         httpServletRequest.addHeader(TwitchEventSubCallbackService.TWITCH_MESSAGE_TYPE, TwitchEventSubCallbackService.MESSAGE_TYPE_REVOCATION);
 
-        service.handleNewWebhook(httpServletRequest, "anything".getBytes(StandardCharsets.UTF_8));
+        final String s = service.handleNewWebhook(httpServletRequest, "anything".getBytes(StandardCharsets.UTF_8));
+        assertEquals("s", s);
     }
 
     @Test
@@ -103,6 +104,8 @@ class TwitchEventSubCallbackServiceTest {
             service.handleNewWebhook(request, "".getBytes());
             fail("should fail here");
         } catch (ApiBadRequestException ignored) {
+        } catch (RuntimeException e) {
+            fail(e);
         }
     }
 
@@ -119,7 +122,8 @@ class TwitchEventSubCallbackServiceTest {
 
             fail("should fail here");
         } catch (ApiBadRequestException ignored) {
-
+        } catch (RuntimeException e) {
+            fail(e);
         }
     }
 
@@ -136,7 +140,8 @@ class TwitchEventSubCallbackServiceTest {
 
             fail("should fail here");
         } catch (ApiBadRequestException ignored) {
-
+        } catch (RuntimeException e) {
+            fail(e);
         }
     }
 

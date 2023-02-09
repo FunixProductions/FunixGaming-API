@@ -11,6 +11,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.enums.Channel
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.websocket.TwitchEventSubWebsocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +24,7 @@ public class TwitchEventSubHandlerService {
     private final TwitchEventSubWebsocketService websocketService;
     private final Gson gson = new Gson();
 
+    @Async
     public void receiveNewNotification(final String notificationType, final JsonObject event) {
         final String streamerId = getStreamerIdInNotification(event);
         websocketService.newNotification(notificationType, streamerId, event.toString());

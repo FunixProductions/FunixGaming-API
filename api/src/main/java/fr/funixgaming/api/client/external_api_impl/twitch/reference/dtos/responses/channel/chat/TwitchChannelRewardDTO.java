@@ -23,7 +23,7 @@ public class TwitchChannelRewardDTO {
          * The maximum number of redemptions allowed per live stream.
          */
         @JsonProperty(value = "max_per_stream")
-        private Integer maxPerStreamSetting;
+        private Integer maxPerStream;
     }
 
     @Getter

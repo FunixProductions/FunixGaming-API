@@ -9,6 +9,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.Twit
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -31,6 +32,7 @@ public class TwitchEventSubWebsocketService extends ApiWebsocketServerHandler {
 
     private final Map<String, String> sessionsMapsStreamersEvents = new HashMap<>();
 
+    @Async
     public void newNotification(final String notificationType, final String streamerId, final String data) {
         final TwitchEventSubWebsocketMessage eventSubWebsocketMessage = new TwitchEventSubWebsocketMessage();
         eventSubWebsocketMessage.setStreamerId(streamerId);

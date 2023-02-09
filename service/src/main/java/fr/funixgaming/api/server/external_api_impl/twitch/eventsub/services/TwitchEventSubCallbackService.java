@@ -32,6 +32,8 @@ public class TwitchEventSubCallbackService {
     public static final String MESSAGE_TYPE_VERIFICATION = "webhook_callback_verification";
     public static final String MESSAGE_TYPE_REVOCATION = "revocation";
 
+    private static final String BODY_JSON_NOT_VALID = "Le body ne vient pas de twitch (malformé).";
+
     private final TwitchEventSubHmacService hmacService;
     private final TwitchEventSubHandlerService twitchEventSubHandlerService;
 
@@ -72,7 +74,7 @@ public class TwitchEventSubCallbackService {
 
                         twitchEventSubHandlerService.receiveNewNotification(notificationType, event);
                     } else {
-                        throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
+                        throw new ApiBadRequestException(BODY_JSON_NOT_VALID);
                     }
 
                     return "s";
@@ -112,7 +114,7 @@ public class TwitchEventSubCallbackService {
         if (element.isJsonObject()) {
             return element.getAsJsonObject();
         } else {
-            throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
+            throw new ApiBadRequestException(BODY_JSON_NOT_VALID);
         }
     }
 
@@ -127,10 +129,10 @@ public class TwitchEventSubCallbackService {
                 final JsonPrimitive subTypeStr = subType.getAsJsonPrimitive();
                 return subTypeStr.getAsString();
             } else {
-                throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
+                throw new ApiBadRequestException(BODY_JSON_NOT_VALID);
             }
         } else {
-            throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
+            throw new ApiBadRequestException(BODY_JSON_NOT_VALID);
         }
     }
 
@@ -141,7 +143,7 @@ public class TwitchEventSubCallbackService {
             final JsonPrimitive challenge = challengeElement.getAsJsonPrimitive();
             return challenge.getAsString();
         } else {
-            throw new ApiBadRequestException("Le body ne vient pas de twitch (malformé).");
+            throw new ApiBadRequestException(BODY_JSON_NOT_VALID);
         }
     }
 

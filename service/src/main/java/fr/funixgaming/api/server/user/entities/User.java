@@ -50,24 +50,21 @@ public class User extends ApiEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        switch (this.role) {
-            case MODERATOR -> {
-                return Set.of(
-                        new SimpleGrantedAuthority(UserRole.USER.getRole()),
-                        new SimpleGrantedAuthority(UserRole.MODERATOR.getRole())
-                );
-            }
-            case ADMIN -> {
-                final Set<SimpleGrantedAuthority> roles = new HashSet<>();
+        if (this.role.equals(UserRole.ADMIN)) {
+            final Set<SimpleGrantedAuthority> roles = new HashSet<>();
 
-                for (final UserRole role : UserRole.values()) {
-                    roles.add(new SimpleGrantedAuthority(role.getRole()));
-                }
-                return roles;
+            for (final UserRole roleGet : UserRole.values()) {
+                roles.add(new SimpleGrantedAuthority(roleGet.getRole()));
             }
+            return roles;
+        } else if (this.role.equals(UserRole.MODERATOR)) {
+            return Set.of(
+                    new SimpleGrantedAuthority(UserRole.USER.getRole()),
+                    new SimpleGrantedAuthority(UserRole.MODERATOR.getRole())
+            );
+        } else {
+            return Collections.singletonList(new SimpleGrantedAuthority(UserRole.USER.getRole()));
         }
-
-        return Collections.singletonList(new SimpleGrantedAuthority(UserRole.USER.getRole()));
     }
 
     @Override

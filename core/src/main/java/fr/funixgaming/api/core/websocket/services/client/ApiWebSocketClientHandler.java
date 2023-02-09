@@ -22,7 +22,7 @@ public abstract class ApiWebSocketClientHandler extends Endpoint {
     private boolean running = true;
     private Session session;
 
-    public ApiWebSocketClientHandler(@NonNull final String uriWs,
+    protected ApiWebSocketClientHandler(@NonNull final String uriWs,
                                      @Nullable final Map<String, String> headers) throws ApiException {
         try {
             this.uri = new URI(uriWs);
@@ -75,8 +75,8 @@ public abstract class ApiWebSocketClientHandler extends Endpoint {
         disconnect();
 
         if (running) {
-            try (final Session session = this.container.connectToServer(this, this.config, this.uri)) {
-                this.session = session;
+            try (final Session newSession = this.container.connectToServer(this, this.config, this.uri)) {
+                this.session = newSession;
             } catch (IOException | DeploymentException e) {
                 throw new ApiException(String.format("Connexion impossible au websocket uri: %s", this.uri), e);
             }

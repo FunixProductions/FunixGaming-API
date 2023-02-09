@@ -1,17 +1,23 @@
 package fr.funixgaming.api.core.websocket.services;
 
+import fr.funixgaming.api.core.websocket.dtos.WebSocketPingMessageRequest;
 import fr.funixgaming.api.core.websocket.entities.MockedServerWebSocketSession;
-import fr.funixgaming.api.core.websocket.entities.WebSocketServerTest;
+import fr.funixgaming.api.core.websocket.entities.WebSocketServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ApiWebSocketHandlerServerTest {
 
-    private final WebSocketServerTest webSocketTest = new WebSocketServerTest();
+    private final WebSocketServer webSocketTest = new WebSocketServer();
 
     @BeforeEach
     void setupSessions() throws Exception {
@@ -30,7 +36,14 @@ class ApiWebSocketHandlerServerTest {
 
     @Test
     void sendPingRequestTest() throws Exception {
+        final WebSocketSession session = generateSession();
+        webSocketTest.afterConnectionEstablished(session);
         webSocketTest.sendPingRequestsAndCheckZombies();
+
+        final Field field = webSocketTest.getClass().getSuperclass().getDeclaredField("sessionsPings");
+        field.setAccessible(true);
+        final Map<String, WebSocketPingMessageRequest> pings = (HashMap<String, WebSocketPingMessageRequest>) field.get(webSocketTest);
+        assertTrue(pings.containsKey(session.getId()));
     }
 
     @Test
