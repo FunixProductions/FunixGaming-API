@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ApiWebsocketServerHandler extends TextWebSocketHandler {
@@ -86,19 +88,31 @@ public abstract class ApiWebsocketServerHandler extends TextWebSocketHandler {
 
     private void disconnectAllZombiesClients() throws ApiException {
         final Instant now = Instant.now();
-        final Map<String, WebSocketPingMessageRequest> copyPings = new HashMap<>(sessionsPings);
-        final Map<String, WebSocketSession> sessionsMap = new HashMap<>(webSocketSessions);
+        final Set<String> sessionsToRemove = new HashSet<>();
+        final Set<String> pingsToRemove = new HashSet<>();
 
-        for (final Map.Entry<String, WebSocketPingMessageRequest> ping : copyPings.entrySet()) {
+        for (final Map.Entry<String, WebSocketPingMessageRequest> ping : sessionsPings.entrySet()) {
             final String sessionId = ping.getKey();
-            final WebSocketSession session = sessionsMap.get(sessionId);
+            final WebSocketSession session = webSocketSessions.get(sessionId);
             if (session == null) {
-                this.sessionsPings.remove(sessionId);
+                pingsToRemove.add(sessionId);
                 continue;
             }
 
             final WebSocketPingMessageRequest validationSession = ping.getValue();
             if (validationSession.getSentAt().plus(1, ChronoUnit.MINUTES).isBefore(now)) {
+                sessionsToRemove.add(sessionId);
+            }
+        }
+
+        for (final String sessionId : pingsToRemove) {
+            this.sessionsPings.remove(sessionId);
+        }
+
+        for (final String sessionId : sessionsToRemove) {
+            final WebSocketSession session = webSocketSessions.get(sessionId);
+
+            if (session != null) {
                 try {
                     session.close();
                     this.sessionsPings.remove(sessionId);
