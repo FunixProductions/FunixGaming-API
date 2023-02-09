@@ -7,9 +7,7 @@ import fr.funixgaming.api.core.websocket.services.ApiWebsocketServerHandler;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.entities.TwitchClientToken;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.TwitchClientTokenRepository;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -22,7 +20,6 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class TwitchEventSubWebsocketService extends ApiWebsocketServerHandler {
 
     public static final String LISTEN_CALL_CLIENT = "listen";
@@ -30,9 +27,12 @@ public class TwitchEventSubWebsocketService extends ApiWebsocketServerHandler {
     private final Gson gson = new Gson();
     private final TwitchClientTokenRepository clientTokenRepository;
 
+    public TwitchEventSubWebsocketService(TwitchClientTokenRepository repository) {
+        this.clientTokenRepository = repository;
+    }
+
     private final Map<String, String> sessionsMapsStreamersEvents = new HashMap<>();
 
-    @Async
     public void newNotification(final String notificationType, final String streamerId, final String data) {
         final TwitchEventSubWebsocketMessage eventSubWebsocketMessage = new TwitchEventSubWebsocketMessage();
         eventSubWebsocketMessage.setStreamerId(streamerId);

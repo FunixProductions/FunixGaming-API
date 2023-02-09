@@ -44,6 +44,7 @@ class ApiWebSocketHandlerServerTest {
         field.setAccessible(true);
         final Map<String, WebSocketPingMessageRequest> pings = (HashMap<String, WebSocketPingMessageRequest>) field.get(webSocketTest);
         assertTrue(pings.containsKey(session.getId()));
+        field.setAccessible(false);
     }
 
     @Test
