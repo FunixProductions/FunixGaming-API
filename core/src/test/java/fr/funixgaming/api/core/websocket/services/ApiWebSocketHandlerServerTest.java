@@ -1,7 +1,7 @@
 package fr.funixgaming.api.core.websocket.services;
 
-import fr.funixgaming.api.core.websocket.entities.WebSocketClientTest;
-import fr.funixgaming.api.core.websocket.entities.WebSocketTest;
+import fr.funixgaming.api.core.websocket.entities.MockedServerWebSocketSession;
+import fr.funixgaming.api.core.websocket.entities.WebSocketServerTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.TextMessage;
@@ -9,9 +9,9 @@ import org.springframework.web.socket.WebSocketSession;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ApiWebSocketHandlerTest {
+class ApiWebSocketHandlerServerTest {
 
-    private final WebSocketTest webSocketTest = new WebSocketTest();
+    private final WebSocketServerTest webSocketTest = new WebSocketServerTest();
 
     @BeforeEach
     void setupSessions() throws Exception {
@@ -51,7 +51,7 @@ class ApiWebSocketHandlerTest {
     }
 
     private WebSocketSession generateSession() {
-        return new WebSocketClientTest(this.webSocketTest);
+        return new MockedServerWebSocketSession(this.webSocketTest);
     }
 
 }
