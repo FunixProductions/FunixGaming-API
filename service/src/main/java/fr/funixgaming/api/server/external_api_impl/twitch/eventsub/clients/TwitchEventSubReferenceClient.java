@@ -1,6 +1,5 @@
 package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.clients;
 
-import feign.Headers;
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.TwitchEventSubListDTO;
 import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchReferenceRequestInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -43,12 +42,13 @@ public interface TwitchEventSubReferenceClient {
      * Create subscription
      * <a href="https://dev.twitch.tv/docs/api/reference/#create-eventsub-subscription">Doc</a>
      * @param twitchAccessToken app access token
+     * @param contentType application-json
      * @param request request
      */
     @PostMapping
-    @Headers("Content-Type: application/json")
     void createSubscription(
             @RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
+            @RequestHeader(name = HttpHeaders.CONTENT_TYPE) String contentType,
             @RequestBody String request
     );
 

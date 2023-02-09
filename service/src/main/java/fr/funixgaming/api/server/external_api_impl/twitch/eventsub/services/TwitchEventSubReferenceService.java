@@ -9,6 +9,7 @@ import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.clients.Twitc
 import fr.funixgaming.api.server.external_api_impl.twitch.eventsub.dtos.requests.TwitchSubscription;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,10 @@ public class TwitchEventSubReferenceService extends TwitchReferenceService {
         request.setSecretHmacKey(hmacService.getKey());
 
         try {
-            this.eventSubReferenceClient.createSubscription(super.addBearerPrefix(tokenService.getAccessToken()), request.getPayload());
+            this.eventSubReferenceClient.createSubscription(
+                    super.addBearerPrefix(tokenService.getAccessToken()),
+                    MediaType.APPLICATION_JSON_VALUE,
+                    request.getPayload());
         } catch (FeignException e) {
             throw super.handleFeignException(e);
         }

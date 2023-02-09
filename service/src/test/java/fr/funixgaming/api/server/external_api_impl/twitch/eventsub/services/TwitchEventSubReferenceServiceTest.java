@@ -44,7 +44,7 @@ class TwitchEventSubReferenceServiceTest {
         when(hmacService.getKey()).thenReturn("key");
         when(tokenService.getAccessToken()).thenReturn("access");
         when(referenceClient.getSubscriptions(any(), any(), any(), any(), any())).thenReturn(new TwitchEventSubListDTO());
-        doNothing().when(referenceClient).createSubscription(any(), any());
+        doNothing().when(referenceClient).createSubscription(any(), any(), any());
         doNothing().when(referenceClient).deleteSubscription(any(), any());
         when(twitchApiConfig.getAppEventSubCallback()).thenReturn("domain");
     }
