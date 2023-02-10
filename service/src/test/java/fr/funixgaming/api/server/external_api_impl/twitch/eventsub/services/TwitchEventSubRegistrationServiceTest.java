@@ -110,7 +110,7 @@ class TwitchEventSubRegistrationServiceTest {
 
         for (int i = 0; i < 3; ++i) {
             final TwitchEventSubListDTO.TwitchEventSub eventSub = new TwitchEventSubListDTO.TwitchEventSub();
-            eventSub.setCondition(UUID.randomUUID().toString());
+            eventSub.setCondition(new TwitchEventSubListDTO.Condition());
             eventSub.setCost(random.nextInt());
             eventSub.setType(UUID.randomUUID().toString());
             eventSub.setStatus("active");
@@ -120,7 +120,7 @@ class TwitchEventSubRegistrationServiceTest {
             eventSubs.add(eventSub);
         }
         final TwitchEventSubListDTO.TwitchEventSub eventSub = new TwitchEventSubListDTO.TwitchEventSub();
-        eventSub.setCondition(UUID.randomUUID().toString());
+        eventSub.setCondition(new TwitchEventSubListDTO.Condition());
         eventSub.setCost(random.nextInt());
         eventSub.setType(UUID.randomUUID().toString());
         eventSub.setStatus("not-active");
