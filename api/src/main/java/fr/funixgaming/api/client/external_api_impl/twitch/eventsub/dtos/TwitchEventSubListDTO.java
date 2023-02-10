@@ -76,7 +76,7 @@ public class TwitchEventSubListDTO {
         /**
          * The subscription’s parameter values. This is a string-encoded JSON object whose contents are determined by the subscription type.
          */
-        private String condition;
+        private Condition condition;
 
         /**
          * The date and time (in RFC3339 format) of when the subscription was created.
@@ -98,6 +98,25 @@ public class TwitchEventSubListDTO {
          * The cursor value that you set the after query parameter to.
          */
         private String cursor;
+    }
+
+    @Getter
+    @Setter
+    public static class Condition {
+        @JsonProperty(value = "broadcaster_user_id")
+        private String streamerId;
+
+        @JsonProperty(value = "moderator_user_id")
+        private String moderatorId;
+
+        @JsonProperty(value = "from_broadcaster_user_id")
+        private String fromStreamerId;
+
+        @JsonProperty(value = "to_broadcaster_user_id")
+        private String toStreamerId;
+
+        @JsonProperty(value = "reward_id")
+        private String rewardId;
     }
 
     /**
