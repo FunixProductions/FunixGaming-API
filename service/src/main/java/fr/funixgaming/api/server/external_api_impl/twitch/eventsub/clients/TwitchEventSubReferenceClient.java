@@ -4,6 +4,7 @@ import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.TwitchEv
 import fr.funixgaming.api.server.external_api_impl.twitch.configs.TwitchReferenceRequestInterceptor;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
@@ -45,7 +46,7 @@ public interface TwitchEventSubReferenceClient {
      * @param contentType application-json
      * @param request request
      */
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     void createSubscription(
             @RequestHeader(name = HttpHeaders.AUTHORIZATION) String twitchAccessToken,
             @RequestHeader(name = HttpHeaders.CONTENT_TYPE) String contentType,
