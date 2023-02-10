@@ -198,7 +198,9 @@ public class TwitchClientTokenService {
                     "user:read:subscriptions",
                     "channel:moderate",
                     "chat:edit",
-                    "chat:read"
+                    "chat:read",
+                    "moderator:read:shoutouts",
+                    "moderator:manage:shoutouts"
             );
         } else {
             scopes = Set.of(
