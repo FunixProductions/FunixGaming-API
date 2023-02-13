@@ -4,6 +4,7 @@ import feign.FeignException;
 import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.server.external_api_impl.paypal.auth.clients.PaypalAuthClient;
 import fr.funixgaming.api.server.external_api_impl.paypal.auth.dtos.PaypalTokenAuth;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -31,6 +32,7 @@ public class PaypalAccessTokenService {
         }
     }
 
+    @NonNull
     public String getAccessToken() throws ApiException {
         if (tokenAuth != null && tokenAuth.isUsable()) {
             return tokenAuth.getAccessToken();
