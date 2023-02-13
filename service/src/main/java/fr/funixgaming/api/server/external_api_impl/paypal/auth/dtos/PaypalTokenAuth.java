@@ -25,8 +25,8 @@ public class PaypalTokenAuth {
         if (expiresIn == null) {
             return false;
         } else {
-            final Instant now = Instant.now().minusSeconds(5);
-            return generatedAt.plusSeconds(expiresIn).isBefore(now);
+            final Instant now = Instant.now().plusSeconds(5);
+            return generatedAt.plusSeconds(expiresIn).isAfter(now);
         }
     }
 
