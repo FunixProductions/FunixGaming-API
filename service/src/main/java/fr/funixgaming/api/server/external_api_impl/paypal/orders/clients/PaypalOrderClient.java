@@ -9,6 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * <a href="https://developer.paypal.com/docs/api/orders/v2/">Main documentation</a>
+ */
 @FeignClient(
         name = "PaypalOrderClient",
         url = "${paypal.paypal-domain}",
