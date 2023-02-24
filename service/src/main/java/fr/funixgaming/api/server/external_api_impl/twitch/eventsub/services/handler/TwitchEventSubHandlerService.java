@@ -25,6 +25,10 @@ public class TwitchEventSubHandlerService {
 
     public void receiveNewNotification(final String notificationType, final JsonObject event) {
         final String streamerId = getStreamerIdInNotification(event);
+        if (streamerId == null) {
+            return;
+        }
+
         websocketService.newNotification(notificationType, streamerId, event.toString());
 
         if (notificationType.startsWith("channel") && !Strings.isNullOrEmpty(streamerId)) {
@@ -45,7 +49,7 @@ public class TwitchEventSubHandlerService {
     private String getStreamerIdInNotification(final JsonObject jsonObject) {
         final JsonElement idJson = jsonObject.get("broadcaster_user_id");
 
-        if (idJson.isJsonPrimitive()) {
+        if (idJson != null && idJson.isJsonPrimitive()) {
             final JsonPrimitive id = idJson.getAsJsonPrimitive();
             return id.getAsString();
         } else {
