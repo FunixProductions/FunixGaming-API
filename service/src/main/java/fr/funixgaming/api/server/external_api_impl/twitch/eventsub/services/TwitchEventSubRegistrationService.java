@@ -134,11 +134,13 @@ public class TwitchEventSubRegistrationService {
             for (final TwitchSubscription subscription : subscriptions) {
                 actualActiveSub = isNewSubscriptionIsAlreadyActivated(subscription, activeSubs);
 
-                if (actualActiveSub != null && !Strings.isNullOrEmpty(actualActiveSub.getStatus()) &&
-                        !actualActiveSub.getStatus().equals(TWITCH_SUBSCRIPTION_ACTIVE_STATUS)) {
-                    deleteSubscriptionRequest(actualActiveSub, streamerId, streamerUsername);
+                if (actualActiveSub != null) {
+                    if (!Strings.isNullOrEmpty(actualActiveSub.getStatus()) && !actualActiveSub.getStatus().equals(TWITCH_SUBSCRIPTION_ACTIVE_STATUS)) {
+                        deleteSubscriptionRequest(actualActiveSub, streamerId, streamerUsername);
+                    }
+                } else {
+                    createNewSubscriptionRequest(subscription, streamerUsername);
                 }
-                createNewSubscriptionRequest(subscription, streamerUsername);
             }
 
         } catch (InterruptedException interruptedException) {
