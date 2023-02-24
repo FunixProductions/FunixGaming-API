@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
     </parent>
 
     <repositories>
@@ -92,9 +92,9 @@
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
         <maven.compiler.version>3.10.1</maven.compiler.version>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
-        <flyway.version>9.14.1</flyway.version>
+        <flyway.version>9.15.1</flyway.version>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <postgres.version>42.5.3</postgres.version>
+        <postgres.version>42.5.4</postgres.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <jwt-api.version>0.11.5</jwt-api.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
@@ -106,7 +106,7 @@
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
         <maven.sign.version>3.0.1</maven.sign.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
-        <maven.javadoc.version>3.4.1</maven.javadoc.version>
+        <maven.javadoc.version>3.5.0</maven.javadoc.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
         <maven.sources.version>3.2.1</maven.sources.version>
         <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
@@ -120,7 +120,7 @@
         <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
         <nexus.staging.plugin.version>1.6.13</nexus.staging.plugin.version>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
-        <spring.boot.configuration.processor.version>3.0.2</spring.boot.configuration.processor.version>
+        <spring.boot.configuration.processor.version>3.0.3</spring.boot.configuration.processor.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
