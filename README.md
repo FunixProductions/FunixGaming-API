@@ -4,10 +4,18 @@ API used for Funix Projects
 ![Maven Central](https://img.shields.io/maven-central/v/fr.funixgaming.api/funix-api.svg)
 ![Tests build](https://github.com/FunixProductions/FunixAPI/actions/workflows/main.yml/badge.svg?branch=master)
 
+[![Security Rating](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=security_rating&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+[![Reliability Rating](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=reliability_rating&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+[![Quality Gate Status](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=alert_status&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+[![Maintainability Rating](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=sqale_rating&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+[![Lines of Code](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=ncloc&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+[![Duplicated Lines (%)](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=duplicated_lines_density&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+[![Coverage](https://sonarqube.funixgaming.fr/api/project_badges/measure?project=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x&metric=coverage&token=sqb_1b07e02bb3b9833965cc83873e87fb91c451b858)](https://sonarqube.funixgaming.fr/dashboard?id=FunixProductions_FunixAPI_AYNRa2sBsXlKxBk9mU9x)
+
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![Spring app](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=Spring-Security&logoColor=white)
-![Database](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+![Database](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
 [![Twitch](https://img.shields.io/badge/Twitch-9146FF?style=for-the-badge&logo=twitch&logoColor=white)](https://twitch.tv/funixgaming)
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/c/funixgaming)
@@ -53,70 +61,13 @@ API used for Funix Projects
 </dependency>
 ```
 
-### Configuration des app spring
-
-Vous devez spécifier les variables d'env ou alors les changer avec une surcharge de properties.
-
-- App api application.properties
-````properties
-funix.api.app-domain-url=https://api.funixgaming.fr
-
-funix.api.user-api-username=${API_USERNAME}
-funix.api.user-api-password=${API_PASSWORD}
-````
-
-- App core application.properties
-````properties
-#Google captcha settings (console captcha google: https://www.google.com/recaptcha/admin)
-google.recaptcha.key.site=${GOOGLE_RECAPTCHA_SITE}
-google.recaptcha.key.secret=${GOOGLE_RECAPTCHA_SECRET}
-google.recaptcha.key.threshold=0.7
-#You can disable google captcha with this, cool in unit test env or local development
-#If you set it to true you only need to set this google.recaptcha line
-google.recaptcha.key.disabled=false
-
-#For securing some actions by ip on api (example: 127.0.0.1,10.2.4.5)
-config.api.ip-whitelist=${API_WHITELIST}
-
-#Mail config
-spring.mail.host=${MAIL_HOST}
-spring.mail.port=${MAIL_PORT}
-spring.mail.username=${MAIL_USER}
-spring.mail.password=${MAIL_USER_PASSWORD}
-#Mail advanced config (here is default values)
-spring.mail.tls=true
-spring.mail.protocol=smtp
-spring.mail.ssl=true
-spring.mail.debug=false
-sping.mail.auth=true
-````
-
-- App service application.properties
-````properties
-spring.datasource.driver-class-name=org.mariadb.jdbc.Driver
-spring.datasource.url=jdbc:mariadb://${DB_HOSTNAME}:${DB_PORT}/${DB_DATABASE}
-spring.datasource.username=${DB_USER}
-spring.datasource.password=${DB_PASSWORD}
-
-server.port=${APP_PORT}
-
-funix.api.email=${API_EMAIL}
-funix.api.password-numbers=${PASSWORD_NUMBERS}
-funix.api.password-specials=${PASSWORD_SPECIALS}
-funix.api.password-caps=${PASSWORD_CAPS}
-funix.api.password-min=${PASSWORD_MIN}
-
-paypal.url.auth=https://api-m.sandbox.paypal.com
-paypal.client-id=${PAYPAL_CLIENT_ID}
-paypal.client-secret=${PAYPAL_CLIENT_SECRET}
-````
-
 ### Annotations requises pour le lancement spring
 ````java
 @EnableAsync
 @EnableScheduling
 @EnableFeignClients(basePackages = "fr.funixgaming.api")
 @SpringBootApplication(scanBasePackages = "fr.funixgaming.api")
+@ImportAutoConfiguration({FeignAutoConfiguration.class})
 public class FunixApiApp {
     public static void main(final String[] args) {
         SpringApplication.run(FunixApiApp.class, args);
