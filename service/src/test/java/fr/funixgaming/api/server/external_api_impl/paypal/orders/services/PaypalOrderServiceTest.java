@@ -18,7 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -50,10 +51,10 @@ class PaypalOrderServiceTest {
         when(orderClient.captureOrder(anyString(), anyString(), anyString(), anyString())).thenReturn(responseDTO);
         when(orderClient.authorizeOrder(anyString(), anyString(), anyString(), anyString())).thenReturn(responseDTO);
 
-        service.createOrder("meta", "id", new PaypalOrderCreationDTO());
-        service.getOrder("orderId");
-        service.authorizeOrder("authSession", "metaId", "requestId", "orderId");
-        service.captureOrder("authSession", "metaId", "requestid", "orderId");
+        assertNotNull(service.createOrder("meta", "id", new PaypalOrderCreationDTO()));
+        assertNotNull(service.getOrder("orderId"));
+        assertNotNull(service.authorizeOrder("authSession", "metaId", "requestId", "orderId"));
+        assertNotNull(service.captureOrder("authSession", "metaId", "requestid", "orderId"));
     }
 
     @Test
@@ -79,29 +80,22 @@ class PaypalOrderServiceTest {
         doThrow(exception).when(orderClient).captureOrder(anyString(), anyString(), anyString(), anyString());
         doThrow(exception).when(orderClient).authorizeOrder(anyString(), anyString(), anyString(), anyString());
 
-        try {
+        assertThrows(ApiException.class, () -> {
             service.createOrder("meta", "id", new PaypalOrderCreationDTO());
-            fail("should fail here");
-        } catch (ApiException ignored) {
-        }
+        });
 
-        try {
+        assertThrows(ApiException.class, () -> {
             service.getOrder("orderId");
-            fail("should fail here");
-        } catch (ApiException ignored) {
-        }
+        });
 
-        try {
+        assertThrows(ApiException.class, () -> {
             service.authorizeOrder("authSession", "metaId", "requestId", "orderId");
-            fail("should fail here");
-        } catch (ApiException ignored) {
-        }
+        });
 
-        try {
+        assertThrows(ApiException.class, () -> {
             service.captureOrder("authSession", "metaId", "requestid", "orderId");
-            fail("should fail here");
-        } catch (ApiException ignored) {
-        }
+        });
+
     }
 
 }

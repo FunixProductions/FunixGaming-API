@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +45,7 @@ class PaypalAccessTokenServiceTest {
     }
 
     @Test
-    void testGetAuthValid() throws InterruptedException {
+    void testGetAuthValid() {
         final PaypalTokenAuth tokenAuth = new PaypalTokenAuth();
         tokenAuth.setAccessToken(UUID.randomUUID().toString());
         tokenAuth.setAppId("appId");
@@ -53,13 +53,11 @@ class PaypalAccessTokenServiceTest {
 
         when(paypalAuthClient.getToken(anyString())).thenReturn(tokenAuth);
         service.refreshPaypalToken();
-        Thread.sleep(1000);
-
         assertEquals(tokenAuth.getAccessToken(), service.getAccessToken());
     }
 
     @Test
-    void testGetAuthExpiredToken() throws InterruptedException {
+    void testGetAuthExpiredToken() {
         final PaypalTokenAuth tokenAuth = new PaypalTokenAuth();
         tokenAuth.setAccessToken(UUID.randomUUID().toString());
         tokenAuth.setAppId("appId");
@@ -67,13 +65,7 @@ class PaypalAccessTokenServiceTest {
 
         when(paypalAuthClient.getToken(anyString())).thenReturn(tokenAuth);
         service.refreshPaypalToken();
-        Thread.sleep(2000);
-
-        try {
-            service.getAccessToken();
-            fail("should throw here");
-        } catch (ApiException ignored) {
-        }
+        assertThrows(ApiException.class, service::getAccessToken);
     }
 
     @Test
@@ -96,12 +88,7 @@ class PaypalAccessTokenServiceTest {
 
         when(paypalAuthClient.getToken(anyString())).thenThrow(exception);
         service.refreshPaypalToken();
-
-        try {
-            service.getAccessToken();
-            fail("should fail here");
-        } catch (ApiException ignored) {
-        }
+        assertThrows(ApiException.class, service::getAccessToken);
     }
 
 }

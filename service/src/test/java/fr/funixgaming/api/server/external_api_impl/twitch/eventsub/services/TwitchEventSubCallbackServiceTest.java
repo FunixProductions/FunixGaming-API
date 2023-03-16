@@ -19,8 +19,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
@@ -41,7 +40,7 @@ class TwitchEventSubCallbackServiceTest {
     private final Gson gson = new Gson();
 
     @Test
-    void testNewWebhookNotification() {
+    void testNewWebhookNotification() throws RuntimeException {
         doNothing().when(hmacService).validEventMessage(any(), any());
         doNothing().when(handlerService).receiveNewNotification(any(), any());
 
@@ -51,17 +50,13 @@ class TwitchEventSubCallbackServiceTest {
 
         final TwitchEventChannelFollowDTO followDTO = new TwitchEventChannelFollowDTO();
         final TwitchBodyTestNotificationTest<TwitchEventChannelFollowDTO> test = new TwitchBodyTestNotificationTest<>(followDTO);
-        try {
+        assertDoesNotThrow(() -> {
             service.handleNewWebhook(httpServletRequest, gson.toJson(test).getBytes(StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            fail("No throw here accepted", e);
-        }
+        });
+        assertThrows(ApiBadRequestException.class, () ->
+                service.handleNewWebhook(httpServletRequest, gson.toJson(test).getBytes(StandardCharsets.UTF_8))
+        );
 
-        try {
-            service.handleNewWebhook(httpServletRequest, gson.toJson(test).getBytes(StandardCharsets.UTF_8));
-            fail("Should fail because not able to manage twice event id");
-        } catch (ApiBadRequestException ignored) {
-        }
         service.cleanMessagesIds();
     }
 
@@ -92,7 +87,7 @@ class TwitchEventSubCallbackServiceTest {
 
     @Test
     void missingMessageIdOrMessageType() {
-        try {
+        assertThrows(ApiBadRequestException.class, () -> {
             doNothing().when(hmacService).validEventMessage(any(), any());
             doNothing().when(handlerService).receiveNewNotification(any(), any());
             final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -102,16 +97,12 @@ class TwitchEventSubCallbackServiceTest {
             request.addHeader(TwitchEventSubCallbackService.TWITCH_MESSAGE_ID, UUID.randomUUID().toString());
 
             service.handleNewWebhook(request, "".getBytes());
-            fail("should fail here");
-        } catch (ApiBadRequestException ignored) {
-        } catch (RuntimeException e) {
-            fail(e);
-        }
+        });
     }
 
     @Test
     void testMalformatedBodyNotification() {
-        try {
+        assertThrows(ApiBadRequestException.class, () -> {
             doNothing().when(hmacService).validEventMessage(any(), any());
             doNothing().when(handlerService).receiveNewNotification(any(), any());
             final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -119,17 +110,12 @@ class TwitchEventSubCallbackServiceTest {
             request.addHeader(TwitchEventSubCallbackService.TWITCH_MESSAGE_TYPE, TwitchEventSubCallbackService.MESSAGE_TYPE_NOTIFICATION);
 
             service.handleNewWebhook(request, "".getBytes());
-
-            fail("should fail here");
-        } catch (ApiBadRequestException ignored) {
-        } catch (RuntimeException e) {
-            fail(e);
-        }
+        });
     }
 
     @Test
     void testMalformatedBodyVerification() {
-        try {
+        assertThrows(ApiBadRequestException.class, () -> {
             doNothing().when(hmacService).validEventMessage(any(), any());
             doNothing().when(handlerService).receiveNewNotification(any(), any());
             final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -137,12 +123,7 @@ class TwitchEventSubCallbackServiceTest {
             request.addHeader(TwitchEventSubCallbackService.TWITCH_MESSAGE_TYPE, TwitchEventSubCallbackService.MESSAGE_TYPE_VERIFICATION);
 
             service.handleNewWebhook(request, "".getBytes());
-
-            fail("should fail here");
-        } catch (ApiBadRequestException ignored) {
-        } catch (RuntimeException e) {
-            fail(e);
-        }
+        });
     }
 
     @Getter
