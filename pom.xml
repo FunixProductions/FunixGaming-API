@@ -94,7 +94,7 @@
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
         <flyway.version>9.15.2</flyway.version>
         <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-        <postgres.version>42.5.4</postgres.version>
+        <postgres.version>42.6.0</postgres.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <jwt-api.version>0.11.5</jwt-api.version>
         <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
