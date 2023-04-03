@@ -2,7 +2,6 @@ package fr.funixgaming.api.server.mail.ressources;
 
 import fr.funixgaming.api.client.mail.clients.FunixMailClient;
 import fr.funixgaming.api.client.mail.dtos.FunixMailDTO;
-import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.server.mail.services.FunixMailCrudService;
 import fr.funixgaming.api.server.mail.services.FunixMailService;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +23,6 @@ public class FunixMailResource implements FunixMailClient {
 
     @Override
     public FunixMailDTO getMailById(String id) {
-        final FunixMailDTO mailDTO = crudService.findById(id);
-
-        if (mailDTO != null) {
-            return mailDTO;
-        } else {
-            throw new ApiNotFoundException(String.format("Le mail %s n'existe pas.", id));
-        }
+        return crudService.findById(id);
     }
 }
