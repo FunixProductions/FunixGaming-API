@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 TestApp.class
         }
 )
-class CrudTests {
+class CrudIntegrationTests {
     public static final String ROUTE = "/test";
 
     private final JsonHelper gson;
@@ -40,10 +40,10 @@ class CrudTests {
     private final TestService service;
 
     @Autowired
-    public CrudTests(MockMvc mockMvc,
-                     TestRepository repository,
-                     JsonHelper gson,
-                     TestService service) {
+    public CrudIntegrationTests(MockMvc mockMvc,
+                                TestRepository repository,
+                                JsonHelper gson,
+                                TestService service) {
         this.mockMvc = mockMvc;
         this.repository = repository;
         this.gson = gson;

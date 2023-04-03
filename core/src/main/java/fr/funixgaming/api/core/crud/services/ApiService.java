@@ -8,6 +8,7 @@ import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.core.crud.repositories.ApiRepository;
 import fr.funixgaming.api.core.crud.services.search.SearchBuilder;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import fr.funixgaming.api.core.exceptions.ApiException;
 import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -42,26 +43,24 @@ public abstract class ApiService<DTO extends ApiDTO,
         final Pageable pageable = getPage(page, elemsPerPage, sort);
         final Page<DTO> toReturn = repository.findAll(specificationSearch, pageable).map(mapper::toDto);
 
-        for (final DTO dto : toReturn) {
-            beforeSendingDTO(dto, null);
-        }
+        beforeSendingDTO(toReturn.getContent());
         return new PageDTO<>(toReturn);
     }
 
     @Override
-    @Nullable
+    @NonNull
     @Transactional
-    public DTO findById(String id) {
+    public DTO findById(String id) throws ApiNotFoundException {
         final Optional<ENTITY> search = repository.findByUuid(id);
 
         if (search.isPresent()) {
             final ENTITY entity = search.get();
             final DTO response = mapper.toDto(entity);
 
-            beforeSendingDTO(response, entity);
+            beforeSendingDTO(Collections.singletonList(response));
             return response;
         } else {
-            return null;
+            throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", id));
         }
     }
 
@@ -69,52 +68,47 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public DTO create(DTO request) {
-        ENTITY entity = mapper.toEntity(request);
+        final List<DTO> created = this.create(Collections.singletonList(request));
 
-        beforeSavingEntity(request, entity);
-        entity = repository.save(entity);
-
-        final DTO dto = mapper.toDto(repository.save(entity));
-        afterSavingEntity(dto, entity);
-        beforeSendingDTO(dto, entity);
-        return dto;
+        if (created.size() == 1) {
+            return created.get(0);
+        } else {
+            throw new ApiException("L'entité n'a pas été crée.");
+        }
     }
 
     @Override
     @Transactional
     public List<DTO> create(List<@Valid DTO> request) {
-        final List<DTO> toReturn = new ArrayList<>();
+        this.beforeMappingToEntity(request);
+        final List<ENTITY> entities = new ArrayList<>();
+        request.forEach(dto -> {
+            final ENTITY actualEnt = mapper.toEntity(dto);
+            this.afterMapperCall(dto, actualEnt);
+            entities.add(actualEnt);
+        });
 
-        for (final DTO dto : request) {
-            toReturn.add(create(dto));
-        }
-        return toReturn;
+        this.beforeSavingEntity(entities);
+        final List<ENTITY> entitiesSaved = repository.saveAll(entities);
+        this.afterSavingEntity(entitiesSaved);
+
+        final List<DTO> toSend = new ArrayList<>();
+        entitiesSaved.forEach(entity -> toSend.add(mapper.toDto(entity)));
+        this.beforeSendingDTO(toSend);
+        return toSend;
     }
 
     @NonNull
     @Override
     @Transactional
-    public DTO update(DTO request) {
+    public DTO update(DTO request) throws ApiNotFoundException, ApiBadRequestException {
         if (request.getId() == null) {
             throw new ApiBadRequestException("Vous n'avez pas spécifié d'id.");
         }
 
-        final Optional<ENTITY> search = repository.findByUuid(request.getId().toString());
-        if (search.isPresent()) {
-            ENTITY entity = search.get();
-            final ENTITY entRequest = mapper.toEntity(request);
-
-            entRequest.setId(null);
-            entRequest.setUpdatedAt(Date.from(Instant.now()));
-            mapper.patch(entRequest, entity);
-
-            beforeSavingEntity(request, entity);
-            entity = repository.save(entity);
-
-            final DTO dto = mapper.toDto(entity);
-            afterSavingEntity(dto, entity);
-            beforeSendingDTO(dto, entity);
-            return dto;
+        final List<DTO> response = update(Collections.singletonList(request));
+        if (response.size() == 1) {
+            return response.get(0);
         } else {
             throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", request.getId()));
         }
@@ -123,13 +117,38 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public List<DTO> update(List<DTO> request) {
-        final List<DTO> toSend = new ArrayList<>();
+        this.beforeMappingToEntity(request);
 
-        for (final DTO data : request) {
-            if (data.getId() != null) {
-                toSend.add(this.update(data));
+        final Set<String> ids = new HashSet<>();
+        for (final DTO dto : request) {
+            if (dto.getId() != null) {
+                ids.add(dto.getId().toString());
             }
         }
+        final Iterable<ENTITY> entities = repository.findAllByUuidIn(ids);
+
+        DTO actualDto;
+        ENTITY entRequest;
+        for (final ENTITY entity : entities) {
+            actualDto = this.getDTOFromIdInList(request, entity.getUuid());
+
+            if (actualDto != null)  {
+                entRequest = mapper.toEntity(actualDto);
+                this.afterMapperCall(actualDto, entRequest);
+                entRequest.setId(null);
+                entRequest.setUpdatedAt(Date.from(Instant.now()));
+                mapper.patch(entRequest, entity);
+                this.afterMapperCall(actualDto, entity);
+            }
+        }
+
+        this.beforeSavingEntity(entities);
+        final Iterable<ENTITY> entitiesSaved = repository.saveAll(entities);
+        this.afterSavingEntity(entitiesSaved);
+
+        final List<DTO> toSend = new ArrayList<>();
+        entitiesSaved.forEach(entity -> toSend.add(mapper.toDto(entity)));
+        beforeSendingDTO(toSend);
         return toSend;
     }
 
@@ -141,7 +160,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         if (search.isPresent()) {
             final ENTITY entity = search.get();
 
-            beforeDeletingEntity(entity);
+            beforeDeletingEntity(Collections.singletonList(entity));
             repository.delete(entity);
         } else {
             throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", id));
@@ -154,28 +173,34 @@ public abstract class ApiService<DTO extends ApiDTO,
         final Set<String> idList = new HashSet<>(Arrays.asList(ids));
         final Iterable<ENTITY> search = this.repository.findAllByUuidIn(idList);
 
-        for (final ENTITY entity : search) {
-            beforeDeletingEntity(entity);
-        }
+        beforeDeletingEntity(search);
         repository.deleteAll(search);
+    }
+
+    /**
+     * Method used when you need to add some code logic before transform DTOs into ENTITIES
+     * @param request dto list
+     */
+    public void beforeMappingToEntity(@NonNull Iterable<DTO> request) {
+    }
+
+    public void afterMapperCall(@NonNull DTO dto, @NonNull ENTITY entity) {
     }
 
     /**
      * Method used when you need to add some logic before saving an entity.
      * Override it when you have specific logic to add.
      *
-     * @param request request received.
-     * @param entity entity mapped from mapper.
+     * @param entity entity list before save database
      */
-    public void beforeSavingEntity(@NonNull DTO request, @NonNull ENTITY entity) {
+    public void beforeSavingEntity(@NonNull Iterable<ENTITY> entity) {
     }
 
     /**
      * Method used when you need to add some logic after an entity save.
-     * @param dto dto mapped by mapper.
      * @param entity entity fetched from database.
      */
-    public void afterSavingEntity(@NonNull DTO dto, @NonNull ENTITY entity) {
+    public void afterSavingEntity(@NonNull Iterable<ENTITY> entity) {
     }
 
     /**
@@ -183,16 +208,15 @@ public abstract class ApiService<DTO extends ApiDTO,
      * add some logic before sending DTO to client.
      *
      * @param dto dto fetched from database.
-     * @param entity entity fetched from database.
      */
-    public void beforeSendingDTO(@NonNull DTO dto, @Nullable ENTITY entity) {
+    public void beforeSendingDTO(@NonNull Iterable<DTO> dto) {
     }
 
     /**
      * Method used when you need to add some logic before removing an entity.
      * @param entity entity fetched from database.
      */
-    public void beforeDeletingEntity(@NonNull ENTITY entity) {
+    public void beforeDeletingEntity(@NonNull Iterable<ENTITY> entity) {
     }
 
     private Pageable getPage(final String page, final String elemsPerPage, @Nullable final String sortQuery) {
@@ -223,7 +247,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         return PageRequest.of(nbrPage, maxPerPage, sort);
     }
 
-    private Sort getSort(@Nullable final String sortQuery) {
+    private Sort getSort(@Nullable final String sortQuery) throws ApiBadRequestException {
         if (Strings.isEmpty(sortQuery)) {
             return Sort.unsorted();
         } else {
@@ -254,7 +278,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     @Nullable
-    private Specification<ENTITY> getSpecification(@Nullable final String search) {
+    private Specification<ENTITY> getSpecification(@Nullable final String search) throws ApiBadRequestException {
         if (Strings.isEmpty(search)) {
             return null;
         }
@@ -277,6 +301,66 @@ public abstract class ApiService<DTO extends ApiDTO,
         }
 
         return searchBuilder.getSpecificationSearch();
+    }
+
+    /**
+     * Finds a DTO from a given list and returns it
+     * @param list dto list
+     * @param idToFind uuid to find
+     * @return dto found, null if not found
+     */
+    @Nullable
+    public DTO getDTOFromIdInList(final Iterable<DTO> list, final UUID idToFind) {
+        if (list == null || idToFind == null) {
+            return null;
+        }
+
+        for (final DTO dto : list) {
+            if (dto.getId() != null && dto.getId().equals(idToFind)) {
+                return dto;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds an entity from a given list and returns it
+     * @param list entity list
+     * @param idToFind uuid to search
+     * @return entity or null if not found
+     */
+    @Nullable
+    public ENTITY getEntityFromUidInList(final Iterable<ENTITY> list, final UUID idToFind) {
+        if (list == null || idToFind == null) {
+            return null;
+        }
+
+        for (final ENTITY entity : list) {
+            if (entity.getUuid() != null && entity.getUuid().equals(idToFind)) {
+                return entity;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds an entity from a given list and returns it
+     * @param list entity list
+     * @param idToFind id long to search
+     * @return entity or null if not found
+     */
+    @Nullable
+    public ENTITY getEntityFromIdInList(final Iterable<ENTITY> list, final Long idToFind) {
+        if (list == null || idToFind == null) {
+            return null;
+        }
+
+        for (final ENTITY entity : list) {
+            if (entity.getId() != null && entity.getId().equals(idToFind)) {
+                return entity;
+            }
+        }
+        return null;
     }
 
 }

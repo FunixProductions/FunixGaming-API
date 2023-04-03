@@ -3,7 +3,6 @@ package fr.funixgaming.api.core.crud.resources;
 import fr.funixgaming.api.core.crud.clients.CrudClient;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
-import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +22,7 @@ public abstract class ApiResource<DTO extends ApiDTO, SERVICE extends CrudClient
 
     @Override
     public DTO findById(String id) {
-        final DTO dto = service.findById(id);
-
-        if (dto != null) {
-            return dto;
-        } else {
-            throw new ApiNotFoundException(String.format("The object id: %s does not exists.", id));
-        }
+        return service.findById(id);
     }
 
     @Override

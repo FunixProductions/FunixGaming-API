@@ -21,31 +21,32 @@ import java.util.Optional;
 @Service
 public class UserCrudService extends ApiService<UserDTO, User, UserMapper, UserRepository> implements UserDetailsService {
 
-    private final UserTokenService tokenService;
     private final UserPasswordUtils passwordUtils;
 
     public UserCrudService(UserRepository repository,
                            UserMapper mapper,
-                           UserTokenService tokenService,
                            UserPasswordUtils passwordUtils) {
         super(repository, mapper);
-        this.tokenService = tokenService;
         this.passwordUtils = passwordUtils;
     }
 
     @Override
-    public void beforeSavingEntity(@NonNull UserDTO request, @NonNull User entity) {
-        if (request.getId() == null) {
-            final Optional<User> search = this.getRepository().findByUsernameIgnoreCase(request.getUsername());
-            if (search.isPresent()) {
-                throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", request.getUsername()));
+    public void beforeMappingToEntity(@NonNull Iterable<UserDTO> requestList) {
+        for (final UserDTO request : requestList) {
+            if (request.getId() == null) {
+                final Optional<User> search = this.getRepository().findByUsernameIgnoreCase(request.getUsername());
+                if (search.isPresent()) {
+                    throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", request.getUsername()));
+                }
             }
         }
+    }
 
-        if (request instanceof final UserSecretsDTO secretsDTO && Strings.isNotBlank(secretsDTO.getPassword())) {
+    @Override
+    public void afterMapperCall(@NonNull UserDTO dto, @NonNull User entity) {
+        if (dto instanceof final UserSecretsDTO secretsDTO && Strings.isNotBlank(secretsDTO.getPassword())) {
             passwordUtils.checkPassword(secretsDTO.getPassword());
             entity.setPassword(secretsDTO.getPassword());
-            tokenService.invalidTokens(request.getId());
         }
     }
 
