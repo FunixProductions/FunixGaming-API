@@ -110,7 +110,7 @@
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-source-plugin -->
         <maven.sources.version>3.2.1</maven.sources.version>
         <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
-        <org.jacoco.coverage.version>0.8.8</org.jacoco.coverage.version>
+        <org.jacoco.coverage.version>0.8.9</org.jacoco.coverage.version>
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
         <greenmail.test.mail.version>2.0.0</greenmail.test.mail.version>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
