@@ -80,9 +80,13 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public List<DTO> create(List<@Valid DTO> request) {
-        this.beforePatchingToEntity(request);
+        this.beforeMappingToEntity(request);
         final List<ENTITY> entities = new ArrayList<>();
-        request.forEach(dto -> entities.add(mapper.toEntity(dto)));
+        request.forEach(dto -> {
+            final ENTITY actualEnt = mapper.toEntity(dto);
+            this.afterMapperCall(dto, actualEnt);
+            entities.add(actualEnt);
+        });
 
         this.beforeSavingEntity(entities);
         final List<ENTITY> entitiesSaved = repository.saveAll(entities);
@@ -113,7 +117,7 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public List<DTO> update(List<DTO> request) {
-        this.beforePatchingToEntity(request);
+        this.beforeMappingToEntity(request);
 
         final Set<String> ids = new HashSet<>();
         for (final DTO dto : request) {
@@ -130,15 +134,17 @@ public abstract class ApiService<DTO extends ApiDTO,
 
             if (actualDto != null)  {
                 entRequest = mapper.toEntity(actualDto);
+                this.afterMapperCall(actualDto, entRequest);
                 entRequest.setId(null);
                 entRequest.setUpdatedAt(Date.from(Instant.now()));
                 mapper.patch(entRequest, entity);
+                this.afterMapperCall(actualDto, entity);
             }
         }
 
-        beforeSavingEntity(entities);
+        this.beforeSavingEntity(entities);
         final Iterable<ENTITY> entitiesSaved = repository.saveAll(entities);
-        afterSavingEntity(entitiesSaved);
+        this.afterSavingEntity(entitiesSaved);
 
         final List<DTO> toSend = new ArrayList<>();
         entitiesSaved.forEach(entity -> toSend.add(mapper.toDto(entity)));
@@ -175,14 +181,17 @@ public abstract class ApiService<DTO extends ApiDTO,
      * Method used when you need to add some code logic before transform DTOs into ENTITIES
      * @param request dto list
      */
-    public void beforePatchingToEntity(@NonNull Iterable<DTO> request) {
+    public void beforeMappingToEntity(@NonNull Iterable<DTO> request) {
+    }
+
+    public void afterMapperCall(@NonNull DTO dto, @NonNull ENTITY entity) {
     }
 
     /**
      * Method used when you need to add some logic before saving an entity.
      * Override it when you have specific logic to add.
      *
-     * @param entity entity mapped from mapper.
+     * @param entity entity list before save database
      */
     public void beforeSavingEntity(@NonNull Iterable<ENTITY> entity) {
     }
