@@ -32,6 +32,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         ENTITY extends ApiEntity,
         MAPPER extends ApiMapper<ENTITY, DTO>,
         REPOSITORY extends ApiRepository<ENTITY>> implements CrudClient<DTO> {
+    private static final String MESSAGE_ENTITY_NOT_FOUND = "L'entité id %s n'existe pas.";
 
     private final REPOSITORY repository;
     private final MAPPER mapper;
@@ -60,7 +61,7 @@ public abstract class ApiService<DTO extends ApiDTO,
             beforeSendingDTO(Collections.singletonList(response));
             return response;
         } else {
-            throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", id));
+            throw new ApiNotFoundException(String.format(MESSAGE_ENTITY_NOT_FOUND, id));
         }
     }
 
@@ -110,7 +111,7 @@ public abstract class ApiService<DTO extends ApiDTO,
         if (response.size() == 1) {
             return response.get(0);
         } else {
-            throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", request.getId()));
+            throw new ApiNotFoundException(String.format(MESSAGE_ENTITY_NOT_FOUND, request.getId()));
         }
     }
 
@@ -163,7 +164,7 @@ public abstract class ApiService<DTO extends ApiDTO,
             beforeDeletingEntity(Collections.singletonList(entity));
             repository.delete(entity);
         } else {
-            throw new ApiNotFoundException(String.format("L'entité id %s n'existe pas.", id));
+            throw new ApiNotFoundException(String.format(MESSAGE_ENTITY_NOT_FOUND, id));
         }
     }
 
