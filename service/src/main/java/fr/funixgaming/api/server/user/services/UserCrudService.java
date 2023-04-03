@@ -4,6 +4,7 @@ import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserSecretsDTO;
 import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
+import fr.funixgaming.api.core.exceptions.ApiNotFoundException;
 import fr.funixgaming.api.server.user.components.UserPasswordUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import fr.funixgaming.api.server.user.mappers.UserMapper;
@@ -34,18 +35,26 @@ public class UserCrudService extends ApiService<UserDTO, User, UserMapper, UserR
     }
 
     @Override
-    public void beforeSavingEntity(@NonNull UserDTO request, @NonNull User entity) {
-        if (request.getId() == null) {
-            final Optional<User> search = this.getRepository().findByUsernameIgnoreCase(request.getUsername());
-            if (search.isPresent()) {
-                throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", request.getUsername()));
+    public void beforeSavingEntity(@NonNull Iterable<UserDTO> requestList, @NonNull Iterable<User> entity) {
+        for (final UserDTO request : requestList) {
+            if (request.getId() == null) {
+                final Optional<User> search = this.getRepository().findByUsernameIgnoreCase(request.getUsername());
+                if (search.isPresent()) {
+                    throw new ApiBadRequestException(String.format("L'utilisateur %s existe déjà.", request.getUsername()));
+                }
             }
-        }
 
-        if (request instanceof final UserSecretsDTO secretsDTO && Strings.isNotBlank(secretsDTO.getPassword())) {
-            passwordUtils.checkPassword(secretsDTO.getPassword());
-            entity.setPassword(secretsDTO.getPassword());
-            tokenService.invalidTokens(request.getId());
+            if (request instanceof final UserSecretsDTO secretsDTO && Strings.isNotBlank(secretsDTO.getPassword())) {
+                final User user = super.getEntityFromUidInList(entity, request.getId());
+
+                if (user != null) {
+                    passwordUtils.checkPassword(secretsDTO.getPassword());
+                    user.setPassword(secretsDTO.getPassword());
+                    tokenService.invalidTokens(request.getId());
+                } else {
+                    throw new ApiNotFoundException(String.format("Utilisateur non présent %s", request.getUsername()));
+                }
+            }
         }
     }
 

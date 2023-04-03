@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
                 TestApp.class
         }
 )
-class SearchTests {
+class SearchIntegrationTests {
 
     static final String ROUTE = "/test";
 
