@@ -26,6 +26,11 @@ public interface UserMapper extends ApiMapper<User, UserDTO> {
     @Mapping(target = "authorities", ignore = true)
     void patch(User request, @MappingTarget User toPatch);
 
+    @Mapping(target = "uuid", source = "id")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "tokens", ignore = true)
+    @Mapping(target = "banned", ignore = true)
+    User toEntity(UserSecretsDTO secretsDTO);
 
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

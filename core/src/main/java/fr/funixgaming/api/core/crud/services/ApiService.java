@@ -80,17 +80,17 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public List<DTO> create(List<@Valid DTO> request) {
+        this.beforePatchingToEntity(request);
         final List<ENTITY> entities = new ArrayList<>();
-        final List<DTO> toSend = new ArrayList<>();
-
         request.forEach(dto -> entities.add(mapper.toEntity(dto)));
-        beforeSavingEntity(request, entities);
 
+        this.beforeSavingEntity(entities);
         final List<ENTITY> entitiesSaved = repository.saveAll(entities);
-        entitiesSaved.forEach(entity -> toSend.add(mapper.toDto(entity)));
-        afterSavingEntity(request, entities);
-        beforeSendingDTO(toSend);
+        this.afterSavingEntity(entitiesSaved);
 
+        final List<DTO> toSend = new ArrayList<>();
+        entitiesSaved.forEach(entity -> toSend.add(mapper.toDto(entity)));
+        this.beforeSendingDTO(toSend);
         return toSend;
     }
 
@@ -113,19 +113,18 @@ public abstract class ApiService<DTO extends ApiDTO,
     @Override
     @Transactional
     public List<DTO> update(List<DTO> request) {
-        final Set<String> ids = new HashSet<>();
-        final List<DTO> toSend = new ArrayList<>();
+        this.beforePatchingToEntity(request);
 
+        final Set<String> ids = new HashSet<>();
         for (final DTO dto : request) {
             if (dto.getId() != null) {
                 ids.add(dto.getId().toString());
             }
         }
-
         final Iterable<ENTITY> entities = repository.findAllByUuidIn(ids);
+
         DTO actualDto;
         ENTITY entRequest;
-
         for (final ENTITY entity : entities) {
             actualDto = this.getDTOFromIdInList(request, entity.getUuid());
 
@@ -137,10 +136,11 @@ public abstract class ApiService<DTO extends ApiDTO,
             }
         }
 
-        beforeSavingEntity(request, entities);
+        beforeSavingEntity(entities);
         final Iterable<ENTITY> entitiesSaved = repository.saveAll(entities);
-        afterSavingEntity(request, entitiesSaved);
+        afterSavingEntity(entitiesSaved);
 
+        final List<DTO> toSend = new ArrayList<>();
         entitiesSaved.forEach(entity -> toSend.add(mapper.toDto(entity)));
         beforeSendingDTO(toSend);
         return toSend;
@@ -172,21 +172,26 @@ public abstract class ApiService<DTO extends ApiDTO,
     }
 
     /**
+     * Method used when you need to add some code logic before transform DTOs into ENTITIES
+     * @param request dto list
+     */
+    public void beforePatchingToEntity(@NonNull Iterable<DTO> request) {
+    }
+
+    /**
      * Method used when you need to add some logic before saving an entity.
      * Override it when you have specific logic to add.
      *
-     * @param request request received.
      * @param entity entity mapped from mapper.
      */
-    public void beforeSavingEntity(@NonNull Iterable<DTO> request, @NonNull Iterable<ENTITY> entity) {
+    public void beforeSavingEntity(@NonNull Iterable<ENTITY> entity) {
     }
 
     /**
      * Method used when you need to add some logic after an entity save.
-     * @param dto dto mapped by mapper.
      * @param entity entity fetched from database.
      */
-    public void afterSavingEntity(@NonNull Iterable<DTO> dto, @NonNull Iterable<ENTITY> entity) {
+    public void afterSavingEntity(@NonNull Iterable<ENTITY> entity) {
     }
 
     /**
