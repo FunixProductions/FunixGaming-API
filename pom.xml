@@ -114,7 +114,7 @@
         <!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
         <greenmail.test.mail.version>2.0.0</greenmail.test.mail.version>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-        <mockito.version>5.2.0</mockito.version>
+        <mockito.version>5.3.0</mockito.version>
         <!-- https://mvnrepository.com/artifact/org.sonarsource.scanner.maven/sonar-maven-plugin -->
         <sonarqube.plugin.version>3.9.1.2184</sonarqube.plugin.version>
         <!-- https://mvnrepository.com/artifact/org.sonatype.plugins/nexus-staging-maven-plugin -->
