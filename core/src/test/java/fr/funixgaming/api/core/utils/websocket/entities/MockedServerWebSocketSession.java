@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.websocket.entities;
+package fr.funixgaming.api.core.utils.websocket.entities;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

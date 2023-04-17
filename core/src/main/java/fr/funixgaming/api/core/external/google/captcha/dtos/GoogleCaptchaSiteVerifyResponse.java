@@ -1,4 +1,4 @@
-package fr.funixgaming.api.server.external_api_impl.google.dtos;
+package fr.funixgaming.api.core.external.google.captcha.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

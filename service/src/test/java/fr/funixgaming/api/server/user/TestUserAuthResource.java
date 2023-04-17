@@ -5,10 +5,15 @@ import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserLoginDTO;
 import fr.funixgaming.api.client.user.enums.UserRole;
+import fr.funixgaming.api.core.external.google.captcha.services.GoogleCaptchaService;
 import fr.funixgaming.api.server.beans.JsonHelper;
 import fr.funixgaming.api.server.user.components.UserTestComponent;
 import fr.funixgaming.api.server.user.entities.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,12 +24,16 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@RunWith(MockitoJUnitRunner.class)
 class TestUserAuthResource {
 
     @Autowired
@@ -35,6 +44,14 @@ class TestUserAuthResource {
 
     @Autowired
     private JsonHelper jsonHelper;
+
+    @Mock
+    private GoogleCaptchaService googleCaptchaService;
+
+    @BeforeEach
+    void setupMocks() {
+        doNothing().when(googleCaptchaService).checkCode(any(), anyString());
+    }
 
     @Test
     void testRegisterSuccess() throws Exception {

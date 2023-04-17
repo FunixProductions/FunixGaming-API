@@ -1,8 +1,7 @@
 package fr.funixgaming.api.server.user.services;
 
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import fr.funixgaming.api.client.user.dtos.UserDTO;
 import fr.funixgaming.api.client.user.dtos.UserTokenDTO;
 import fr.funixgaming.api.client.user.dtos.requests.UserCreationDTO;
@@ -16,7 +15,6 @@ import fr.funixgaming.api.core.utils.network.IPUtils;
 import fr.funixgaming.api.server.user.entities.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -39,14 +37,7 @@ public class UserAuthService {
     private final UserCrudService userCrudService;
     private final UserTokenService tokenService;
 
-    private final LoadingCache<String, Integer> triesCache = CacheBuilder.newBuilder()
-            .expireAfterWrite(COOLDOWN_REQUEST_SPAM, TimeUnit.MINUTES).build(new CacheLoader<>() {
-                @Override
-                @NonNull
-                public Integer load(@NonNull String s) {
-                    return 0;
-                }
-            });
+    private final Cache<String, Integer> triesCache = CacheBuilder.newBuilder().expireAfterWrite(COOLDOWN_REQUEST_SPAM, TimeUnit.MINUTES).build();
 
     @Transactional
     public UserDTO register(final UserCreationDTO userCreationDTO) {
@@ -104,13 +95,22 @@ public class UserAuthService {
     }
 
     private boolean isBlocked(final HttpServletRequest servletRequest) {
-        return triesCache.getUnchecked(ipUtils.getClientIp(servletRequest)) >= MAX_ATTEMPT;
+        final Integer tries = triesCache.getIfPresent(ipUtils.getClientIp(servletRequest));
+
+        if (tries == null) {
+            return false;
+        } else {
+            return tries >= MAX_ATTEMPT;
+        }
     }
 
     private void failLogin(final HttpServletRequest servletRequest) {
         final String key = ipUtils.getClientIp(servletRequest);
+        Integer attempts = triesCache.getIfPresent(key);
 
-        int attempts = triesCache.getUnchecked(key);
+        if (attempts == null) {
+            attempts = 0;
+        }
         triesCache.put(key, attempts + 1);
     }
 

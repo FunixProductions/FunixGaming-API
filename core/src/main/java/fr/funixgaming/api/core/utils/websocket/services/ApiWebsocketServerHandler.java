@@ -1,8 +1,8 @@
-package fr.funixgaming.api.core.websocket.services;
+package fr.funixgaming.api.core.utils.websocket.services;
 
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
 import fr.funixgaming.api.core.exceptions.ApiException;
-import fr.funixgaming.api.core.websocket.dtos.WebSocketPingMessageRequest;
+import fr.funixgaming.api.core.utils.websocket.dtos.WebSocketPingMessageRequest;
 import lombok.NonNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.socket.*;

@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.websocket.dtos;
+package fr.funixgaming.api.core.utils.websocket.dtos;
 
 import fr.funixgaming.api.core.utils.string.PasswordGenerator;
 import lombok.Getter;

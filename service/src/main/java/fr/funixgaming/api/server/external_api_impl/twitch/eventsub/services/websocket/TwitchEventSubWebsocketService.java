@@ -3,7 +3,7 @@ package fr.funixgaming.api.server.external_api_impl.twitch.eventsub.services.web
 import com.google.gson.Gson;
 import fr.funixgaming.api.client.external_api_impl.twitch.eventsub.dtos.websocket.TwitchEventSubWebsocketMessage;
 import fr.funixgaming.api.core.exceptions.ApiBadRequestException;
-import fr.funixgaming.api.core.websocket.services.ApiWebsocketServerHandler;
+import fr.funixgaming.api.core.utils.websocket.services.ApiWebsocketServerHandler;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.entities.TwitchClientToken;
 import fr.funixgaming.api.server.external_api_impl.twitch.auth.repositories.TwitchClientTokenRepository;
 import lombok.NonNull;

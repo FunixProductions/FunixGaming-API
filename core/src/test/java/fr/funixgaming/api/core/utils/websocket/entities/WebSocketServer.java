@@ -1,6 +1,6 @@
-package fr.funixgaming.api.core.websocket.entities;
+package fr.funixgaming.api.core.utils.websocket.entities;
 
-import fr.funixgaming.api.core.websocket.services.ApiWebsocketServerHandler;
+import fr.funixgaming.api.core.utils.websocket.services.ApiWebsocketServerHandler;
 import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.web.socket.WebSocketSession;

@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.websocket.services.client;
+package fr.funixgaming.api.core.utils.websocket.services.client;
 
 import jakarta.websocket.ClientEndpointConfig;
 import lombok.RequiredArgsConstructor;

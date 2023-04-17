@@ -1,4 +1,4 @@
-package fr.funixgaming.api.core.websocket.services.client;
+package fr.funixgaming.api.core.utils.websocket.services.client;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
 import jakarta.websocket.MessageHandler;
