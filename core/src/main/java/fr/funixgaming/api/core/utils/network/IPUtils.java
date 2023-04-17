@@ -2,6 +2,7 @@ package fr.funixgaming.api.core.utils.network;
 
 import fr.funixgaming.api.core.exceptions.ApiException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 
@@ -35,6 +36,7 @@ public class IPUtils {
      * @param request http request to fetch ip
      * @return IP in string
      */
+    @NonNull
     public String getClientIp(final HttpServletRequest request) {
         final String addressHeader = request.getHeader(HEADER_X_FORWARDED);
         final String remoteAddress;
@@ -46,7 +48,12 @@ public class IPUtils {
                 remoteAddress = request.getRemoteAddr();
             } else {
                 final String[] addresses = addressHeader.split(",");
-                remoteAddress = addresses[0].replace(" ", "");
+
+                if (addresses.length > 0) {
+                    remoteAddress = addresses[0].replace(" ", "");
+                } else {
+                    remoteAddress = request.getRemoteAddr();
+                }
             }
         }
 

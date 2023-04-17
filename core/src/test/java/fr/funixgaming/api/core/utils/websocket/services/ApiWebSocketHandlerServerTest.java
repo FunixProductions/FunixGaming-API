@@ -1,8 +1,8 @@
-package fr.funixgaming.api.core.websocket.services;
+package fr.funixgaming.api.core.utils.websocket.services;
 
-import fr.funixgaming.api.core.websocket.dtos.WebSocketPingMessageRequest;
-import fr.funixgaming.api.core.websocket.entities.MockedServerWebSocketSession;
-import fr.funixgaming.api.core.websocket.entities.WebSocketServer;
+import fr.funixgaming.api.core.utils.websocket.dtos.WebSocketPingMessageRequest;
+import fr.funixgaming.api.core.utils.websocket.entities.MockedServerWebSocketSession;
+import fr.funixgaming.api.core.utils.websocket.entities.WebSocketServer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.socket.TextMessage;
