@@ -32,7 +32,7 @@ public class GoogleCaptchaService {
     private final GoogleCaptchaConfig googleCaptchaConfig;
     private final IPUtils ipUtils;
 
-    private final Cache<String, Integer> triesCache = CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();;
+    private final Cache<String, Integer> triesCache = CacheBuilder.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
     private final Gson gson = new Gson();
 
     public GoogleCaptchaService(GoogleCaptchaConfig captchaConfig,
