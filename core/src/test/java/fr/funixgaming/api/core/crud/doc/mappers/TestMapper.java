@@ -1,5 +1,7 @@
-package fr.funixgaming.api.core.crud.doc;
+package fr.funixgaming.api.core.crud.doc.mappers;
 
+import fr.funixgaming.api.core.crud.doc.dtos.TestDTO;
+import fr.funixgaming.api.core.crud.doc.entities.TestEntity;
 import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import org.mapstruct.*;
 

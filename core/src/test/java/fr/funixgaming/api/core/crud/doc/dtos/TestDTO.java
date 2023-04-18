@@ -1,5 +1,6 @@
-package fr.funixgaming.api.core.crud.doc;
+package fr.funixgaming.api.core.crud.doc.dtos;
 
+import fr.funixgaming.api.core.crud.doc.enums.TestEnum;
 import fr.funixgaming.api.core.crud.dtos.ApiDTO;
 import lombok.Getter;
 import lombok.Setter;
