@@ -10,7 +10,7 @@ public enum ChannelEventType {
     /**
      * <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelfollow">Doc</a>
      */
-    FOLLOW("channel.follow", "beta", ChannelFollowSubscription.class),
+    FOLLOW("channel.follow", "2", ChannelFollowSubscription.class),
 
     /**
      * <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelupdate">Doc</a>
@@ -100,12 +100,12 @@ public enum ChannelEventType {
     /**
      * <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshoutoutcreate">Doc</a>
      */
-    SHOUTOUT_CREATE("channel.shoutout.create", "beta", ChannelShoutOutCreateSubscription.class),
+    SHOUTOUT_CREATE("channel.shoutout.create", "1", ChannelShoutOutCreateSubscription.class),
 
     /**
      * <a href="https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelshoutoutreceive">Doc</a>
      */
-    SHOUTOUT_RECEIVE("channel.shoutout.receive", "beta", ChannelShoutOutReceiveSubscription.class);
+    SHOUTOUT_RECEIVE("channel.shoutout.receive", "1", ChannelShoutOutReceiveSubscription.class);
 
     private final String type;
     private final String version;
