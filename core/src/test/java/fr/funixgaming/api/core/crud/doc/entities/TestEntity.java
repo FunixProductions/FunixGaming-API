@@ -1,5 +1,6 @@
-package fr.funixgaming.api.core.crud.doc;
+package fr.funixgaming.api.core.crud.doc.entities;
 
+import fr.funixgaming.api.core.crud.doc.enums.TestEnum;
 import fr.funixgaming.api.core.crud.entities.ApiEntity;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;

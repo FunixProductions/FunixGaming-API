@@ -2,7 +2,12 @@ package fr.funixgaming.api.core.crud;
 
 import fr.funixgaming.api.core.TestApp;
 import fr.funixgaming.api.core.beans.JsonHelper;
-import fr.funixgaming.api.core.crud.doc.*;
+import fr.funixgaming.api.core.crud.doc.dtos.TestDTO;
+import fr.funixgaming.api.core.crud.doc.entities.TestEntity;
+import fr.funixgaming.api.core.crud.doc.enums.TestEnum;
+import fr.funixgaming.api.core.crud.doc.mappers.TestMapper;
+import fr.funixgaming.api.core.crud.doc.repositories.TestRepository;
+import fr.funixgaming.api.core.crud.doc.services.TestService;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
 import fr.funixgaming.api.core.utils.time.TimeUtils;
