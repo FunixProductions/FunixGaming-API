@@ -7,6 +7,7 @@ import fr.funixgaming.api.core.crud.doc.entities.TestEntity;
 import fr.funixgaming.api.core.crud.doc.enums.TestEnum;
 import fr.funixgaming.api.core.crud.doc.mappers.TestMapper;
 import fr.funixgaming.api.core.crud.doc.repositories.TestRepository;
+import fr.funixgaming.api.core.crud.doc.repositories.TestSubRepository;
 import fr.funixgaming.api.core.crud.doc.services.TestService;
 import fr.funixgaming.api.core.crud.dtos.PageDTO;
 import fr.funixgaming.api.core.crud.enums.SearchOperation;
@@ -43,6 +44,9 @@ class SearchIntegrationTests {
     private TestRepository repository;
 
     @Autowired
+    private TestSubRepository testSubRepository;
+
+    @Autowired
     private TestMapper testMapper;
 
     @Autowired
@@ -56,6 +60,7 @@ class SearchIntegrationTests {
 
     @BeforeEach
     void cleanDb() {
+        testSubRepository.deleteAll();
         repository.deleteAll();
     }
 
