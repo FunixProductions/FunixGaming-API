@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableAsync
 @EnableScheduling
-@EnableFeignClients(basePackages = "fr.funixgaming.api.server")
-@SpringBootApplication(scanBasePackages = "fr.funixgaming.api.server")
+@EnableFeignClients(basePackages = "fr.funixgaming.api")
+@SpringBootApplication(scanBasePackages = "fr.funixgaming.api")
 public class FunixApiApp {
 
     public static void main(final String[] args) {
