@@ -98,10 +98,9 @@ public class GoogleCaptchaService {
                                                        final String remoteIp) throws ApiException {
         final HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create("https://www.google.com/recaptcha/api/siteverify" +
-                        "?secret=" + googleCaptchaConfig.getSecret() + ("" +
+                        "?secret=" + googleCaptchaConfig.getSecret() + (
                         "&response=" + captchaCode +
-                        "&remoteip=" + remoteIp)))
-                .header("Content-Type", "application/x-www-form-urlencoded")
+                                "&remoteip=" + remoteIp)))
                 .POST(HttpRequest.BodyPublishers.ofString(""));
         final HttpClient httpClient = HttpClient.newBuilder().build();
 
