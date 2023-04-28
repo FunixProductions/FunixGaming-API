@@ -88,7 +88,7 @@
         <funixgaming.api.version>1.2.8.5</funixgaming.api.version>
 
         <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
-        <mapstruct.version>1.5.4.Final</mapstruct.version>
+        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
         <maven.compiler.version>3.11.0</maven.compiler.version>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
