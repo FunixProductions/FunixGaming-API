@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -198,6 +199,25 @@ class SearchIntegrationTests {
         for (final TestDTO testDTO : response.getContent()) {
             assertTrue(testDTO.getTestEnum() == TestEnum.TWO || testDTO.getTestEnum() == TestEnum.THREE);
         }
+    }
+
+    @Test
+    void testSearchStringFormattedUUID() throws  Exception {
+        TestDTO testDTO = new TestDTO();
+        testDTO.setData(UUID.randomUUID().toString());
+        testDTO = this.testService.create(testDTO);
+
+        PageDTO<TestDTO> response = this.testService.getAll("", "", String.format("data:%s:%s", SearchOperation.EQUALS.getOperation(), testDTO.getData()), "");
+        assertEquals(1, response.getTotalElementsThisPage());
+        assertEquals(testDTO.getData(), response.getContent().get(0).getData());
+
+        TestDTO testDTO2 = new TestDTO();
+        testDTO2.setData(UUID.randomUUID().toString());
+        testDTO2 = this.testService.create(testDTO2);
+
+        response = this.testService.getAll("", "", String.format("data:%s:%s", SearchOperation.EQUALS.getOperation(), testDTO2.getData()), "");
+        assertEquals(1, response.getTotalElementsThisPage());
+        assertEquals(testDTO2.getData(), response.getContent().get(0).getData());
     }
 
     @Test
