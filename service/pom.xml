@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>funix-api</artifactId>
+        <artifactId>funixgaming-api</artifactId>
         <groupId>fr.funixgaming.api</groupId>
         <version>1.2.8.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>fr.funixgaming.api.server</groupId>
-    <artifactId>funix-api-server</artifactId>
+    <artifactId>funixgaming-api-server</artifactId>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,14 +24,14 @@
     <dependencies>
         <dependency>
             <groupId>fr.funixgaming.api.core</groupId>
-            <artifactId>funix-api-core</artifactId>
+            <artifactId>funixgaming-api-core</artifactId>
             <version>${funixgaming.api.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>fr.funixgaming.api.client</groupId>
-            <artifactId>funix-api-client</artifactId>
+            <artifactId>funixgaming-api-client</artifactId>
             <version>${funixgaming.api.version}</version>
             <scope>compile</scope>
         </dependency>
