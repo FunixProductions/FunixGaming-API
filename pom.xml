@@ -45,9 +45,9 @@
         <module>service</module>
     </modules>
 
-    <name>FunixAPI</name>
+    <name>FunixGamingAPI</name>
     <description>Project used in Funix projects</description>
-    <url>https://github.com/FunixProductions/FunixAPI</url>
+    <url>https://github.com/FunixProductions/FunixGaming-API</url>
 
     <licenses>
         <license>
@@ -61,14 +61,14 @@
             <name>Antoine PRONNIER</name>
             <email>antoine.pronnier@gmail.com</email>
             <organization>FunixProductions</organization>
-            <organizationUrl>https://funixgaming.fr</organizationUrl>
+            <organizationUrl>https://funixproductions.com</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/FunixProductions/FunixAPI.git</connection>
-        <developerConnection>scm:git:ssh://github.com:FunixProductions/FunixAPI.git</developerConnection>
-        <url>http://github.com/FunixProductions/FunixAPI/tree/master</url>
+        <connection>scm:git:git://github.com/FunixProductions/FunixGaming-API.git</connection>
+        <developerConnection>scm:git:ssh://github.com:FunixProductions/FunixGaming-API.git</developerConnection>
+        <url>http://github.com/FunixProductions/FunixGaming-API/tree/master</url>
     </scm>
 
     <distributionManagement>
