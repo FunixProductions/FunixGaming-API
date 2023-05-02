@@ -16,8 +16,8 @@ COPY service/pom.xml ./service/
 COPY service/src ./service/src
 
 RUN mvn clean package -B
-RUN rm service/target/funix-api-server-*-javadoc.jar
-RUN rm service/target/funix-api-server-*-sources.jar
+RUN rm service/target/funixgaming-api-server-*-javadoc.jar
+RUN rm service/target/funixgaming-api-server-*-sources.jar
 
 FROM openjdk:17 AS FINAL_PTEROQ
 
@@ -27,7 +27,7 @@ USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-COPY --from=MAVEN /container/funix-api/service/target/funix-api-server-*.jar /home/java/server.jar
+COPY --from=MAVEN /container/funix-api/service/target/funixgaming-api-server-*.jar /home/java/server.jar
 
 COPY ./entrypointPteroq.sh /entrypoint.sh
 
