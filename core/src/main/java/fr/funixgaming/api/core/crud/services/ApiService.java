@@ -83,8 +83,12 @@ public abstract class ApiService<DTO extends ApiDTO,
     public List<DTO> create(List<@Valid DTO> request) {
         this.beforeMappingToEntity(request);
         final List<ENTITY> entities = new ArrayList<>();
+
         request.forEach(dto -> {
             final ENTITY actualEnt = mapper.toEntity(dto);
+
+            actualEnt.setId(null);
+            actualEnt.setUuid(null);
             this.afterMapperCall(dto, actualEnt);
             entities.add(actualEnt);
         });
