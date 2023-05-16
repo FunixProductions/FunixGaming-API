@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 
 public class FeignConfig implements RequestInterceptor {
 
-    private final String accessToken = System.getenv("FUNIX_API_AUTH_TOKEN");
+    private final String accessToken = System.getenv("FUNIXPRODUCTIONS_API_AUTH_TOKEN");
 
     @Override
     public void apply(RequestTemplate requestTemplate) {

@@ -7,7 +7,7 @@
     <parent>
         <artifactId>funixgaming-api</artifactId>
         <groupId>fr.funixgaming.api</groupId>
-        <version>1.2.8.6</version>
+        <version>1.2.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,81 +23,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>fr.funixgaming.api.core</groupId>
-            <artifactId>funixgaming-api-core</artifactId>
-            <version>${funixgaming.api.version}</version>
-            <scope>compile</scope>
+            <groupId>com.funixproductions.api.client</groupId>
+            <artifactId>funixproductions-api-client</artifactId>
+            <version>${com.funixproductions.api.version}</version>
         </dependency>
 
         <dependency>
             <groupId>fr.funixgaming.api.client</groupId>
             <artifactId>funixgaming-api-client</artifactId>
-            <version>${funixgaming.api.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-        </dependency>
-
-        <!-- Databse driver for postgres -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgres.version}</version>
-        </dependency>
-
-        <!-- Migration scripts -->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-maven-plugin</artifactId>
-            <version>${flyway.version}</version>
-        </dependency>
-
-        <!-- Spring dependency -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- Used for middlewares and tokens -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- Used for auth tokens -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-api</artifactId>
-            <version>${jwt-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-impl</artifactId>
-            <version>${jwt-impl.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt-gson</artifactId>
-            <version>${jwt-gson.version}</version>
+            <version>${fr.funixgaming.api.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
-        </dependency>
-
-        <!-- Used for auth -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
         </dependency>
 
         <!-- Used for routing security -->
@@ -106,6 +45,25 @@
             <artifactId>spring-security-config</artifactId>
         </dependency>
 
+        <!-- Used for auth -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+
+        <!-- Databse driver for postgres -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+
+        <!-- Migration scripts -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-maven-plugin</artifactId>
+            <version>${flyway.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -127,13 +85,13 @@
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
+                            <version>${org.mapstruct.version}</version>
                         </path>
 
                         <path>
                             <groupId>org.springframework.boot</groupId>
                             <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring.boot.configuration.processor.version}</version>
+                            <version>${org.springframeork.boot.annotation.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

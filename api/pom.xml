@@ -7,7 +7,7 @@
     <parent>
         <artifactId>funixgaming-api</artifactId>
         <groupId>fr.funixgaming.api</groupId>
-        <version>1.2.8.6</version>
+        <version>1.2.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,20 +19,5 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>fr.funixgaming.api.core</groupId>
-            <artifactId>funixgaming-api-core</artifactId>
-            <version>${funixgaming.api.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp FOR PATCH-->
-        <dependency>
-            <groupId>io.github.openfeign</groupId>
-            <artifactId>feign-okhttp</artifactId>
-        </dependency>
-    </dependencies>
 
 </project>

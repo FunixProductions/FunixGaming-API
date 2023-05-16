@@ -1,11 +1,13 @@
 package fr.funixgaming.api.server.funixbot;
 
+import com.funixproductions.core.test.beans.JsonHelper;
 import fr.funixgaming.api.client.funixbot.dtos.FunixBotUserExperienceDTO;
-import fr.funixgaming.api.server.beans.JsonHelper;
+import fr.funixgaming.api.server.ResourceTestHandler;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
 import fr.funixgaming.api.server.funixbot.repositories.FunixBotUserExperienceRepository;
-import fr.funixgaming.api.server.user.components.UserTestComponent;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,11 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class TestFunixBotUserExperience {
+@RunWith(MockitoJUnitRunner.class)
+class TestFunixBotUserExperience extends ResourceTestHandler {
 
     private final MockMvc mockMvc;
     private final JsonHelper jsonHelper;
-    private final UserTestComponent userTestComponent;
 
     private final FunixBotUserExperience first;
     private final FunixBotUserExperience second;
@@ -39,12 +41,9 @@ class TestFunixBotUserExperience {
     @Autowired
     TestFunixBotUserExperience(MockMvc mockMvc,
                                JsonHelper jsonHelper,
-                               UserTestComponent userTestComponent,
                                FunixBotUserExperienceRepository repository) throws Exception {
         this.mockMvc = mockMvc;
         this.jsonHelper = jsonHelper;
-        this.userTestComponent = userTestComponent;
-
         repository.deleteAll();
 
         final FunixBotUserExperience first = new FunixBotUserExperience();
@@ -83,22 +82,28 @@ class TestFunixBotUserExperience {
 
     @Test
     void testAccessAdminRouteWithSimpleUser() throws Exception {
+        super.setupNormal();
+
         mockMvc.perform(post("/funixbot/user/exp")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userTestComponent.loginUser(userTestComponent.createBasicUser()).getToken())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void testAccessAdminRouteWithSimpleUserOneSlash() throws Exception {
+        super.setupNormal();
+
         mockMvc.perform(post("/funixbot/user/exp/")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userTestComponent.loginUser(userTestComponent.createBasicUser()).getToken())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void testAccessAdminRouteWithModeratorUser() throws Exception {
+        super.setupModerator();
+
         final FunixBotUserExperienceDTO funixBotUserExperienceDTO = new FunixBotUserExperienceDTO();
         funixBotUserExperienceDTO.setTwitchUserId(UUID.randomUUID().toString());
         funixBotUserExperienceDTO.setXp(10);
@@ -107,7 +112,7 @@ class TestFunixBotUserExperience {
         funixBotUserExperienceDTO.setLastMessageDateSeconds(10L);
 
         mockMvc.perform(post("/funixbot/user/exp")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userTestComponent.loginUser(userTestComponent.createModoAccount()).getToken())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(funixBotUserExperienceDTO)))
                 .andExpect(status().isOk());
@@ -115,6 +120,8 @@ class TestFunixBotUserExperience {
 
     @Test
     void testAccessAdminRouteWithAdminUser() throws Exception {
+        super.setupAdmin();
+
         final FunixBotUserExperienceDTO funixBotUserExperienceDTO = new FunixBotUserExperienceDTO();
         funixBotUserExperienceDTO.setTwitchUserId(UUID.randomUUID().toString());
         funixBotUserExperienceDTO.setXp(10);
@@ -123,54 +130,65 @@ class TestFunixBotUserExperience {
         funixBotUserExperienceDTO.setLastMessageDateSeconds(10L);
 
         mockMvc.perform(post("/funixbot/user/exp")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + userTestComponent.loginUser(userTestComponent.createAdminAccount()).getToken())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonHelper.toJson(funixBotUserExperienceDTO)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void testGetFirstRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get("/funixbot/user/exp/rank?twitchUserId=1"))
-                .andExpect(status().isOk())
-                .andReturn();
+    void testPostWithUserClassic() throws Exception {
+        super.setupNormal();
 
-        final Integer rank = jsonHelper.fromJson(result.getResponse().getContentAsString(), Integer.class);
-        assertEquals(1, rank);
+        final FunixBotUserExperienceDTO funixBotUserExperienceDTO = new FunixBotUserExperienceDTO();
+        funixBotUserExperienceDTO.setTwitchUserId(UUID.randomUUID().toString());
+        funixBotUserExperienceDTO.setXp(10);
+        funixBotUserExperienceDTO.setLevel(10);
+        funixBotUserExperienceDTO.setXpNextLevel(10);
+        funixBotUserExperienceDTO.setLastMessageDateSeconds(10L);
+
+        mockMvc.perform(post("/funixbot/user/exp")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(funixBotUserExperienceDTO)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testGetFirstRank() throws Exception {
+        testGetFirstRankWithLevel(1);
     }
 
     @Test
     void testGetSecondRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get("/funixbot/user/exp/rank?twitchUserId=2"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        final Integer rank = jsonHelper.fromJson(result.getResponse().getContentAsString(), Integer.class);
-        assertEquals(2, rank);
+        testGetFirstRankWithLevel(2);
     }
 
     @Test
     void testGetThirdRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get("/funixbot/user/exp/rank?twitchUserId=3"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        final Integer rank = jsonHelper.fromJson(result.getResponse().getContentAsString(), Integer.class);
-        assertEquals(3, rank);
+        testGetFirstRankWithLevel(3);
     }
 
     @Test
     void testGetFourthRank() throws Exception {
-        final MvcResult result = mockMvc.perform(get("/funixbot/user/exp/rank?twitchUserId=4"))
+        testGetFirstRankWithLevel(4);
+    }
+
+    private void testGetFirstRankWithLevel(final int rankLevel) throws Exception {
+        super.setupNormal();
+
+        final MvcResult result = mockMvc.perform(get("/funixbot/user/exp/rank?twitchUserId=" + rankLevel))
                 .andExpect(status().isOk())
                 .andReturn();
 
         final Integer rank = jsonHelper.fromJson(result.getResponse().getContentAsString(), Integer.class);
-        assertEquals(4, rank);
+        assertEquals(rankLevel, rank);
     }
 
     @Test
     void testGetUnranked() throws Exception {
+        super.setupNormal();
+
         final MvcResult result = mockMvc.perform(get("/funixbot/user/exp/rank?twitchUserId=ouiouiuiu"))
                 .andExpect(status().isOk())
                 .andReturn();

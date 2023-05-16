@@ -1,6 +1,6 @@
 package fr.funixgaming.api.client.funixbot.dtos;
 
-import fr.funixgaming.api.core.crud.dtos.ApiDTO;
+import com.funixproductions.core.crud.dtos.ApiDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
