@@ -2,15 +2,12 @@ FROM maven:3-openjdk-17 AS MAVEN
 
 MAINTAINER Antoine PRONNIER, <antoine.pronnier@gmail.com>
 
-WORKDIR /container/funix-api/
+WORKDIR /container/funixgaming-api/
 
 COPY pom.xml .
 
 COPY api/pom.xml ./api/
 COPY api/src ./api/src
-
-COPY core/pom.xml ./core/
-COPY core/src ./core/src
 
 COPY service/pom.xml ./service/
 COPY service/src ./service/src
@@ -27,7 +24,7 @@ USER container
 ENV USER=container HOME=/home/container
 WORKDIR /home/container
 
-COPY --from=MAVEN /container/funix-api/service/target/funixgaming-api-server-*.jar /home/java/server.jar
+COPY --from=MAVEN /container/funixgaming-api/service/target/funixgaming-api-server-*.jar /home/java/server.jar
 
 COPY ./entrypointPteroq.sh /entrypoint.sh
 
