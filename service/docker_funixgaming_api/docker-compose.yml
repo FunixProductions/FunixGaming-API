@@ -5,6 +5,7 @@ services:
   mysql:
     image: postgres
     container_name: funixgaming_api_db
+    hostname: funixgamingdb
     volumes:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
       - funixgaming_api_db:/var/lib/mysql
