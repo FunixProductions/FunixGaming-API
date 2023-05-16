@@ -16,16 +16,10 @@ RUN mvn clean package -B
 RUN rm service/target/funixgaming-api-server-*-javadoc.jar
 RUN rm service/target/funixgaming-api-server-*-sources.jar
 
-FROM openjdk:17 AS FINAL_PTEROQ
+FROM openjdk:17 AS FINAL
 
-MAINTAINER Antoine PRONNIER, <antoine.pronnier@gmail.com>
+WORKDIR /container/java
 
-USER container
-ENV USER=container HOME=/home/container
-WORKDIR /home/container
+COPY --from=MAVEN /container/funixgaming-api/service/target/funixgaming-api-server-*.jar /container/java/server.jar
 
-COPY --from=MAVEN /container/funixgaming-api/service/target/funixgaming-api-server-*.jar /home/java/server.jar
-
-COPY ./entrypointPteroq.sh /entrypoint.sh
-
-CMD ["/bin/bash", "/entrypoint.sh"]
+ENTRYPOINT ["java", "-jar", "/container/java/server.jar", "-Dspring.profiles.active=docker"]

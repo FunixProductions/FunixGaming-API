@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.funixbot.mappers;
 
+import com.funixproductions.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.client.funixbot.dtos.FunixBotUserExperienceDTO;
-import fr.funixgaming.api.core.crud.mappers.ApiMapper;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
 import org.mapstruct.*;
 

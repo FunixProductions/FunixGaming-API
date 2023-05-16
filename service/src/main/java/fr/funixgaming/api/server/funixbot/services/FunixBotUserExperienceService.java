@@ -1,7 +1,7 @@
 package fr.funixgaming.api.server.funixbot.services;
 
+import com.funixproductions.core.crud.services.ApiService;
 import fr.funixgaming.api.client.funixbot.dtos.FunixBotUserExperienceDTO;
-import fr.funixgaming.api.core.crud.services.ApiService;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
 import fr.funixgaming.api.server.funixbot.mappers.FunixBotUserExperienceMapper;
 import fr.funixgaming.api.server.funixbot.repositories.FunixBotUserExperienceRepository;

@@ -1,8 +1,8 @@
 package fr.funixgaming.api.server.funixbot.resources;
 
+import com.funixproductions.core.crud.resources.ApiResource;
 import fr.funixgaming.api.client.funixbot.clients.FunixBotUserExperienceClient;
 import fr.funixgaming.api.client.funixbot.dtos.FunixBotUserExperienceDTO;
-import fr.funixgaming.api.core.crud.resources.ApiResource;
 import fr.funixgaming.api.server.funixbot.services.FunixBotUserExperienceService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,6 +1,6 @@
 package fr.funixgaming.api.server.funixbot.repositories;
 
-import fr.funixgaming.api.core.crud.repositories.ApiRepository;
+import com.funixproductions.core.crud.repositories.ApiRepository;
 import fr.funixgaming.api.server.funixbot.entities.FunixBotUserExperience;
 import org.springframework.stereotype.Repository;
 
