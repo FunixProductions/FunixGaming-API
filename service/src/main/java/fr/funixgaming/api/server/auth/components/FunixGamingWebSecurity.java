@@ -1,12 +1,13 @@
 package fr.funixgaming.api.server.auth.components;
 
 import com.funixproductions.api.client.user.enums.UserRole;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,36 +30,31 @@ public class FunixGamingWebSecurity {
 
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http = http.cors().and().csrf().disable();
+        http = http.cors(httpSecurityCorsConfigurer ->httpSecurityCorsConfigurer.configurationSource(httpServletRequest -> {
+                    final CorsConfiguration corsConfiguration = new CorsConfiguration();
+                    corsConfiguration.setAllowCredentials(true);
+                    corsConfiguration.addAllowedOriginPattern("*");
+                    corsConfiguration.addAllowedHeader("*");
+                    corsConfiguration.addAllowedMethod("*");
+                    return corsConfiguration;
+                })).csrf(AbstractHttpConfigurer::disable)
 
-        //Set unauthorized requests exception handler
-        http = http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and();
+                .sessionManagement(httpSecuritySessionManagementConfigurer ->
+                        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(Customizer.withDefaults())
 
-        http = http
-                .exceptionHandling()
-                .authenticationEntryPoint(
-                        (request, response, ex) -> response.sendError(
-                                HttpServletResponse.SC_UNAUTHORIZED,
-                                ex.getMessage()
-                        )
-                )
-                .and();
+                .authorizeHttpRequests(exchanges -> exchanges
+                        .requestMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
+                        .requestMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
 
-        http.authorizeHttpRequests(exchanges -> exchanges
-                .requestMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
-                .requestMatchers("/funixbot/**").hasAuthority(UserRole.MODERATOR.getRole())
+                        .requestMatchers("/ws/admin/**").hasAuthority(UserRole.ADMIN.getRole())
+                        .requestMatchers("/ws/mod/**").hasAuthority(UserRole.MODERATOR.getRole())
+                        .requestMatchers("/ws/public/**").permitAll()
 
-                .requestMatchers("/ws/admin/**").hasAuthority(UserRole.ADMIN.getRole())
-                .requestMatchers("/ws/mod/**").hasAuthority(UserRole.MODERATOR.getRole())
-                .requestMatchers("/ws/public/**").permitAll()
+                        .anyRequest().authenticated()
+                ).httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
-                .anyRequest().authenticated()
-        ).httpBasic();
-
-        http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
