@@ -7,7 +7,7 @@
     <parent>
         <artifactId>funixgaming-api</artifactId>
         <groupId>fr.funixgaming.api</groupId>
-        <version>1.2.9</version>
+        <version>1.2.9.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -37,32 +37,35 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+            <version>${org.springframeork.security.version}</version>
         </dependency>
 
         <!-- Used for routing security -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
+            <version>${org.springframeork.security.version}</version>
         </dependency>
 
         <!-- Used for auth -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
+            <version>${org.springframeork.security.version}</version>
         </dependency>
 
         <!-- Databse driver for postgres -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
+            <version>${org.postgresql.version}</version>
         </dependency>
 
         <!-- Migration scripts -->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-maven-plugin</artifactId>
-            <version>${flyway.version}</version>
+            <version>${org.flywaydb.version}</version>
         </dependency>
     </dependencies>
 
