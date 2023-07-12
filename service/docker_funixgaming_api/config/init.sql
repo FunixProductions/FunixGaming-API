@@ -1,2 +1,0 @@
-CREATE DATABASE funixgaming_api_local;
-CREATE DATABASE funixgaming_api_docker;

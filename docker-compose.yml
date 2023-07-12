@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  #FunixBot service
+  build-production-server-box-service:
+    image: ghcr.io/funixproductions/funixgaming-api-funixbot:latest
+    build:
+      context: .
+      args:
+        service_name: funixbot
+        service_base_dir: funixbot

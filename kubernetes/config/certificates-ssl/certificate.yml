@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: funixgaming-api-certificate
+  namespace: "funixproductions"
+spec:
+  secretName: funixgaming-api-certificate-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: "api.funixgaming.fr"
+  dnsNames:
+    - "api.funixgaming.fr"
