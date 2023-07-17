@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TwitchStreamResource implements TwitchStreamClient {
 
-    private TwitchStreamService service;
+    private final TwitchStreamService service;
 
     @Override
     public TwitchDataResponseDTO<TwitchStreamDTO> getStream() {
