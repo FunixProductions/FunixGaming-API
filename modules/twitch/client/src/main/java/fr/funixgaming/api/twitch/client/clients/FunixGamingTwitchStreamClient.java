@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
         url = "${funixgaming.api.twitch.app-domain-url}",
         path = "/twitch/stream"
 )
-public interface TwitchStreamClient {
+public interface FunixGamingTwitchStreamClient {
 
     @GetMapping
     TwitchDataResponseDTO<TwitchStreamDTO> getStream();
