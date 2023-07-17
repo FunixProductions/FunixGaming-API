@@ -21,6 +21,7 @@
     <modules>
         <module>modules/core</module>
         <module>modules/funixbot</module>
+        <module>modules/twitch</module>
     </modules>
 
     <licenses>

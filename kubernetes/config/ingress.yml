@@ -19,3 +19,10 @@ spec:
                 name: funixbot-service
                 port:
                   number: 80
+          - path: /twitch
+            pathType: Prefix
+            backend:
+              service:
+                name: funixgaming-twitch-service
+                port:
+                  number: 80

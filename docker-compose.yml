@@ -2,10 +2,19 @@ version: '3'
 
 services:
   #FunixBot service
-  build-production-server-box-service:
+  build-production-funixbot-service:
     image: ghcr.io/funixproductions/funixgaming-api-funixbot:latest
     build:
       context: .
       args:
         service_name: funixbot
         service_base_dir: funixbot
+
+  #Twitch service
+  build-production-twitch-service:
+    image: ghcr.io/funixproductions/funixgaming-api-twitch:latest
+    build:
+      context: .
+      args:
+        service_name: twitch
+        service_base_dir: twitch
