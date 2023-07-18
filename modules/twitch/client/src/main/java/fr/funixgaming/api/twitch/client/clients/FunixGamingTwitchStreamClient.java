@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface FunixGamingTwitchStreamClient {
 
     @GetMapping
-    TwitchDataResponseDTO<TwitchStreamDTO> getStream(@RequestParam(defaultValue = "funix") String channel);
+    TwitchDataResponseDTO<TwitchStreamDTO> getStream(@RequestParam(defaultValue = "funixgaming") String channel);
 
     @GetMapping("chatters")
-    TwitchDataResponseDTO<TwitchChannelChattersDTO> getChatters(@RequestParam(defaultValue = "funix") String channel);
+    TwitchDataResponseDTO<TwitchChannelChattersDTO> getChatters(@RequestParam(defaultValue = "funixgaming") String channel);
 
 }
