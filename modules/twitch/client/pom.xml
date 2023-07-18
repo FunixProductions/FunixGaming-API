@@ -24,6 +24,12 @@
             <artifactId>funixproductions-twitch-reference-client</artifactId>
             <version>${com.funixproductions.api.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>fr.funixgaming.api.core.client</groupId>
+            <artifactId>funixgaming-core-client</artifactId>
+            <version>${fr.funixgaming.api.version}</version>
+        </dependency>
     </dependencies>
 
 </project>
