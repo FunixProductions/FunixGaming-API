@@ -27,7 +27,7 @@ public class FunixGamingInformationService {
         final PageDTO<UserDTO> search = this.internalUserCrudClient.getAll(
                 "0",
                 "1",
-                String.format("username:%s:%s", SearchOperation.EQUALS, FUNIX_GAMING_USERNAME),
+                String.format("username:%s:%s", SearchOperation.EQUALS.getOperation(), FUNIX_GAMING_USERNAME),
                 null
         );
 
