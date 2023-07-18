@@ -28,7 +28,7 @@ public class FunixGamingInformationService {
                 "0",
                 "1",
                 String.format("username:%s:%s", SearchOperation.EQUALS, FUNIX_GAMING_USERNAME),
-                ""
+                null
         );
 
         if (search.getContent().size() != 1 || !search.getContent().get(0).getUsername().equals(FUNIX_GAMING_USERNAME)) {
