@@ -6,7 +6,7 @@
     <parent>
         <groupId>fr.funixgaming.api.core</groupId>
         <artifactId>funixgaming-core</artifactId>
-        <version>1.3.0.2</version>
+        <version>1.3.0.3</version>
     </parent>
 
     <groupId>fr.funixgaming.api.core.test</groupId>

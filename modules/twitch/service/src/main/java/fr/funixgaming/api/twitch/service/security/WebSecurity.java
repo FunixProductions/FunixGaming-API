@@ -12,13 +12,12 @@ import org.springframework.security.config.annotation.web.configurers.AuthorizeH
 @Configuration
 @EnableWebSecurity
 public class WebSecurity extends ApiWebSecurity {
-
     @NotNull
     @Override
     public Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> getUrlsMatchers() {
         return ex -> ex
                 .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/twitch/games/**").hasAuthority(UserRole.MODERATOR.getRole())
-                .anyRequest().permitAll();
+                .requestMatchers("/twitch/stream**").permitAll()
+                .anyRequest().hasAuthority(UserRole.MODERATOR.getRole());
     }
 }
