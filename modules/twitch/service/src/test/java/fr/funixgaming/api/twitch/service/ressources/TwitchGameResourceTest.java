@@ -1,5 +1,6 @@
 package fr.funixgaming.api.twitch.service.ressources;
 
+import com.funixproductions.api.twitch.reference.client.clients.chat.TwitchChatClient;
 import com.funixproductions.api.twitch.reference.client.clients.game.TwitchGameClient;
 import com.funixproductions.api.twitch.reference.client.dtos.responses.TwitchDataResponseDTO;
 import com.funixproductions.api.user.client.clients.UserAuthClient;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -31,6 +33,9 @@ class TwitchGameResourceTest {
 
     @MockBean
     private UserAuthClient userAuthClient;
+
+    @MockBean
+    private TwitchChatClient twitchChatClient;
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,6 +52,8 @@ class TwitchGameResourceTest {
         when(twitchGameClient.getGameByName(anyString())).thenReturn(new TwitchDataResponseDTO<>());
         when(twitchGameClient.getGameById(anyString())).thenReturn(new TwitchDataResponseDTO<>());
         when(userAuthClient.current(anyString())).thenReturn(userDTO);
+        when(twitchChatClient.getChannelChatters(anyInt(), anyString(), anyString())).thenReturn(new TwitchDataResponseDTO<>());
+
     }
 
     @Test

@@ -1,5 +1,6 @@
 package fr.funixgaming.api.twitch.service.ressources;
 
+import com.funixproductions.api.twitch.reference.client.clients.chat.TwitchChatClient;
 import com.funixproductions.api.twitch.reference.client.clients.users.TwitchUsersClient;
 import com.funixproductions.api.twitch.reference.client.dtos.responses.TwitchDataResponseDTO;
 import com.funixproductions.api.user.client.clients.UserAuthClient;
@@ -17,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +33,9 @@ class TwitchUserResourceTest {
     @MockBean
     private UserAuthClient userAuthClient;
 
+    @MockBean
+    private TwitchChatClient twitchChatClient;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -41,6 +44,7 @@ class TwitchUserResourceTest {
         when(twitchUsersClient.getUsersById(anyList())).thenReturn(new TwitchDataResponseDTO<>());
         when(twitchUsersClient.getUsersByName(anyList())).thenReturn(new TwitchDataResponseDTO<>());
         when(twitchUsersClient.isUserFollowingStreamer(anyString(), anyString())).thenReturn(new TwitchDataResponseDTO<>());
+        when(twitchChatClient.getChannelChatters(anyInt(), anyString(), anyString())).thenReturn(new TwitchDataResponseDTO<>());
 
         final UserDTO userDTO = new UserDTO();
         userDTO.setRole(UserRole.MODERATOR);
