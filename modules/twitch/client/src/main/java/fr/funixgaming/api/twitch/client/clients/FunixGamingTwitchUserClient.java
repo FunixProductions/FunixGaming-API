@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @FeignClient(
-        name = "TwitchStreamClient",
+        name = "FunixGamingTwitchUserClient",
         url = "${funixgaming.api.twitch.app-domain-url}",
         path = "/twitch/user"
 )

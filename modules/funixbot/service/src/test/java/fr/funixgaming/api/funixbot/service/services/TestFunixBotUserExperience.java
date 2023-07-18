@@ -1,4 +1,4 @@
-package fr.funixgaming.api.funixbot.service;
+package fr.funixgaming.api.funixbot.service.services;
 
 import com.funixproductions.core.test.beans.JsonHelper;
 import fr.funixgaming.api.core.test.ResourceTestHandler;

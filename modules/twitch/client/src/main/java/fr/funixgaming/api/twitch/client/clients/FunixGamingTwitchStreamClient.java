@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
-        name = "TwitchStreamClient",
+        name = "FunixGamingTwitchStreamClient",
         url = "${funixgaming.api.twitch.app-domain-url}",
         path = "/twitch/stream"
 )

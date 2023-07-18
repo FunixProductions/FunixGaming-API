@@ -18,7 +18,7 @@ public class WebSecurity extends ApiWebSecurity {
     public Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> getUrlsMatchers() {
         return ex -> ex
                 .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/funixbot/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/funixbot**").permitAll()
                 .anyRequest().hasAuthority(UserRole.MODERATOR.getRole());
     }
 }
