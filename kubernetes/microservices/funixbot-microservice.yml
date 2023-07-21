@@ -54,7 +54,7 @@ spec:
             - name: DB_DATABASE
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-config-funixgaming
                   key: postgres-db
             - name: DB_USER
               valueFrom:
