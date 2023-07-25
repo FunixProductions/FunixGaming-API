@@ -3,7 +3,7 @@ version: '3'
 services:
   #FunixBot service
   build-production-funixbot-service:
-    image: ghcr.io/funixproductions/funixgaming-api-funixbot:latest
+    image: ghcr.io/funixproductions/funixgaming-api-funixbot:${IMAGE_TAG}
     build:
       context: .
       args:
@@ -12,7 +12,7 @@ services:
 
   #Twitch service
   build-production-twitch-service:
-    image: ghcr.io/funixproductions/funixgaming-api-twitch:latest
+    image: ghcr.io/funixproductions/funixgaming-api-twitch:${IMAGE_TAG}
     build:
       context: .
       args:

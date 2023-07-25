@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: 'funixproductions-dev'
+  name: funixgaming-api-ingress
+  annotations:
+    spec.ingressClassName: traefik
+spec:
+  tls:
+    - secretName: funixgaming-api-certificate-tls
+  rules:
+    - host: dev.api.funixgaming.fr
+      http:
+        paths:
+          - path: /funixbot
+            pathType: Prefix
+            backend:
+              service:
+                name: funixbot-service
+                port:
+                  number: 80
+          - path: /twitch
+            pathType: Prefix
+            backend:
+              service:
+                name: funixgaming-twitch-service
+                port:
+                  number: 80

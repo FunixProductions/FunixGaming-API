@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: funixbot-microservice-deployment
+  namespace: 'funixproductions-dev'
+  labels:
+    app: springboot
+    service: funixbot
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot
+      service: funixbot
+  template:
+    metadata:
+      namespace: 'funixproductions-dev'
+      annotations:
+        build-time: "TIME-UPDATE-BUILD-FNG"
+      labels:
+        app: springboot
+        service: funixbot
+    spec:
+      containers:
+        - name: springboot-funixbot
+          image: ghcr.io/funixproductions/funixgaming-api-funixbot:dev
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "250Mi"
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          env:
+            - name: APP_PORT
+              value: '80'
+            - name: DB_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: postgres-url
+                  name: postgres-config
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres-port
+            - name: DB_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-funixgaming
+                  key: postgres-db
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres-password
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  namespace: 'funixproductions-dev'
+  name: funixbot-service
+
+spec:
+  type: ClusterIP
+  selector:
+    app: springboot
+    service: funixbot
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

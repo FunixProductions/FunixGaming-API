@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: twitch-microservice-deployment
+  namespace: 'funixproductions-dev'
+  labels:
+    app: springboot
+    service: twitch
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: springboot
+      service: twitch
+  template:
+    metadata:
+      namespace: 'funixproductions-dev'
+      annotations:
+        build-time: "TIME-UPDATE-BUILD-FNG"
+      labels:
+        app: springboot
+        service: twitch
+    spec:
+      containers:
+        - name: springboot-twitch
+          image: ghcr.io/funixproductions/funixgaming-api-twitch:dev
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "250Mi"
+          imagePullPolicy: Always
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          env:
+            - name: APP_PORT
+              value: '80'
+
+---
+
+apiVersion: v1
+kind: Service
+
+metadata:
+  namespace: 'funixproductions-dev'
+  name: funixgaming-twitch-service
+
+spec:
+  type: ClusterIP
+  selector:
+    app: springboot
+    service: twitch
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
