@@ -21,6 +21,8 @@ API used for Funix Projects
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/c/funixgaming)
 [![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/funixgaming)
 
+Migrations scripts are located in modules/funixbot/service/src/main/resources/db/migration
+
 ### Importer le projet
 - Ajouter comme parent le projet funix-api
 ```xml
