@@ -50,7 +50,7 @@ public class FunixGamingTwitchStreamService {
         }
 
         try {
-            this.cacheChatters = twitchChatClient.getChannelChatters(1000, "", twitchConfig.getStreamerUsername());
+            this.cacheChatters = twitchChatClient.getChannelChatters(1000, "", userDTO.getId().toString());
         } catch (FeignException e) {
             log.error("Impossible to fetch chatters from FunixProd APi -> Twitch API. Error code: {}", e.status(), e);
         }
