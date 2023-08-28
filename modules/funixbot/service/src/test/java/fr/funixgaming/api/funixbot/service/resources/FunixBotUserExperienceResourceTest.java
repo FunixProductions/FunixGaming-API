@@ -92,6 +92,7 @@ class FunixBotUserExperienceResourceTest {
         experienceDTO.setLastMessageDateSeconds(1L);
         experienceDTO.setTwitchUserId("qsd");
         experienceDTO.setXpNextLevel(100);
+        experienceDTO.setTwitchUsername(UUID.randomUUID().toString());
 
         MvcResult mvcResult = this.mockMvc.perform(post("/funixbot/user/exp")
                         .header("Authorization", "Bearer " + UUID.randomUUID())
