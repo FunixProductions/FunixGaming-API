@@ -51,6 +51,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         first.setLevel(100);
         first.setXp(900);
         first.setXpNextLevel(1000);
+        first.setTwitchUsername(UUID.randomUUID().toString());
         first.setLastMessageDate(Date.from(Instant.now()));
 
         final FunixBotUserExperience second = new FunixBotUserExperience();
@@ -58,6 +59,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         second.setLevel(100);
         second.setXp(200);
         second.setXpNextLevel(1000);
+        second.setTwitchUsername(UUID.randomUUID().toString());
         second.setLastMessageDate(Date.from(Instant.now()));
 
         final FunixBotUserExperience third = new FunixBotUserExperience();
@@ -65,6 +67,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         third.setLevel(90);
         third.setXp(200);
         third.setXpNextLevel(1000);
+        third.setTwitchUsername(UUID.randomUUID().toString());
         third.setLastMessageDate(Date.from(Instant.now()));
 
         final FunixBotUserExperience fourth = new FunixBotUserExperience();
@@ -72,6 +75,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         fourth.setLevel(10);
         fourth.setXp(200);
         fourth.setXpNextLevel(1000);
+        fourth.setTwitchUsername(UUID.randomUUID().toString());
         fourth.setLastMessageDate(Date.from(Instant.now()));
 
         this.first = repository.save(first);
@@ -109,6 +113,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         funixBotUserExperienceDTO.setXp(10);
         funixBotUserExperienceDTO.setLevel(10);
         funixBotUserExperienceDTO.setXpNextLevel(10);
+        funixBotUserExperienceDTO.setTwitchUsername(UUID.randomUUID().toString());
         funixBotUserExperienceDTO.setLastMessageDateSeconds(10L);
 
         mockMvc.perform(post("/funixbot/user/exp")
@@ -127,6 +132,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         funixBotUserExperienceDTO.setXp(10);
         funixBotUserExperienceDTO.setLevel(10);
         funixBotUserExperienceDTO.setXpNextLevel(10);
+        funixBotUserExperienceDTO.setTwitchUsername(UUID.randomUUID().toString());
         funixBotUserExperienceDTO.setLastMessageDateSeconds(10L);
 
         mockMvc.perform(post("/funixbot/user/exp")
@@ -145,6 +151,7 @@ class TestFunixBotUserExperience extends ResourceTestHandler {
         funixBotUserExperienceDTO.setXp(10);
         funixBotUserExperienceDTO.setLevel(10);
         funixBotUserExperienceDTO.setXpNextLevel(10);
+        funixBotUserExperienceDTO.setTwitchUsername(UUID.randomUUID().toString());
         funixBotUserExperienceDTO.setLastMessageDateSeconds(10L);
 
         mockMvc.perform(post("/funixbot/user/exp")

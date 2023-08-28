@@ -12,6 +12,9 @@ public class FunixBotUserExperienceDTO extends ApiDTO {
     @NotBlank
     private String twitchUserId;
 
+    @NotBlank
+    private String twitchUsername;
+
     @NotNull
     private Integer xp;
 
