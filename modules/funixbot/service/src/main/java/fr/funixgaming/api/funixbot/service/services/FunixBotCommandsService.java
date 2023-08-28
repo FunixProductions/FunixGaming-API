@@ -28,8 +28,8 @@ public class FunixBotCommandsService extends ApiService<FunixBotCommandDTO, Funi
     }
 
     @Override
-    public void beforeSavingEntity(@NonNull Iterable<FunixBotCommand> entity) {
-        for (FunixBotCommand command : entity) {
+    public void beforeMappingToEntity(@NonNull Iterable<FunixBotCommandDTO> request) {
+        for (FunixBotCommandDTO command : request) {
             if (command.getMessage().length() > MAX_LEN_MESSAGE) {
                 throw new ApiBadRequestException(ERROR_MESSAGE_MAX_LEN);
             }
@@ -45,7 +45,7 @@ public class FunixBotCommandsService extends ApiService<FunixBotCommandDTO, Funi
                 throw new ApiBadRequestException(ERROR_MESSAGE_NOT_ALPHANUMERIC);
             }
 
-            if (super.getRepository().existsByCommand(command.getCommand())) {
+            if (super.getRepository().existsFunixBotCommandByCommandContainsIgnoreCase(command.getCommand())) {
                 throw new ApiBadRequestException(String.format("La commande '%s' existe déjà.", command.getCommand()));
             }
 

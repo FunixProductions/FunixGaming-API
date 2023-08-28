@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FunixBotCommandRepository extends ApiRepository<FunixBotCommand> {
-    boolean existsByCommand(String command);
+    boolean existsFunixBotCommandByCommandContainsIgnoreCase(String command);
 }

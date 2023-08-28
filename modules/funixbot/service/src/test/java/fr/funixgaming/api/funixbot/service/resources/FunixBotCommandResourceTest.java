@@ -87,7 +87,7 @@ class FunixBotCommandResourceTest {
                 .andExpect(status().isOk()).andReturn();
         final FunixBotCommandDTO createdCommand = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), FunixBotCommandDTO.class);
         assertEquals(commandName.toLowerCase(), createdCommand.getCommand());
-        createdCommand.setCommand("test2");
+        createdCommand.setCommand("test2patched");
 
         mvcResult = mockMvc.perform(patch("/funixbot/command")
                         .header("Authorization", "Bearer " + UUID.randomUUID())
@@ -131,6 +131,35 @@ class FunixBotCommandResourceTest {
         handleBadRequest(commandDTO);
         commandDTO.setCommand("test#");
         handleBadRequest(commandDTO);
+    }
+
+    @Test
+    void testCreateDuplicateCommands() throws Exception {
+        final FunixBotCommandDTO commandDTO = new FunixBotCommandDTO();
+        commandDTO.setCommand("testDupplicateCmd");
+        commandDTO.setMessage("testMessage");
+        commandDTO.setType(FunixBotCommandType.FUN);
+
+        final UserDTO userDTO = new UserDTO();
+        userDTO.setRole(UserRole.MODERATOR);
+        userDTO.setUsername(UUID.randomUUID().toString());
+        userDTO.setEmail(UUID.randomUUID().toString());
+        userDTO.setId(UUID.randomUUID());
+        userDTO.setValid(true);
+        when(userAuthClient.current(any())).thenReturn(userDTO);
+
+        mockMvc.perform(post("/funixbot/command")
+                        .header("Authorization", "Bearer " + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(commandDTO)))
+                .andExpect(status().isOk());
+
+        commandDTO.setId(null);
+        mockMvc.perform(post("/funixbot/command")
+                        .header("Authorization", "Bearer " + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(commandDTO)))
+                .andExpect(status().isBadRequest());
     }
 
     private void handleBadRequest(final FunixBotCommandDTO commandDTO) throws Exception {
