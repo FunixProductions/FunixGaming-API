@@ -16,6 +16,9 @@ class FunixBotCommandResourceTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private
+
     @Test
     void testGetCommands() throws Exception {
         mockMvc.perform(get("/funixbot/command"))
