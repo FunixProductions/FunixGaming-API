@@ -86,7 +86,7 @@ class FunixBotCommandResourceTest {
                         .content(jsonHelper.toJson(commandDTO)))
                 .andExpect(status().isOk()).andReturn();
         final FunixBotCommandDTO createdCommand = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), FunixBotCommandDTO.class);
-        assertEquals(commandName, createdCommand.getCommand());
+        assertEquals(commandName.toLowerCase(), createdCommand.getCommand());
         createdCommand.setCommand("test2");
 
         mvcResult = mockMvc.perform(patch("/funixbot/command")
