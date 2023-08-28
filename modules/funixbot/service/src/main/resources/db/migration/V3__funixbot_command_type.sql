@@ -1,0 +1,3 @@
+ALTER TABLE funixbot_commands ADD COLUMN type VARCHAR(200) DEFAULT 'OTHER' NOT NULL;
+
+ALTER TABLE funixbot_commands ALTER COLUMN message TYPE VARCHAR(500);
