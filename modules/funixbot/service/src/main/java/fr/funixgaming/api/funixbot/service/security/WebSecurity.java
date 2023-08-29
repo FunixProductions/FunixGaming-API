@@ -20,6 +20,7 @@ public class WebSecurity extends ApiWebSecurity {
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/funixbot/user/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/funixbot/command/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/funixbot/automessages/**").permitAll()
                 .anyRequest().hasAuthority(UserRole.MODERATOR.getRole());
     }
 }
