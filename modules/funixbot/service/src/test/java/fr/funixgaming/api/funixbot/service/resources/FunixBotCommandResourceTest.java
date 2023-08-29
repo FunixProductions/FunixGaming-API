@@ -99,6 +99,39 @@ class FunixBotCommandResourceTest {
     }
 
     @Test
+    void testCreateAndEditCommand2() throws Exception {
+        final UserDTO userDTO = new UserDTO();
+        userDTO.setRole(UserRole.MODERATOR);
+        userDTO.setUsername(UUID.randomUUID().toString());
+        userDTO.setEmail(UUID.randomUUID().toString());
+        userDTO.setId(UUID.randomUUID());
+        userDTO.setValid(true);
+        when(userAuthClient.current(any())).thenReturn(userDTO);
+
+        final String commandName = "bonjourModo";
+        final FunixBotCommandDTO commandDTO = new FunixBotCommandDTO();
+        commandDTO.setCommand(commandName);
+        commandDTO.setMessage("testMessage");
+        commandDTO.setType(FunixBotCommandType.FUN);
+
+        MvcResult mvcResult = mockMvc.perform(post("/funixbot/command")
+                        .header("Authorization", "Bearer " + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(commandDTO)))
+                .andExpect(status().isOk()).andReturn();
+        final FunixBotCommandDTO createdCommand = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), FunixBotCommandDTO.class);
+        createdCommand.setMessage("test2patched");
+
+        mvcResult = mockMvc.perform(patch("/funixbot/command")
+                        .header("Authorization", "Bearer " + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonHelper.toJson(createdCommand)))
+                .andExpect(status().isOk()).andReturn();
+        final FunixBotCommandDTO editedCommand = jsonHelper.fromJson(mvcResult.getResponse().getContentAsString(), FunixBotCommandDTO.class);
+        assertEquals(createdCommand.getMessage(), editedCommand.getMessage());
+    }
+
+    @Test
     void testCreateCommandWithCommandTooLong() throws Exception {
         final FunixBotCommandDTO commandDTO = new FunixBotCommandDTO();
         commandDTO.setCommand("testdfgldfskghdflkghdflskgjhdfslkgjhdflkgjhdskflhfghdgfhdgfhdfghdfghfdghfdgh");

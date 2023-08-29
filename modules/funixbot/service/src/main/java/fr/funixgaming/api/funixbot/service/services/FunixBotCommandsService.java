@@ -45,7 +45,7 @@ public class FunixBotCommandsService extends ApiService<FunixBotCommandDTO, Funi
                 throw new ApiBadRequestException(ERROR_MESSAGE_NOT_ALPHANUMERIC);
             }
 
-            if (super.getRepository().existsFunixBotCommandByCommandContainsIgnoreCase(command.getCommand())) {
+            if (command.getId() == null && super.getRepository().existsFunixBotCommandByCommandContainsIgnoreCase(command.getCommand())) {
                 throw new ApiBadRequestException(String.format("La commande '%s' existe déjà.", command.getCommand()));
             }
 
