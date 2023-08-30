@@ -15,7 +15,7 @@ public class FunixBotUserExperience extends ApiEntity {
     @Column(name = "twitch_user_id", nullable = false, updatable = false, unique = true)
     private String twitchUserId;
 
-    @Column(name = "twitch_username", nullable = false, unique = true, columnDefinition = "varchar(200) DEFAULT ''")
+    @Column(name = "twitch_username", nullable = false, columnDefinition = "varchar(200) DEFAULT ''")
     private String twitchUsername;
 
     @Column(nullable = false)
