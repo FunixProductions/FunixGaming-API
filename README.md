@@ -75,4 +75,5 @@ public class FunixApiApp {
         SpringApplication.run(FunixApiApp.class, args);
     }
 }
+
 ````
