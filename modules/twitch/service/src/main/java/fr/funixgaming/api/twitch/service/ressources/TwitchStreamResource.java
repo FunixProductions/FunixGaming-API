@@ -4,6 +4,7 @@ import com.funixproductions.api.twitch.reference.client.dtos.responses.TwitchDat
 import com.funixproductions.api.twitch.reference.client.dtos.responses.channel.chat.TwitchChannelChattersDTO;
 import com.funixproductions.api.twitch.reference.client.dtos.responses.channel.stream.TwitchStreamDTO;
 import com.funixproductions.core.exceptions.ApiBadRequestException;
+import com.funixproductions.core.exceptions.ApiException;
 import fr.funixgaming.api.twitch.client.clients.FunixGamingTwitchStreamClient;
 import fr.funixgaming.api.twitch.service.services.DrakkadesTwitchStreamService;
 import fr.funixgaming.api.twitch.service.services.FunixGamingTwitchStreamService;
@@ -21,17 +22,29 @@ public class TwitchStreamResource implements FunixGamingTwitchStreamClient {
 
     @Override
     public TwitchDataResponseDTO<TwitchStreamDTO> getStream(String channel) {
-        if (channel.equals("funixgaming")) {
-            return funixTwitchStreamService.getCacheStream();
-        } else if (channel.equals("drakkades")) {
-            return drakkadesTwitchStreamService.getCacheStream();
-        } else {
-            throw new ApiBadRequestException("Le nom du stream est invalide ou ne fait pas parti de la liste des streams autorisés.");
+        try {
+            if (channel.equals("funixgaming")) {
+                return funixTwitchStreamService.getCacheStream();
+            } else if (channel.equals("drakkades")) {
+                return drakkadesTwitchStreamService.getCacheStream();
+            } else {
+                throw new ApiBadRequestException("Le nom du stream est invalide ou ne fait pas parti de la liste des streams autorisés.");
+            }
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException("Erreur interne: " + e.getMessage(), e);
         }
     }
 
     @Override
     public TwitchDataResponseDTO<TwitchChannelChattersDTO> getChatters(String channel) {
-        return funixTwitchStreamService.getCacheChatters();
+        try {
+            return funixTwitchStreamService.getCacheChatters();
+        } catch (ApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ApiException("Erreur interne: " + e.getMessage(), e);
+        }
     }
 }

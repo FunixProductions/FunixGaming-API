@@ -21,12 +21,10 @@ public interface FunixGamingTwitchUserClient {
     /**
      * Check if a user is following a streamer
      * @param userId viewer id to check
-     * @param streamerId streamer id to check
      * @return a single element list if the user is following otherwise not following
      */
     @GetMapping("isFollowing")
-    TwitchDataResponseDTO<TwitchFollowDTO> isUserFollowingStreamer(@RequestParam(name = "user_id") String userId,
-                                                                   @RequestParam(name = "streamer_id") String streamerId);
+    TwitchDataResponseDTO<TwitchFollowDTO> isUserFollowingStreamer(@RequestParam(name = "user_id") String userId);
 
     @GetMapping("usersByName")
     TwitchDataResponseDTO<TwitchUserDTO> getUsersByName(@RequestParam(name = "login") List<String> name);
