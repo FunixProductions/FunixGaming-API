@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  namespace: 'funixproductions-dev'
-  name: postgres-config-funixgaming
-data:
-  postgres-db: 'funixapi_dev'

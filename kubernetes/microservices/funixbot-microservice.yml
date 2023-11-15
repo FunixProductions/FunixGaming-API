@@ -44,12 +44,12 @@ spec:
             - name: DB_HOSTNAME
               valueFrom:
                 configMapKeyRef:
-                  key: postgres-url
-                  name: postgres-config
+                  key: postgres-host
+                  name: postgres-config-funixgaming
             - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-config-funixgaming
                   key: postgres-port
             - name: DB_DATABASE
               valueFrom:
@@ -59,12 +59,12 @@ spec:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: postgres-secret-funixgaming
                   key: postgres-user
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: postgres-secret-funixgaming
                   key: postgres-password
 
 ---
