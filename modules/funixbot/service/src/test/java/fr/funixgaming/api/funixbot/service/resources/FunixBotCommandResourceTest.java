@@ -76,7 +76,7 @@ class FunixBotCommandResourceTest {
 
         final String commandName = "tEst1";
         final FunixBotCommandDTO commandDTO = new FunixBotCommandDTO();
-        commandDTO.setCommand("!" + commandName);
+        commandDTO.setCommand(commandName);
         commandDTO.setMessage("testMessage");
         commandDTO.setType(FunixBotCommandType.FUN);
 

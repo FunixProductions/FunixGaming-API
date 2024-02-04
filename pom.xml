@@ -6,7 +6,7 @@
 
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funixgaming-api</artifactId>
-    <version>1.3.0.10</version>
+    <version>1.3.1</version>
     <name>FunixGamingAPI</name>
     <description>Project used in Funix projects</description>
     <url>https://github.com/FunixProductions/FunixGaming-API</url>
@@ -15,7 +15,7 @@
     <parent>
         <groupId>com.funixproductions.api</groupId>
         <artifactId>funixproductions-api</artifactId>
-        <version>1.2.2.5</version>
+        <version>1.3.0</version>
     </parent>
 
     <modules>
@@ -47,7 +47,7 @@
     </scm>
 
     <properties>
-        <fr.funixgaming.api.version>1.3.0.10</fr.funixgaming.api.version>
+        <fr.funixgaming.api.version>1.3.1</fr.funixgaming.api.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
