@@ -23,44 +23,22 @@ API used for Funix Projects
 
 Migrations scripts are located in modules/funixbot/service/src/main/resources/db/migration
 
-### Importer le projet
-- Ajouter comme parent le projet funix-api
+### Maven repo
+
+Lien du repository Maven : [FunixGaming - Api package](https://mvn.funixproductions.com/#/releases/fr/funixgaming/api)
+
 ```xml
+<repository>
+  <id>funixproductions-repository-releases</id>
+  <name>FunixProductions Repository</name>
+  <url>https://mvn.funixproductions.com/releases</url>
+</repository>
+
 <parent>
-    <artifactId>funix-api</artifactId>
     <groupId>fr.funixgaming.api</groupId>
-    <version>(version)</version>
+    <artifactId>funixgaming-api</artifactId>
+    <version>1.3.1.2</version>
 </parent>
-```
-
-- Si vous voulez utiliser le core
-```xml
-<dependency>
-    <groupId>fr.funixgaming.api.core</groupId>
-    <artifactId>funix-api-core</artifactId>
-    <version>(version)</version>
-    <scope>compile</scope>
-</dependency>
-```
-
-- Si vous voulez utiliser l'api funix
-```xml
-<dependency>
-    <groupId>fr.funixgaming.api.client</groupId>
-    <artifactId>funix-api-client</artifactId>
-    <version>(version)</version>
-    <scope>compile</scope>
-</dependency>
-```
-
-- Si vous voulez utiliser le serveur
-```xml
-<dependency>
-    <groupId>fr.funixgaming.api.server</groupId>
-    <artifactId>funix-api-server</artifactId>
-    <version>(version)</version>
-    <scope>compile</scope>
-</dependency>
 ```
 
 ### Annotations requises pour le lancement spring
