@@ -26,7 +26,7 @@ Lien du repository Maven : [FunixGaming - Api package](https://mvn.funixproducti
 <parent>
     <groupId>fr.funixgaming.api</groupId>
     <artifactId>funixgaming-api</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
 </parent>
 ```
 
