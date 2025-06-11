@@ -9,7 +9,7 @@ spec:
   tls:
     - secretName: funixgaming-api-certificate-tls
   rules:
-    - host: dev.api.funixgaming.fr
+    - host: dev-api.funixgaming.fr
       http:
         paths:
           - path: /funixbot
